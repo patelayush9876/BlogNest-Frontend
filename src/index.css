@@ -1,0 +1,110 @@
+@import "tailwindcss";
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+.nav-link {
+  @apply text-gray-700 dark:text-gray-300 
+           hover:text-indigo-600 dark:hover:text-indigo-400 
+           focus:text-indigo-600 dark:focus:text-indigo-400 
+           active:text-indigo-600 dark:active:text-indigo-400 
+           transition-colors duration-150;
+}
+.tab-button {
+  @apply rounded-full bg-transparent border-0 p-0;
+}
+.tab-button:hover {
+  background-color: transparent !important; /* disable hover */
+  border-color: transparent !important;
+}
+
+/* Tabs Navigation Sliding Indicator */
+.tabs-indicator {
+  height: 30px;
+  position: absolute;
+  top: 0.25rem; /* matches top-1 */
+  bottom: 0.25rem; /* matches bottom-1 */
+  border-radius: 9999px; /* fully rounded */
+  transition: all 0.3s ease-in-out;
+  background-color: #d1d5db; /* default gray-300 */
+}
+
+.dark .tabs-indicator {
+  background-color: #9ca3af; /* gray-400 for dark mode */
+}
+
+/* Optional: you can add a margin-left for the sliding indicator */
+.tabs-indicator-offset {
+  margin-left: 4px;
+}
+
+/* Reset tab buttons hover/background */
+.tab-button {
+  background-color: transparent;
+  border: none;
+}
