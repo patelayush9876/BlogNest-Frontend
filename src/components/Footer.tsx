@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
           <div className="col-span-2 md:col-span-2">
             <div className="flex items-center space-x-2 mb-3">
               <div className="w-6 h-6 bg-black rounded-full"></div> {/* Logo Placeholder */}
-              <span className="text-xl font-bold tracking-tight text-gray-900">BlogSpace</span>
+              <span className="text-xl font-bold tracking-tight text-gray-900">BlogNest</span>
             </div>
             <p className="max-w-xs text-base text-gray-600">
               A modern platform for sharing knowledge and connecting with writers worldwide.
@@ -92,7 +92,7 @@ const Footer: React.FC = () => {
           
           {/* Copyright */}
           <p className="text-gray-500">
-            &copy; 2025 BlogSpace. All rights reserved.
+            &copy; 2025 BlogNest. All rights reserved.
           </p>
           
           {/* Social Icons */}

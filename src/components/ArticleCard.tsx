@@ -1,7 +1,5 @@
-// ArticleCard.tsx
-
-import React from 'react';
-import { Heart, MessageSquare, Bookmark } from 'lucide-react';
+import React from "react";
+import { Heart, MessageSquare, Bookmark } from "lucide-react";
 
 interface ArticleCardProps {
   image: string;
@@ -36,11 +34,11 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           className="object-cover w-full h-full transition duration-300 hover:scale-[1.03]"
         />
         {/* "Learn React" / "Preview" overlay section */}
-        <div className="absolute inset-0 flex items-end justify-between p-6 bg-black bg-opacity-30">
-          <span className="px-3 py-1 text-sm font-medium text-white bg-gray-900 rounded-full bg-opacity-60">
+        <div className="absolute inset-0 flex items-end justify-between p-6">
+          <span className="px-3 py-1 text-sm font-medium text-white bg-gray-900 dark:bg-gray-300 rounded-full bg-opacity-60">
             Preview
           </span>
-          <button className="px-4 py-2 text-sm font-semibold text-white transition duration-200 bg-indigo-600 rounded-lg hover:bg-indigo-700">
+          <button className="px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white transition duration-200 dark:bg-indigo-600 rounded-lg hover:bg-indigo-700">
             Learn React
           </button>
         </div>
@@ -88,7 +86,10 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             <MessageSquare className="w-5 h-5" />
             <span className="text-sm">{comments}</span>
           </div>
-          <button className="p-1 hover:text-gray-900 transition duration-150">
+          <button
+            className="p-1 hover:text-gray-900 transition duration-150"
+            aria-label="Bookmark this article"
+          >
             <Bookmark className="w-5 h-5" />
           </button>
         </div>

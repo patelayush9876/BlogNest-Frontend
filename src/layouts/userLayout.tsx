@@ -1,13 +1,12 @@
-import { type ReactNode } from "react";
+import { Outlet } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/navbar/Navbar";
 
 interface UserLayoutProps {
-  children: ReactNode;
-  toggleTheme: () => void;
+  toggleTheme?: () => void; // optional for now
 }
 
-const UserLayout = ({ children }: UserLayoutProps) => {
+const UserLayout: React.FC<UserLayoutProps> = () => {
   return (
     <div className="flex flex-col min-h-screen w-screen">
       {/* Navbar */}
@@ -15,7 +14,7 @@ const UserLayout = ({ children }: UserLayoutProps) => {
 
       {/* Main content */}
       <main className="flex-1 w-full pt-16">
-        {children}
+        <Outlet /> {/* renders nested route content */}
       </main>
 
       {/* Footer */}
@@ -23,6 +22,5 @@ const UserLayout = ({ children }: UserLayoutProps) => {
     </div>
   );
 };
-
 
 export default UserLayout;

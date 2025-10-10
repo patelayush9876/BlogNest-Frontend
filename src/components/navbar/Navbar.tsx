@@ -1,15 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Search,
-  Bell,
-  Bookmark,
-  Menu,
-  Sun,
-  Moon,
-  PenSquare,
-} from "lucide-react";
+import { Search, Bell, Bookmark, Menu, Sun, Moon, PenSquare } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+
 interface NavbarProps {
   userProfileImage: string;
 }
@@ -19,13 +12,9 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  // Initialize theme on load
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
       document.documentElement.classList.add("dark");
       setIsDarkMode(true);
@@ -35,7 +24,6 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
     }
   }, []);
 
-  // Theme toggle
   const toggleTheme = () => {
     const newTheme = !isDarkMode;
     setIsDarkMode(newTheme);
@@ -43,13 +31,9 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
     localStorage.setItem("theme", newTheme ? "dark" : "light");
   };
 
-  // Close profile dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsProfileOpen(false);
       }
     };
@@ -58,27 +42,23 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
   }, []);
 
   return (
-   <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-100 shadow-sm dark:bg-gray-900 dark:border-gray-800 transition-colors duration-300 z-50">
-      {/* Left Section: Logo and Links */}
+    <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-100 shadow-sm dark:bg-gray-900 dark:border-gray-800 transition-colors duration-300 z-50">
+      {/* Left Section */}
       <div className="flex items-center space-x-8">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-indigo-600 rounded-full"></div>
+          <div className="w-8 h-8 bg-indigo-600 rounded-full" />
           <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
             BlogNest
           </span>
         </div>
-        {/* Navigation Links */}
+
         <div className="hidden space-x-6 text-base font-medium md:flex">
-          <a href="#" className="nav-link">
-            Home
-          </a>
-          <a href="#" className="nav-link">
-            Explore
-          </a>
+          <a href="#" className="nav-link">Home</a>
+          <a href="#" className="nav-link">Explore</a>
         </div>
       </div>
 
-      {/* Center Section: Search */}
+      {/* Center Search */}
       <div className="flex-1 max-w-lg mx-4">
         <div className="relative flex items-center w-full">
           <Search className="absolute w-5 h-5 ml-3 text-gray-400 dark:text-gray-500 pointer-events-none" />
@@ -94,52 +74,64 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
       <div className="flex items-center space-x-4">
         {/* Create Blog */}
         <button
+          type="button"
           className="flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 
                      rounded-lg hover:bg-indigo-700 
                      dark:bg-indigo-500 dark:hover:bg-indigo-400 
                      transition-colors duration-150"
+          title="Create a new blog"
         >
           <PenSquare className="w-4 h-4 mr-2 text-gray-800 dark:text-white" />
-          <span className="text-gray-800 dark:text-white font-semibold">
-            Create
-          </span>
+          <span className="text-gray-800 dark:text-white font-semibold">Create</span>
         </button>
 
         {/* Theme Toggle */}
         <button
+          type="button"
           onClick={toggleTheme}
+          aria-label="Toggle dark mode"
+          title="Toggle dark mode"
           className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
         >
-          {isDarkMode ? (
-            <Sun className="w-5 h-5" />
-          ) : (
-            <Moon className="w-5 h-5" />
-          )}
+          {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
 
         {/* Bookmark */}
-        <button className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+        <button
+          type="button"
+          title="View bookmarks"
+          aria-label="Bookmarks"
+          className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+        >
           <Bookmark className="w-5 h-5" />
         </button>
 
         {/* Notifications */}
         <div className="relative">
-          <button className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+          <button
+            type="button"
+            title="View notifications"
+            aria-label="Notifications"
+            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          >
             <Bell className="w-5 h-5" />
           </button>
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
         </div>
 
-        {/* Profile Dropdown */}
+        {/* Profile */}
         <div ref={dropdownRef} className="relative">
           <button
+            type="button"
             onClick={() => setIsProfileOpen((prev) => !prev)}
+            aria-label="Open profile menu"
+            title="Profile"
             className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-transparent hover:border-indigo-500 transition"
           >
-            {!userProfileImage ? (
+            {userProfileImage ? (
               <img
                 src={userProfileImage}
-                alt="User"
+                alt="User profile"
                 className="w-8 h-8 rounded-full object-cover"
               />
             ) : (
@@ -152,26 +144,11 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
 
           {isProfileOpen && (
             <div className="absolute right-0 w-48 mt-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-50">
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                Profile
-              </a>
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                Settings
-              </a>
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                Create Blog
-              </a>
+              <a href="/user/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Profile</a>
+              <a href="/user/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Settings</a>
+              <a href="#" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Create Blog</a>
               <hr className="border-gray-100 dark:border-gray-700" />
-              <button className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+              <button type="button" className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700">
                 Logout
               </button>
             </div>
@@ -179,7 +156,12 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
         </div>
 
         {/* Mobile Menu */}
-        <button className="p-2 text-gray-600 dark:text-gray-300 rounded-full md:hidden hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+        <button
+          type="button"
+          title="Open menu"
+          aria-label="Open mobile menu"
+          className="p-2 text-gray-600 dark:text-gray-300 rounded-full md:hidden hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+        >
           <Menu className="w-6 h-6" />
         </button>
       </div>

@@ -1,0 +1,22 @@
+{
+  "UNKNOWN_ERROR": {
+    "title": "Error",
+    "message": "Something went wrong"
+  },
+  "INVALID_CREDENTIALS": {
+    "title": "Login Failed",
+    "message": "Email or password is incorrect"
+  },
+  "ACCOUNT_EXPIRED": {
+    "title": "Account Expired",
+    "message": "Please contact admin"
+  },
+  "SUCCESS_OPERATION": {
+    "title": "Success",
+    "message": "Operation completed successfully"
+  },
+  "NETWORK_ERROR": {
+    "title": "Network Error",
+    "message": "Please check your internet connection"
+  }
+}

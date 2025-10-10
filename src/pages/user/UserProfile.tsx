@@ -93,7 +93,7 @@ const ProfileArticleCard: React.FC<ArticleData> = ({
           <MessageSquare className="w-5 h-5" />
           <span className="text-sm">{comments}</span>
         </div>
-        <button className="p-1 hover:text-gray-900">
+        <button className="p-1 hover:text-gray-900" aria-label='bookmark'>
           <Bookmark className="w-5 h-5" />
         </button>
       </div>
