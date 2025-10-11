@@ -45,7 +45,7 @@ const footerColumns: FooterColumn[] = [
 
 const Footer: React.FC = () => {
   return (
-    <footer className="w-full bg-white border-t border-gray-100 mt-16">
+    <footer className="w-full bg-white border-t border-gray-100">
       <div className="container px-4 py-12 mx-auto md:px-8">
         
         {/* Top Section: Logo/Description and Navigation Columns */}
@@ -54,8 +54,7 @@ const Footer: React.FC = () => {
           {/* 1. Logo and Description Column (Takes 1-2 columns on wider screens) */}
           <div className="col-span-2 md:col-span-2">
             <div className="flex items-center space-x-2 mb-3">
-              <div className="w-6 h-6 bg-black rounded-full"></div> {/* Logo Placeholder */}
-              <span className="text-xl font-bold tracking-tight text-gray-900">BlogNest</span>
+              <img className='h-12' src="/Images/BlogNest.png" alt="logo-blognest" />
             </div>
             <p className="max-w-xs text-base text-gray-600">
               A modern platform for sharing knowledge and connecting with writers worldwide.

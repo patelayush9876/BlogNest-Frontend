@@ -11,6 +11,7 @@ interface ArticleCardProps {
   tags: string[];
   likes: number;
   comments: number;
+  author:any;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
@@ -23,11 +24,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   tags,
   likes,
   comments,
+  author
 }) => {
   return (
     <div className="pb-8 border-b border-gray-200">
       {/* Article Image / Video Preview */}
-      <div className="relative mb-4 overflow-hidden rounded-xl h-96">
+      {image &&(<div className="relative mb-4 overflow-hidden rounded-xl h-96">
         <img
           src={image}
           alt={title}
@@ -42,14 +44,14 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             Learn React
           </button>
         </div>
-      </div>
+      </div>)}
 
       {/* Author and Metadata */}
       <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
         <div className="w-8 h-8 bg-gray-300 rounded-full">
-          {/* Placeholder for Author Avatar */}
+          <img className="rounded-full" src={author?.profile?.profilePic} alt="authorProfile" />
         </div>
-        <span className="font-semibold text-gray-900">{user}</span>
+        <span className="font-semibold text-gray-900">{author?.name}</span>
         <span>&bull;</span>
         <span>{date}</span>
         <span>&bull;</span>

@@ -10,7 +10,7 @@ import { setSessionExpiredCallback } from "../services/api";
 import { showToast } from "../services/toastService";
 import { login, logoutApi } from "../services/authService";
 import { getLoggedInUser } from "../services/userService";
-
+import type { LoginResponse } from "../interfaces/userInterface";
 
 interface AuthContextType {
   user: any | null;
@@ -33,7 +33,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const navigate = useNavigate();
-  // Load tokens/user from localStorage and register session callback
+
+  // Load tokens and user from localStorage on app start
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedAccessToken = localStorage.getItem("accessToken");
@@ -45,17 +46,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setRefreshToken(storedRefreshToken);
     }
 
-    // Global auth event callback
+    // Set up session expired callback
     setSessionExpiredCallback(() => {
-      // Only clear auth keys
-      setUser(null);
-      setAccessToken(null);
-      setRefreshToken(null);
-
-      localStorage.removeItem("user");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-
+      clearAuthData();
       showToast(
         "Session expired due to inactivity. Please login again.",
         "error"
@@ -64,31 +57,54 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
+  // Helper to clear auth data
+  const clearAuthData = () => {
+    setUser(null);
+    setAccessToken(null);
+    setRefreshToken(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+  };
+
+  // Login user
   const loginUser = async (
     email: string,
     password: string,
     captchaToken: string
   ) => {
     try {
-      const res = await login({ email, password, captchaToken });
-      setUser(res.user);
-      setAccessToken(res.accessToken);
-      setRefreshToken(res.refreshToken);
+      const response: LoginResponse = await login({ email, password, captchaToken });
 
-      localStorage.setItem("user", JSON.stringify(res.user));
-      localStorage.setItem("accessToken", res.accessToken);
-      localStorage.setItem("refreshToken", res.refreshToken);
+      // Handle both possible response shapes
+      const data = (response as any).data || response;
+      const { user, accessToken, refreshToken } = data;
+
+      if (!accessToken || !refreshToken) {
+        throw new Error("Invalid login response: tokens missing");
+      }
+
+      setUser(user);
+      setAccessToken(accessToken);
+      setRefreshToken(refreshToken);
+
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
 
       showToast("Login successful!", "success");
+      navigate("/dashboard"); // redirect as needed
     } catch (err: any) {
       const message =
-        err.response?.data?.message || "Login failed. Please try again.";
+        err.response?.data?.message ||
+        err.message ||
+        "Login failed. Please try again.";
       showToast(message, "error");
       throw err;
     }
   };
 
-
+  // Logout user
   const logoutUser = async () => {
     try {
       if (refreshToken) await logoutApi(refreshToken);
@@ -97,27 +113,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Logout failed:", err);
       showToast("Logout failed. Please try again.", "error");
     } finally {
-      // Only remove auth-related keys
-      setUser(null);
-      setAccessToken(null);
-      setRefreshToken(null);
-
-      localStorage.removeItem("user");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      clearAuthData();
+      navigate("/");
     }
   };
 
+  // Refresh logged-in user info
   const refreshUser = async () => {
     if (!accessToken) return;
     try {
       const res = await getLoggedInUser();
-      setUser(res.data); // assuming service returns { success, data }
+      setUser(res.data);
       localStorage.setItem("user", JSON.stringify(res.data));
     } catch (err) {
       console.error("Failed to refresh user:", err);
     }
   };
+
+  // Update access & refresh tokens
   const setTokens = (newAccessToken: string, newRefreshToken?: string) => {
     setAccessToken(newAccessToken);
     localStorage.setItem("accessToken", newAccessToken);

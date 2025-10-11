@@ -12,6 +12,7 @@ import UserLayout from "./layouts/userLayout";
 import SettingsPage from "./pages/user/SettingsPage";
 import UserProfile from "./pages/user/UserProfile";
 import ContentLayout from "./layouts/ContentLayout";
+import PostEditor from "./pages/user/PostEditor";
 
 
 const lazyLoad = (Component: ComponentType) => (
@@ -38,6 +39,7 @@ function AppRoutes() {
         { path: "", element: lazyLoad(ContentLayout) },
         { path: "settings", element: lazyLoad(SettingsPage) },
         { path: "profile", element: lazyLoad(UserProfile) },
+        { path: "create", element: lazyLoad(PostEditor) },
         // You can later add more routes like:
         // { path: "profile", element: lazyLoad(UserProfilePage) },
       ],

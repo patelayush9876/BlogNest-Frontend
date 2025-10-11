@@ -1,20 +1,39 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Bell, Bookmark, Menu, Sun, Moon, PenSquare } from "lucide-react";
+import {
+  Search,
+  Bell,
+  Bookmark,
+  Menu,
+  Sun,
+  Moon,
+  PenSquare,
+} from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 interface NavbarProps {
   userProfileImage: string;
+  onLogout: () => void; // Added logout callback
+  userName: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
+const Navbar: React.FC<NavbarProps> = ({
+  userProfileImage,
+  onLogout,
+  userName,
+}) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
+  // Initialize theme
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
     if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
       document.documentElement.classList.add("dark");
       setIsDarkMode(true);
@@ -31,9 +50,13 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
     localStorage.setItem("theme", newTheme ? "dark" : "light");
   };
 
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsProfileOpen(false);
       }
     };
@@ -46,15 +69,11 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
       {/* Left Section */}
       <div className="flex items-center space-x-8">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-indigo-600 rounded-full" />
-          <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
-            BlogNest
-          </span>
+          <img src="/Images/BlogNest.png" alt="BlogNest" className="h-10 cursor-pointer" onClick={()=>{navigate("/user")}}/>
         </div>
-
         <div className="hidden space-x-6 text-base font-medium md:flex">
-          <a href="#" className="nav-link">Home</a>
-          <a href="#" className="nav-link">Explore</a>
+          <p className="cursor-pointer text-gray-800 hover:text-blue-800" onClick={()=>{navigate("/user")}} >Home</p>
+          <p className="cursor-pointer text-gray-800 hover:text-blue-800" onClick={()=>{navigate("/user")}} >Explore</p>
         </div>
       </div>
 
@@ -75,14 +94,17 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
         {/* Create Blog */}
         <button
           type="button"
+          onClick={() => navigate("/user/create")}
           className="flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 
-                     rounded-lg hover:bg-indigo-700 
-                     dark:bg-indigo-500 dark:hover:bg-indigo-400 
-                     transition-colors duration-150"
+             rounded-lg hover:bg-indigo-700 
+             dark:bg-indigo-500 dark:hover:bg-indigo-400 
+             transition-colors duration-150"
           title="Create a new blog"
         >
           <PenSquare className="w-4 h-4 mr-2 text-gray-800 dark:text-white" />
-          <span className="text-gray-800 dark:text-white font-semibold">Create</span>
+          <span className="text-gray-800 dark:text-white font-semibold">
+            Create
+          </span>
         </button>
 
         {/* Theme Toggle */}
@@ -93,7 +115,11 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
           title="Toggle dark mode"
           className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
         >
-          {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          {isDarkMode ? (
+            <Sun className="w-5 h-5" />
+          ) : (
+            <Moon className="w-5 h-5" />
+          )}
         </button>
 
         {/* Bookmark */}
@@ -144,11 +170,33 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage }) => {
 
           {isProfileOpen && (
             <div className="absolute right-0 w-48 mt-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-50">
-              <a href="/user/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Profile</a>
-              <a href="/user/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Settings</a>
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Create Blog</a>
+              <div className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                @{userName}
+              </div>
+              <a
+                href="/user/profile"
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Profile
+              </a>
+              <a
+                href="/user/settings"
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Settings
+              </a>
+              <a
+                href="#"
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                Create Blog
+              </a>
               <hr className="border-gray-100 dark:border-gray-700" />
-              <button type="button" className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+              <button
+                type="button"
+                onClick={onLogout} // Integrated logout
+                className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
                 Logout
               </button>
             </div>

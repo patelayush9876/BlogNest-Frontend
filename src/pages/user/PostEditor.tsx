@@ -1,46 +1,73 @@
-// PostEditor.tsx
-
-import React, { useState } from 'react';
-import { Upload, Eye, Save } from 'lucide-react';
+import React, { useState } from "react";
+import { Upload, Eye, Save } from "lucide-react";
+import { createBlog } from "../../services/blogService";
 
 const PostEditor: React.FC = () => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState('');
-  const [coverImageUrl, setCoverImageUrl] = useState('');
+  const [tagInput, setTagInput] = useState("");
+  const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // Function to handle adding a tag
+  // Add a new tag
   const handleAddTag = () => {
     const newTag = tagInput.trim();
     if (newTag && !tags.includes(newTag)) {
       setTags([...tags, newTag]);
-      setTagInput('');
+      setTagInput("");
     }
   };
 
-  // Function to handle tag input on Enter key press
+  // Handle Enter key for tags
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault(); // Prevents form submission
+    if (e.key === "Enter") {
+      e.preventDefault();
       handleAddTag();
     }
   };
 
-  // Function to handle removing a tag
+  // Remove a tag
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
-  
-  // Dummy function for image upload button
-  const handleImageUpload = () => {
-    alert("Image upload/browse functionality triggered.");
-    // In a real application, this would open a file dialog or handle drag/drop logic.
-  }
+
+  // Handle blog publish
+  const handlePublish = async () => {
+    try {
+      if (!title || !content) {
+        alert("Title and content are required.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("tags", JSON.stringify(tags));
+
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
+      } else if (coverImageUrl) {
+        formData.append("coverImageUrl", coverImageUrl);
+      }
+
+      const blog = await createBlog(formData);
+
+      setTitle("");
+      setContent("");
+      setTags([]);
+      setCoverImageUrl("");
+      setSelectedFile(null);
+
+      alert(`Blog "${blog.title}" published successfully!`);
+    } catch (error: any) {
+      console.error("Error publishing blog:", error);
+      alert("Failed to publish the blog. Please try again.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-8 pb-16">
-      
       {/* Header Bar */}
       <div className="container mx-auto px-4 md:px-8 max-w-4xl flex items-center justify-between mb-8">
         <h1 className="text-xl font-medium text-gray-900">Create New Post</h1>
@@ -53,7 +80,10 @@ const PostEditor: React.FC = () => {
             <Save className="w-5 h-5" />
             <span className="text-sm font-medium">Save Draft</span>
           </button>
-          <button className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-800 transition duration-150">
+          <button
+            onClick={handlePublish}
+            className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-800 transition duration-150"
+          >
             Publish
           </button>
         </div>
@@ -61,20 +91,41 @@ const PostEditor: React.FC = () => {
 
       {/* Editor Form */}
       <div className="container mx-auto px-4 md:px-8 max-w-4xl bg-white p-6 shadow-md rounded-lg space-y-8">
-        
         {/* 1. Cover Image Section */}
         <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-3">Cover Image</label>
-          <div 
+          <label className="block text-lg font-semibold text-gray-900 mb-3">
+            Cover Image
+          </label>
+
+          <div
             className="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center cursor-pointer hover:border-indigo-500 transition duration-150"
-            onClick={handleImageUpload} // Simulate click to upload
+            onClick={() => document.getElementById("coverImageInput")?.click()}
           >
             <Upload className="w-10 h-10 mx-auto text-gray-400" />
             <p className="mt-2 text-sm text-gray-600">
               Upload a cover image
-              <br/>
-              <span className="text-gray-500">Click to browse or drag and drop</span>
+              <br />
+              <span className="text-gray-500">
+                Click to browse or drag and drop
+              </span>
             </p>
+
+            {/* Image preview */}
+            {(coverImageUrl || selectedFile) && (
+              <div className="mt-4 flex justify-center">
+                <img
+                  src={
+                    selectedFile
+                      ? URL.createObjectURL(selectedFile)
+                      : coverImageUrl
+                  }
+                  alt="Cover Preview"
+                  className="h-40 w-auto rounded-md shadow-md"
+                />
+              </div>
+            )}
+
+            {/* URL input */}
             <div className="mt-4">
               <input
                 type="url"
@@ -82,15 +133,35 @@ const PostEditor: React.FC = () => {
                 className="w-80 px-3 py-2 text-sm border-b border-gray-300 focus:border-indigo-500 focus:outline-none transition duration-150"
                 value={coverImageUrl}
                 onChange={(e) => setCoverImageUrl(e.target.value)}
-                onClick={(e) => e.stopPropagation()} // Prevent parent div click
+                onClick={(e) => e.stopPropagation()}
               />
             </div>
+
+            {/* Hidden file input */}
+            <input
+              id="coverImageInput"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setSelectedFile(file);
+                  setCoverImageUrl("");
+                }
+              }}
+            />
           </div>
         </div>
 
         {/* 2. Title Section */}
         <div>
-          <label htmlFor="post-title" className="block text-lg font-semibold text-gray-900 mb-2">Title</label>
+          <label
+            htmlFor="post-title"
+            className="block text-lg font-semibold text-gray-900 mb-2"
+          >
+            Title
+          </label>
           <input
             id="post-title"
             type="text"
@@ -101,9 +172,14 @@ const PostEditor: React.FC = () => {
           />
         </div>
 
-        {/* 3. Content Section (Textarea) */}
+        {/* 3. Content Section */}
         <div>
-          <label htmlFor="post-content" className="block text-lg font-semibold text-gray-900 mb-2">Content</label>
+          <label
+            htmlFor="post-content"
+            className="block text-lg font-semibold text-gray-900 mb-2"
+          >
+            Content
+          </label>
           <textarea
             id="post-content"
             placeholder="Write your story..."
@@ -112,13 +188,17 @@ const PostEditor: React.FC = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
-          <p className="text-sm text-gray-500 mt-2">Supports Markdown formatting</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Supports Markdown formatting
+          </p>
         </div>
-        
+
         {/* 4. Tags Section */}
         <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-2">Tags</label>
-          
+          <label className="block text-lg font-semibold text-gray-900 mb-2">
+            Tags
+          </label>
+
           <div className="flex items-center space-x-2">
             <input
               type="text"
@@ -136,12 +216,14 @@ const PostEditor: React.FC = () => {
             </button>
           </div>
 
-          {/* Display current tags */}
           <div className="mt-4 flex flex-wrap gap-2">
             {tags.map((tag) => (
-              <span key={tag} className="flex items-center px-3 py-1 text-sm font-medium text-indigo-700 bg-indigo-100 rounded-full">
+              <span
+                key={tag}
+                className="flex items-center px-3 py-1 text-sm font-medium text-indigo-700 bg-indigo-100 rounded-full"
+              >
                 {tag}
-                <button 
+                <button
                   onClick={() => handleRemoveTag(tag)}
                   className="ml-2 text-indigo-700 hover:text-indigo-900"
                 >
@@ -151,7 +233,6 @@ const PostEditor: React.FC = () => {
             ))}
           </div>
         </div>
-        
       </div>
     </div>
   );

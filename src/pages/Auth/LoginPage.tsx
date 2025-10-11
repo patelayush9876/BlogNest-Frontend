@@ -24,6 +24,7 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
   const RECAPTCHA_SITE_KEY = FRONTEND_CONFIG.RECAPTCHA_SITE_KEY;
   const { loginUser } = useAuth();
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ const LoginPage: React.FC = () => {
     event.preventDefault();
     setErrors({});
 
+    // Validate fields
     const emailErrors = validateField(email, [required("Email"), validEmail]);
     const passwordErrors = validateField(password, [required("Password")]);
     const captchaErrors = validateField(captchaToken || "", [validCaptcha]);
@@ -49,20 +51,23 @@ const LoginPage: React.FC = () => {
     try {
       await loginUser(email, password, captchaToken);
 
+      // Get stored user from localStorage
       const storedUser = localStorage.getItem("user");
       const user = storedUser ? JSON.parse(storedUser) : null;
 
+      // Redirect based on role
       switch (user?.role) {
         case "admin":
-        case "hr":
-        case "employee":
-          navigate("/employee/Dashboard");
+          navigate("/admin/dashboard");
+          break;
+        case "user":
+          navigate("/user");
           break;
         default:
           navigate("/");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Login failed:", err);
     } finally {
       setLoading(false);
     }
@@ -153,6 +158,7 @@ const LoginPage: React.FC = () => {
             <ReCAPTCHA
               sitekey={RECAPTCHA_SITE_KEY || ""}
               onChange={(token: string | null) => setCaptchaToken(token)}
+              onExpired={() => setCaptchaToken(null)}
             />
           </div>
           {errors.captcha && (
@@ -174,7 +180,7 @@ const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 font-bold text-white rounded-lg ${
+            className={`w-full py-3 font-bold dark:bg-green-400 text-black border rounded-lg ${
               loading
                 ? "bg-green-400 cursor-not-allowed"
                 : "bg-green-600 hover:bg-green-700"
@@ -193,7 +199,9 @@ const LoginPage: React.FC = () => {
           {/* Google OAuth */}
           <button
             type="button"
-            onClick={() => (window.location.href = `${API_CONFIG.BASE_URL}/auth/google`)}
+            onClick={() =>
+              (window.location.href = `${API_CONFIG.BASE_URL}/auth/google`)
+            }
             className="flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-3 w-full mt-4 hover:bg-gray-50 transition"
           >
             <img
@@ -201,7 +209,9 @@ const LoginPage: React.FC = () => {
               alt="Google"
               className="h-5 w-5"
             />
-            <span className="text-gray-700 font-semibold">Continue with Google</span>
+            <span className="text-gray-700 font-semibold">
+              Continue with Google
+            </span>
           </button>
 
           {/* Signup Link */}
