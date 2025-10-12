@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { Upload, Eye, Save } from "lucide-react";
 import { createBlog } from "../../services/blogService";
+import { useTheme } from "../../contexts/ThemeContext";
+
 
 const PostEditor: React.FC = () => {
+  const { isDarkMode } = useTheme();
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
@@ -10,7 +14,7 @@ const PostEditor: React.FC = () => {
   const [coverImageUrl, setCoverImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // Add a new tag
+  // Add tag
   const handleAddTag = () => {
     const newTag = tagInput.trim();
     if (newTag && !tags.includes(newTag)) {
@@ -19,7 +23,7 @@ const PostEditor: React.FC = () => {
     }
   };
 
-  // Handle Enter key for tags
+  // Enter key handler for tags
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -27,12 +31,12 @@ const PostEditor: React.FC = () => {
     }
   };
 
-  // Remove a tag
+  // Remove tag
   const handleRemoveTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  // Handle blog publish
+  // Publish post
   const handlePublish = async () => {
     try {
       if (!title || !content) {
@@ -43,7 +47,8 @@ const PostEditor: React.FC = () => {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("content", content);
-      formData.append("tags", JSON.stringify(tags));
+
+      tags.forEach((tag) => formData.append("tags", tag));
 
       if (selectedFile) {
         formData.append("attachment", selectedFile);
@@ -60,29 +65,44 @@ const PostEditor: React.FC = () => {
       setSelectedFile(null);
 
       alert(`Blog "${blog.title}" published successfully!`);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error publishing blog:", error);
       alert("Failed to publish the blog. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-8 pb-16">
+    <div
+      className={`min-h-screen pt-8 pb-16 transition-colors duration-300
+      ${isDarkMode ? "bg-gray-950 text-gray-100" : "bg-gray-50 text-gray-900"}`}
+    >
       {/* Header Bar */}
       <div className="container mx-auto px-4 md:px-8 max-w-4xl flex items-center justify-between mb-8">
-        <h1 className="text-xl font-medium text-gray-900">Create New Post</h1>
+        <h1 className="text-xl font-medium">Create New Post</h1>
         <div className="flex items-center space-x-3">
-          <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition duration-150">
+          <button
+            className={`flex items-center space-x-1 transition duration-150
+            ${isDarkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"}`}
+          >
             <Eye className="w-5 h-5" />
             <span className="text-sm font-medium">Preview</span>
           </button>
-          <button className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition duration-150">
+
+          <button
+            className={`flex items-center space-x-1 transition duration-150
+            ${isDarkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"}`}
+          >
             <Save className="w-5 h-5" />
             <span className="text-sm font-medium">Save Draft</span>
           </button>
+
           <button
             onClick={handlePublish}
-            className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-800 transition duration-150"
+            className={`px-5 py-2 text-sm font-semibold rounded-lg transition duration-150
+            ${isDarkMode
+              ? "bg-indigo-600 text-white hover:bg-indigo-500"
+              : "text-white bg-black hover:bg-gray-800"
+            }`}
           >
             Publish
           </button>
@@ -90,27 +110,42 @@ const PostEditor: React.FC = () => {
       </div>
 
       {/* Editor Form */}
-      <div className="container mx-auto px-4 md:px-8 max-w-4xl bg-white p-6 shadow-md rounded-lg space-y-8">
+      <div
+        className={`container mx-auto px-4 md:px-8 max-w-4xl p-6 rounded-lg shadow-md space-y-8 transition-colors duration-300
+        ${isDarkMode ? "bg-gray-900 shadow-gray-800" : "bg-white shadow-gray-100"}`}
+      >
         {/* 1. Cover Image Section */}
         <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-3">
-            Cover Image
-          </label>
+          <label className="block text-lg font-semibold mb-3">Cover Image</label>
 
           <div
-            className="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center cursor-pointer hover:border-indigo-500 transition duration-150"
+            className={`border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition duration-150
+            ${
+              isDarkMode
+                ? "border-gray-700 hover:border-indigo-500 bg-gray-800"
+                : "border-gray-300 hover:border-indigo-500 bg-white"
+            }`}
             onClick={() => document.getElementById("coverImageInput")?.click()}
           >
-            <Upload className="w-10 h-10 mx-auto text-gray-400" />
-            <p className="mt-2 text-sm text-gray-600">
+            <Upload
+              className={`w-10 h-10 mx-auto ${
+                isDarkMode ? "text-gray-400" : "text-gray-500"
+              }`}
+            />
+            <p
+              className={`mt-2 text-sm ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
               Upload a cover image
               <br />
-              <span className="text-gray-500">
+              <span
+                className={isDarkMode ? "text-gray-500" : "text-gray-400"}
+              >
                 Click to browse or drag and drop
               </span>
             </p>
 
-            {/* Image preview */}
             {(coverImageUrl || selectedFile) && (
               <div className="mt-4 flex justify-center">
                 <img
@@ -125,19 +160,22 @@ const PostEditor: React.FC = () => {
               </div>
             )}
 
-            {/* URL input */}
             <div className="mt-4">
               <input
                 type="url"
                 placeholder="Or paste image URL"
-                className="w-80 px-3 py-2 text-sm border-b border-gray-300 focus:border-indigo-500 focus:outline-none transition duration-150"
+                className={`w-80 px-3 py-2 text-sm border-b focus:outline-none focus:border-indigo-500 transition duration-150
+                ${
+                  isDarkMode
+                    ? "bg-transparent border-gray-700 text-gray-200 placeholder-gray-500"
+                    : "border-gray-300 text-gray-700 placeholder-gray-400"
+                }`}
                 value={coverImageUrl}
                 onChange={(e) => setCoverImageUrl(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
               />
             </div>
 
-            {/* Hidden file input */}
             <input
               id="coverImageInput"
               type="file"
@@ -156,17 +194,17 @@ const PostEditor: React.FC = () => {
 
         {/* 2. Title Section */}
         <div>
-          <label
-            htmlFor="post-title"
-            className="block text-lg font-semibold text-gray-900 mb-2"
-          >
-            Title
-          </label>
+          <label className="block text-lg font-semibold mb-2">Title</label>
           <input
             id="post-title"
             type="text"
             placeholder="Enter your post title..."
-            className="w-full px-4 py-3 text-xl font-medium border-0 border-b border-gray-200 focus:border-indigo-500 focus:ring-0 focus:outline-none placeholder-gray-400 transition duration-150"
+            className={`w-full px-4 py-3 text-xl font-medium border-0 border-b focus:ring-0 focus:outline-none transition duration-150
+            ${
+              isDarkMode
+                ? "bg-transparent border-gray-700 text-gray-100 placeholder-gray-500 focus:border-indigo-500"
+                : "border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"
+            }`}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -174,43 +212,55 @@ const PostEditor: React.FC = () => {
 
         {/* 3. Content Section */}
         <div>
-          <label
-            htmlFor="post-content"
-            className="block text-lg font-semibold text-gray-900 mb-2"
-          >
-            Content
-          </label>
+          <label className="block text-lg font-semibold mb-2">Content</label>
           <textarea
             id="post-content"
             placeholder="Write your story..."
             rows={15}
-            className="w-full px-4 py-3 text-base border-0 focus:ring-0 focus:outline-none placeholder-gray-400 resize-none transition duration-150"
+            className={`w-full px-4 py-3 text-base border-0 focus:ring-0 resize-none transition duration-150
+            ${
+              isDarkMode
+                ? "bg-transparent text-gray-100 placeholder-gray-500"
+                : "text-gray-900 placeholder-gray-400"
+            }`}
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
-          <p className="text-sm text-gray-500 mt-2">
+          <p
+            className={`text-sm mt-2 ${
+              isDarkMode ? "text-gray-500" : "text-gray-500"
+            }`}
+          >
             Supports Markdown formatting
           </p>
         </div>
 
         {/* 4. Tags Section */}
         <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-2">
-            Tags
-          </label>
+          <label className="block text-lg font-semibold mb-2">Tags</label>
 
           <div className="flex items-center space-x-2">
             <input
               type="text"
               placeholder="Add a tag..."
-              className="flex-1 px-4 py-3 text-base border-b border-gray-200 focus:border-indigo-500 focus:ring-0 focus:outline-none placeholder-gray-400 transition duration-150"
+              className={`flex-1 px-4 py-3 text-base border-b focus:ring-0 focus:outline-none transition duration-150
+              ${
+                isDarkMode
+                  ? "bg-transparent border-gray-700 text-gray-100 placeholder-gray-500 focus:border-indigo-500"
+                  : "border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"
+              }`}
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleKeyDown}
             />
             <button
               onClick={handleAddTag}
-              className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-800 transition duration-150"
+              className={`px-5 py-2 text-sm font-semibold rounded-lg transition duration-150
+              ${
+                isDarkMode
+                  ? "bg-indigo-600 text-white hover:bg-indigo-500"
+                  : "bg-black text-white hover:bg-gray-800"
+              }`}
             >
               Add
             </button>
@@ -220,12 +270,21 @@ const PostEditor: React.FC = () => {
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="flex items-center px-3 py-1 text-sm font-medium text-indigo-700 bg-indigo-100 rounded-full"
+                className={`flex items-center px-3 py-1 text-sm font-medium rounded-full
+                ${
+                  isDarkMode
+                    ? "bg-indigo-800 text-indigo-200"
+                    : "bg-indigo-100 text-indigo-700"
+                }`}
               >
                 {tag}
                 <button
                   onClick={() => handleRemoveTag(tag)}
-                  className="ml-2 text-indigo-700 hover:text-indigo-900"
+                  className={`ml-2 font-bold ${
+                    isDarkMode
+                      ? "text-indigo-300 hover:text-indigo-100"
+                      : "text-indigo-700 hover:text-indigo-900"
+                  }`}
                 >
                   &times;
                 </button>
