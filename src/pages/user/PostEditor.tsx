@@ -164,7 +164,7 @@ const PostEditor: React.FC = () => {
               <input
                 type="url"
                 placeholder="Or paste image URL"
-                className={`w-80 px-3 py-2 text-sm border-b focus:outline-none focus:border-indigo-500 transition duration-150
+                className={`w-80 px-3 py-2 text-sm text-center border-b focus:outline-none focus:border-indigo-500 transition duration-150
                 ${
                   isDarkMode
                     ? "bg-transparent border-gray-700 text-gray-200 placeholder-gray-500"
@@ -226,13 +226,6 @@ const PostEditor: React.FC = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
-          <p
-            className={`text-sm mt-2 ${
-              isDarkMode ? "text-gray-500" : "text-gray-500"
-            }`}
-          >
-            Supports Markdown formatting
-          </p>
         </div>
 
         {/* 4. Tags Section */}

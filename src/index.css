@@ -13,33 +13,94 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-.tab-button {
-  @apply rounded-full bg-transparent border-0 p-0;
-}
-
-/* Tabs Navigation Sliding Indicator */
-.tabs-indicator {
-  height: 30px;
-  position: absolute;
-  top: 0.25rem; /* matches top-1 */
-  bottom: 0.25rem; /* matches bottom-1 */
-  border-radius: 9999px; /* fully rounded */
+.btn-primary {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  color: #fff;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: linear-gradient(to right, #2563eb, #7c3aed); /* blue-600 → violet-600 */
   transition: all 0.3s ease-in-out;
-  background-color: #d1d5db; /* default gray-300 */
 }
 
-.dark .tabs-indicator {
-  background-color: #9ca3af; /* gray-400 for dark mode */
+/* Hover state (when not loading) */
+.btn-primary:hover:not(.btn-loading) {
+  background-color: #16a34a; /* green-600 */
 }
 
-/* Optional: you can add a margin-left for the sliding indicator */
-.tabs-indicator-offset {
-  margin-left: 4px;
+/* Loading state */
+.btn-loading {
+  background-color: #4ade80; /* green-400 */
+  cursor: not-allowed;
+  opacity: 0.8;
 }
 
-/* Reset tab buttons hover/background */
+/* Outer container background */
+.tab-container {
+  width: 100%;
+  height: 3rem; /* same as h-12 */
+  display: flex;
+  position: relative;
+  border-radius: 9999px; /* rounded-full */
+  overflow: hidden;
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  background-color: #f3f4f6; /* bg-gray-100 */
+  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+}
+
+.dark .tab-container {
+  background-color: #1f2937; /* bg-gray-800 */
+  border-color: #374151; /* border-gray-700 */
+}
+
+/* Gradient indicator */
+.tab-indicator {
+  position: absolute;
+  top: 0.25rem; /* top-1 */
+  left: 0.25rem;
+  height: 2.5rem; /* h-10 */
+  border-radius: 9999px;
+  background: linear-gradient(to right, #2563eb, #7c3aed); /* blue → violet */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out;
+}
+
+.dark .tab-indicator {
+  background: linear-gradient(to right, #4f46e5, #7c3aed);
+}
+
+/* Tab button */
 .tab-button {
-  background-color: transparent;
+  flex: 1;
+  position: relative;
+  z-index: 10;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
   border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+  color: #374151; /* text-gray-700 */
+}
+
+.tab-button:hover {
+  color: #111827; /* hover:text-gray-900 */
+}
+
+.dark .tab-button {
+  color: #d1d5db; /* text-gray-300 */
+}
+
+.dark .tab-button:hover {
+  color: #fff; /* hover:white */
+}
+
+/* Active state (text color on top of gradient) */
+.tab-button.active {
+  color: #fff;
+  background: linear-gradient(to right, #2563eb, #7c3aed);
+  border-radius: 9999px;
+
 }

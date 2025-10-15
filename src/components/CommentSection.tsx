@@ -1,127 +1,188 @@
-// CommentSection.tsx
+import React, { useEffect, useState } from "react";
+import { Heart } from "lucide-react";
+import { addComment, getComments, toggleLikeComment } from "../services/commentService";
 
-import React from 'react';
-import { Heart, MessageSquare } from 'lucide-react';
-
-interface Comment {
-  id: number;
-  author: string;
-  username: string;
-  date: string;
+interface CommentDTO {
+  _id: string;
+  userId: { name: string; username: string; profilePic?: string };
   text: string;
-  likes: number;
-  replies: Comment[]; // Nested comments/replies
+  likes: string[];
+  replies: CommentDTO[];
+  createdAt: string;
 }
 
-// Sub-component for a single comment/reply
-const CommentItem: React.FC<{ comment: Comment; isReply?: boolean }> = ({ comment, isReply = false }) => (
-  <div className={`flex ${isReply ? 'mt-4' : 'mt-6'}`}>
-    {/* Avatar */}
-    <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0"></div>
-    
-    <div className={`ml-3 flex-1 ${!isReply ? 'pb-4' : ''}`}>
-      {/* Metadata */}
-      <div className="text-sm">
-        <span className="font-semibold text-gray-900">{comment.author}</span>
-        <span className="text-gray-500 ml-1">@{comment.username}</span>
-        <span className="text-gray-500 ml-2">&middot; {comment.date}</span>
-      </div>
-      
-      {/* Comment Text */}
-      <p className="mt-1 text-gray-700">{comment.text}</p>
-      
-      {/* Actions (Like, Reply) */}
-      <div className="flex items-center mt-2 space-x-4 text-sm text-gray-500">
-        <button className="flex items-center space-x-1 hover:text-red-500 transition duration-150">
-          <Heart className="w-4 h-4" />
-          <span>{comment.likes}</span>
-        </button>
-        <button className="hover:text-indigo-600 transition duration-150 font-medium">
-          Reply
-        </button>
-      </div>
+interface CommentSectionProps {
+  blogId: string;
+  onCountChange?: (count: number) => void;
+}
 
-      {/* Nested Replies */}
-      {comment.replies.length > 0 && (
-        <div className="pl-4 border-l border-gray-200 mt-4">
-          {comment.replies.map(reply => (
-            <CommentItem key={reply.id} comment={reply} isReply={true} />
-          ))}
+const countAllComments = (comments: CommentDTO[]): number => {
+  return comments.reduce(
+    (acc, c) => acc + 1 + (c.replies ? countAllComments(c.replies) : 0),
+    0
+  );
+};
+
+const CommentItem: React.FC<{
+  comment: CommentDTO;
+  onReply: (text: string, parentId: string) => void;
+  onLike: (id: string) => void;
+}> = ({ comment, onReply, onLike }) => {
+  const [liked, setLiked] = useState(comment.likes.length > 0);
+  const [showReplyInput, setShowReplyInput] = useState(false);
+  const [replyText, setReplyText] = useState("");
+
+  const handleLike = async () => {
+    await onLike(comment._id);
+    setLiked(!liked);
+  };
+
+  const handleReply = async () => {
+    if (!replyText.trim()) return;
+    await onReply(replyText, comment._id);
+    setReplyText("");
+    setShowReplyInput(false);
+  };
+
+  return (
+    <div className="flex mt-6">
+      <img src={`${comment.userId?.profilePic}`} className="w-8 h-8 rounded-full" alt="ProfilePic" />
+      <div className="ml-3 flex-1 pb-4">
+        <div className="text-sm">
+          <span className="font-semibold text-gray-900">{comment.userId.name}</span>
+          <span className="text-gray-500 ml-1">@{comment.userId.username}</span>
+          <span className="text-gray-500 ml-2">
+            &middot; {new Date(comment.createdAt).toLocaleDateString()}
+          </span>
         </div>
-      )}
+        <p className="mt-1 text-gray-700">{comment.text}</p>
+
+        <div className="flex items-center mt-2 space-x-4 text-sm text-gray-500">
+          <button
+            onClick={handleLike}
+            className={`flex items-center space-x-1 transition duration-150 ${
+              liked ? "text-red-500" : "hover:text-red-500"
+            }`}
+          >
+            <Heart className="w-4 h-4" />
+            <span>{comment.likes.length}</span>
+          </button>
+
+          <button
+            onClick={() => setShowReplyInput(!showReplyInput)}
+            className="hover:text-indigo-600 transition duration-150 font-medium"
+          >
+            Reply
+          </button>
+        </div>
+
+        {/* Reply Input */}
+        {showReplyInput && (
+          <div className="mt-2">
+            <textarea
+              rows={2}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none text-gray-700"
+              placeholder="Write a reply..."
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+            />
+            <div className="flex justify-end mt-1">
+              <button
+                className="px-3 py-1 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition duration-200"
+                onClick={handleReply}
+              >
+                Post Reply
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Nested Replies */}
+        {comment.replies.length > 0 && (
+          <div className="pl-4 border-l border-gray-200 mt-4">
+            {comment.replies.map((reply) => (
+              <CommentItem
+                key={reply._id}
+                comment={reply}
+                onLike={onLike}
+                onReply={onReply}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-// Mock Data for Comments
-const mockComments: Comment[] = [
-  {
-    id: 1,
-    author: 'Emily Dixon',
-    username: 'codevolution',
-    date: '1d ago',
-    text: "This is an excellent overview of React 19! The compiler feature is particularly exciting. Can't wait to try it in production.",
-    likes: 17,
-    replies: [
-      {
-        id: 11,
-        author: 'Sarah Johnson',
-        username: 'sarahjsprojects',
-        date: '1d ago',
-        text: "I agree! The compiler really is a game changer. No more tooling in a ton projects and the performance improvements are undeniable.",
-        likes: 9,
-        replies: [
-          {
-            id: 111,
-            author: 'John Doe',
-            username: 'johndoe',
-            date: '1d ago',
-            text: "I agree! Have you noticed any edge cases where the compiler doesn't work as expected?",
-            likes: 0,
-            replies: [],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    author: 'John Doe',
-    username: 'johndoe',
-    date: '1d ago',
-    text: "Great article! One thing I'd add is the importance of the new 'use hook.' It's going to make data fetching so much cleaner.",
-    likes: 45,
-    replies: [],
-  },
-];
+const CommentSection: React.FC<CommentSectionProps> = ({ blogId, onCountChange }) => {
+  const [comments, setComments] = useState<CommentDTO[]>([]);
+  const [text, setText] = useState("");
 
-const CommentSection: React.FC = () => {
+  useEffect(() => {
+  const fetchComments = async () => {
+    const data = await getComments(blogId);
+    setComments(data.comments);
+    if (onCountChange) onCountChange(countAllComments(data.comments));
+  };
+
+  fetchComments();
+}, [blogId, onCountChange]); // include dependencies
+
+
+  const fetchComments = async () => {
+    const data = await getComments(blogId);
+    setComments(data.comments);
+    if (onCountChange) onCountChange(countAllComments(data.comments));
+  };
+
+  const handlePostComment = async () => {
+    if (!text.trim()) return;
+    await addComment(blogId, text);
+    setText("");
+    fetchComments();
+  };
+
+  const handleReply = async (replyText: string, parentId: string) => {
+    await addComment(blogId, replyText, parentId);
+    fetchComments();
+  };
+
+  const handleLike = async (commentId: string) => {
+    await toggleLikeComment(commentId);
+    fetchComments();
+  };
+
   return (
     <div className="mt-8">
-      {/* Comment Count Link */}
-      <a href="#" className="flex items-center space-x-1 text-base font-semibold text-gray-500 hover:text-indigo-600 mb-6">
-        <MessageSquare className="w-5 h-5" />
-        <span>Comments ({mockComments.length})</span>
-      </a>
-
-      {/* Comment Input Box */}
+      {/* New Comment Input */}
       <div className="mb-8">
         <textarea
           placeholder="Share your thoughts..."
           rows={3}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 resize-none text-gray-700"
-        ></textarea>
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
         <div className="flex justify-end mt-2">
-          <button className="px-5 py-2 text-sm font-semibold text-white transition duration-200 bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50" disabled>
+          <button
+            className="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition duration-200"
+            onClick={handlePostComment}
+          >
             Post Comment
           </button>
         </div>
       </div>
 
-      {/* Comment Feed */}
+      {/* Comments List */}
       <div className="space-y-4">
-        {mockComments.map(comment => (
-          <CommentItem key={comment.id} comment={comment} />
+        {comments.map((comment) => (
+          <CommentItem
+            key={comment._id}
+            comment={comment}
+            onLike={handleLike}
+            onReply={handleReply}
+          />
         ))}
       </div>
     </div>

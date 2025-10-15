@@ -32,7 +32,10 @@ const Navbar: React.FC<NavbarProps> = ({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsProfileOpen(false);
       }
     };
@@ -98,10 +101,7 @@ const Navbar: React.FC<NavbarProps> = ({
         {/* Create Blog */}
         <button
           onClick={() => navigate("/user/create")}
-          className="flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 
-             rounded-lg hover:bg-indigo-700 
-             dark:bg-indigo-500 dark:hover:bg-indigo-400 
-             transition-colors duration-150"
+          className={`flex flex-row items-center btn-primary`}
         >
           <PenSquare className="w-4 h-4 mr-2" />
           Create
@@ -113,7 +113,11 @@ const Navbar: React.FC<NavbarProps> = ({
           aria-label="Toggle dark mode"
           className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
         >
-          {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          {isDarkMode ? (
+            <Sun className="w-5 h-5" />
+          ) : (
+            <Moon className="w-5 h-5" />
+          )}
         </button>
 
         {/* Bookmark */}
@@ -158,7 +162,9 @@ const Navbar: React.FC<NavbarProps> = ({
           {isProfileOpen && (
             <div
               className={`absolute right-0 w-48 mt-3 rounded-lg shadow-lg border overflow-hidden z-50 ${
-                isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"
+                isDarkMode
+                  ? "bg-gray-800 border-gray-700"
+                  : "bg-white border-gray-100"
               }`}
             >
               <div
@@ -198,7 +204,9 @@ const Navbar: React.FC<NavbarProps> = ({
               >
                 Create Blog
               </button>
-              <hr className={isDarkMode ? "border-gray-700" : "border-gray-100"} />
+              <hr
+                className={isDarkMode ? "border-gray-700" : "border-gray-100"}
+              />
               <button
                 onClick={onLogout}
                 className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700"

@@ -23,43 +23,42 @@ const ContentLayout: React.FC = () => {
     trending: "translate-x-[200%]",
   };
 
-  // Fetch blogs on mount
   useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        setLoading(true);
-        const blogs = await BlogService.getAllBlogs();
-        const formattedBlogs = blogs.map((blog: any) => {
-          let parsedTags = [];
-          try {
-            if (Array.isArray(blog.tags)) {
-              if (
-                blog.tags.length === 1 &&
-                typeof blog.tags[0] === "string" &&
-                blog.tags[0].startsWith("[")
-              ) {
-                parsedTags = JSON.parse(blog.tags[0]);
-              } else {
-                parsedTags = blog.tags;
-              }
-            }
-          } catch (err) {
-            console.warn("Error parsing tags for blog:", blog._id, err);
-            parsedTags = [];
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true);
+      const blogs = await BlogService.getAllBlogs(); // blogs is already Blog[]
+      const blogsData = blogs.map((blog: any) => {
+        let parsedTags: string[] = [];
+        try {
+          if (Array.isArray(blog.tags)) {
+            parsedTags =
+              blog.tags.length === 1 && blog.tags[0].startsWith("[")
+                ? JSON.parse(blog.tags[0])
+                : blog.tags;
           }
+        } catch (err) {
+          console.log("Error fetching blogs",err)
+          parsedTags = [];
+        }
 
-          return { ...blog, tags: parsedTags };
-        });
+        return {
+          ...blog,
+          tags: parsedTags,
+          likes: blog.likeCount || 0,
+          comments: blog.commentCount || 0,
+        };
+      });
+      setBlogs(blogsData);
+    } catch (err) {
+      console.error("Error fetching blogs:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchBlogs();
+}, []);
 
-        setBlogs(formattedBlogs);
-      } catch (error) {
-        console.error("Error fetching blogs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlogs();
-  }, []);
 
   return (
     <div
@@ -69,21 +68,13 @@ const ContentLayout: React.FC = () => {
       )}
     >
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Main Content Area */}
+        {/* Main Content */}
         <div className="lg:col-span-2">
           {/* Tabs */}
-          <div
-            className={clsx(
-              "relative w-full h-12 flex rounded-full overflow-hidden shadow-sm border transition-colors duration-300",
-              isDarkMode
-                ? "bg-gray-800 border-gray-700"
-                : "bg-gray-100 border-gray-200"
-            )}
-          >
+          <div className={`p-1 tab-container ${isDarkMode ? "dark" : ""}`}>
             <div
               className={clsx(
-                "absolute top-1 left-1 h-10 w-[calc(33.333%-0.5rem)] rounded-full transition-transform duration-300 ease-in-out shadow-md",
-                "bg-indigo-500 dark:bg-indigo-600",
+                "tab-indicator",
                 indicatorPosition[activeTab as keyof typeof indicatorPosition]
               )}
             />
@@ -91,40 +82,33 @@ const ContentLayout: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={clsx(
-                  "relative flex-1 text-center z-10 font-semibold text-sm md:text-base transition-colors duration-300",
-                  activeTab === tab.id
-                    ? isDarkMode
-                      ? "text-indigo-200"
-                      : "text-indigo-900"
-                    : isDarkMode
-                    ? "text-gray-300 hover:text-white"
-                    : "text-gray-700 hover:text-gray-900"
-                )}
+                className={clsx("tab-button", { active: activeTab === tab.id })}
               >
                 {tab.label}
               </button>
             ))}
           </div>
 
-          {/* Article Feed */}
+          {/* Blog Feed */}
           <div className="mt-6 space-y-8">
             {loading ? (
               <p className="text-center text-gray-500">Loading blogs...</p>
             ) : blogs.length > 0 ? (
-              blogs.map((blog, index) => (
+              blogs.map((blog) => (
                 <ArticleCard
-                  key={index}
-                  image={blog.attachment}
+                  key={blog._id}
+                  id={blog._id}
+                  image={blog.attachment || ""}
                   user={blog.author?.name || "Unknown"}
                   date={new Date(blog.createdAt).toLocaleDateString()}
                   readTime={blog.readTime || "5 min read"}
                   title={blog.title}
                   excerpt={(blog.content || "").slice(0, 100) + "..."}
                   tags={blog.tags || []}
-                  likes={blog.likes?.length || 0}
-                  comments={blog.comments?.length || 0}
-                  author={blog?.author as any}
+                  likes={blog.likes}
+                  comments={blog.comments}
+                  author={blog.author}
+                  profile={blog.profile} // pass profile for ArticleCard
                 />
               ))
             ) : (

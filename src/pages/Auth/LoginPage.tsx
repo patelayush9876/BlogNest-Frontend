@@ -105,7 +105,7 @@ const LoginPage: React.FC = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+              className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
                 errors.email
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-green-500"
@@ -133,7 +133,7 @@ const LoginPage: React.FC = () => {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 pr-10 ${
+                className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 pr-10 ${
                   errors.password
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-green-500"
@@ -180,11 +180,9 @@ const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 font-bold dark:bg-green-400 text-black border rounded-lg ${
-              loading
-                ? "bg-green-400 cursor-not-allowed"
-                : "bg-green-600 hover:bg-green-700"
-            } transition duration-300 ease-in-out`}
+            className={`w-full py-3 btn-primary  ${
+              loading ? "btn-loading" : ""
+            } `}
           >
             {loading ? "Logging in..." : "Login"}
           </button>

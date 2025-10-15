@@ -1,7 +1,10 @@
-import React from "react";
-import { Heart, MessageSquare, Bookmark } from "lucide-react";
+import { Heart, MessageSquare } from "lucide-react";
+import CommentSection from "./CommentSection";
+import { toggleLike } from "../services/likeService";
+import { useEffect, useState } from "react";
 
 interface ArticleCardProps {
+  id: string;
   image: string;
   user: string;
   date: string;
@@ -11,12 +14,13 @@ interface ArticleCardProps {
   tags: string[];
   likes: number;
   comments: number;
-  author:any;
+  author: any;
+  profile?: any; // <-- added
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
+  id,
   image,
-  user,
   date,
   readTime,
   title,
@@ -24,32 +28,48 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   tags,
   likes,
   comments,
-  author
+  author,
+  profile,
 }) => {
+  const [showComments, setShowComments] = useState(false);
+  const [likeCount, setLikeCount] = useState(likes);
+  const [liked, setLiked] = useState(false);
+  const [commentCount, setCommentCount] = useState(comments);
+  useEffect(() => {
+    setLikeCount(likes);
+    setCommentCount(comments);
+  }, [likes, comments]);
+
+  const handleLike = async () => {
+    try {
+      const data = await toggleLike(id);
+      setLikeCount(data.likeCount);
+      setLiked(data.liked);
+    } catch (err) {
+      console.error("Error toggling like:", err);
+    }
+  };
+
   return (
     <div className="pb-8 border-b border-gray-200">
-      {/* Article Image / Video Preview */}
-      {image &&(<div className="relative mb-4 overflow-hidden rounded-xl h-96">
-        <img
-          src={image}
-          alt={title}
-          className="object-cover w-full h-full transition duration-300 hover:scale-[1.03]"
-        />
-        {/* "Learn React" / "Preview" overlay section */}
-        <div className="absolute inset-0 flex items-end justify-between p-6">
-          <span className="px-3 py-1 text-sm font-medium text-white bg-gray-900 dark:bg-gray-300 rounded-full bg-opacity-60">
-            Preview
-          </span>
-          <button className="px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white transition duration-200 dark:bg-indigo-600 rounded-lg hover:bg-indigo-700">
-            Learn React
-          </button>
+      {image && (
+        <div className="relative mb-4 overflow-hidden rounded-xl h-96">
+          <img
+            src={image}
+            alt={title}
+            className="object-cover w-full h-full transition-transform duration-500 ease-in-out transform hover:scale-110"
+          />
         </div>
-      </div>)}
+      )}
 
-      {/* Author and Metadata */}
+      {/* Author */}
       <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
-        <div className="w-8 h-8 bg-gray-300 rounded-full">
-          <img className="rounded-full" src={author?.profile?.profilePic} alt="authorProfile" />
+        <div className="w-8 h-8 rounded-full overflow-hidden">
+          <img
+            className="rounded-full"
+            src={profile?.profilePic || ""}
+            alt={author?.name || "author"}
+          />
         </div>
         <span className="font-semibold text-gray-900">{author?.name}</span>
         <span>&bull;</span>
@@ -58,15 +78,13 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         <span>{readTime}</span>
       </div>
 
-      {/* Title and Excerpt */}
-      <h2 className="mb-2 text-2xl font-bold leading-snug text-gray-900 cursor-pointer hover:text-indigo-600">
+      <h2 className="mb-2 text-2xl font-bold text-gray-900 cursor-pointer hover:text-indigo-600">
         {title}
       </h2>
       <p className="mb-4 text-gray-600 line-clamp-2">{excerpt}</p>
 
-      {/* Tags and Actions */}
+      {/* Tags & Actions */}
       <div className="flex items-center justify-between">
-        {/* Tags */}
         <div className="flex flex-wrap items-center space-x-2">
           {tags.map((tag, i) => (
             <span
@@ -78,24 +96,32 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           ))}
         </div>
 
-        {/* Actions (Likes, Comments, Bookmark) */}
         <div className="flex items-center space-x-4 text-gray-500">
-          <div className="flex items-center space-x-1 hover:text-red-500 cursor-pointer transition duration-150">
-            <Heart className="w-5 h-5 fill-current" />
-            <span className="text-sm">{likes}</span>
-          </div>
-          <div className="flex items-center space-x-1 hover:text-blue-500 cursor-pointer transition duration-150">
-            <MessageSquare className="w-5 h-5" />
-            <span className="text-sm">{comments}</span>
-          </div>
-          <button
-            className="p-1 hover:text-gray-900 transition duration-150"
-            aria-label="Bookmark this article"
+          <div
+            className={`flex items-center space-x-1 cursor-pointer ${
+              liked ? "text-red-500" : "hover:text-red-500"
+            }`}
+            onClick={handleLike}
           >
-            <Bookmark className="w-5 h-5" />
-          </button>
+            <Heart className="w-5 h-5" />
+            <span className="text-sm">{likeCount}</span>
+          </div>
+
+          <div
+            className="flex items-center space-x-1 cursor-pointer"
+            onClick={() => setShowComments(!showComments)}
+          >
+            <MessageSquare className="w-5 h-5 text-gray-500" />
+            <span className="text-sm">{commentCount}</span>
+          </div>
         </div>
       </div>
+
+      {showComments && (
+        <div className="mt-6">
+          <CommentSection blogId={id} onCountChange={setCommentCount} />
+        </div>
+      )}
     </div>
   );
 };
