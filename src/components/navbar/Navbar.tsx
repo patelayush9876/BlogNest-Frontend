@@ -4,6 +4,7 @@ import {
   Bell,
   Bookmark,
   Menu,
+  X,
   Sun,
   Moon,
   PenSquare,
@@ -26,6 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { isDarkMode, toggleTheme } = useTheme();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
@@ -45,21 +47,22 @@ const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 border-b shadow-sm backdrop-blur-lg transition-colors duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 py-3 border-b shadow-sm backdrop-blur-lg transition-colors duration-300 ${
         isDarkMode
           ? "bg-gray-900/80 border-gray-800"
-          : "bg-white/80 border-gray-100"
+          : "bg-white/90 border-gray-100"
       }`}
     >
       {/* Left Section */}
-      <div className="flex items-center space-x-8">
+      <div className="flex items-center space-x-4 sm:space-x-6">
         <img
           src="/Images/BlogNest.png"
           alt="BlogNest"
-          className="h-10 cursor-pointer"
+          className="h-9 sm:h-10 cursor-pointer"
           onClick={() => navigate("/user")}
         />
 
+        {/* Desktop Nav Links */}
         <div className="hidden md:flex space-x-6 text-base font-medium">
           <p
             onClick={() => navigate("/user")}
@@ -85,23 +88,35 @@ const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Center Search */}
-      <div className="flex-1 max-w-lg mx-4">
+      <div className="hidden md:flex flex-1 max-w-lg mx-4">
         <div className="relative flex items-center w-full">
-          <Search className="absolute w-5 h-5 ml-3 text-gray-400 dark:text-gray-500 pointer-events-none" />
+          <Search
+            className={`absolute w-5 h-5 ml-3 pointer-events-none ${
+              isDarkMode ? "text-gray-400" : "text-gray-500"
+            }`}
+          />
           <input
             type="search"
             placeholder="Search articles..."
-            className="w-full py-2 pl-10 pr-4 text-gray-700 dark:text-gray-100 bg-gray-50 dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            className={`w-full py-2 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition ${
+              isDarkMode
+                ? "bg-gray-800 text-gray-200 placeholder-gray-400"
+                : "bg-gray-100 text-gray-800 placeholder-gray-500"
+            }`}
           />
         </div>
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-3 sm:space-x-4">
         {/* Create Blog */}
         <button
           onClick={() => navigate("/user/create")}
-          className={`flex flex-row items-center btn-primary`}
+          className={`hidden sm:flex flex-row items-center px-3 py-2 rounded-lg border transition ${
+            isDarkMode
+              ? "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
+              : "bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200"
+          }`}
         >
           <PenSquare className="w-4 h-4 mr-2" />
           Create
@@ -109,9 +124,14 @@ const Navbar: React.FC<NavbarProps> = ({
 
         {/* Theme Toggle */}
         <button
+          type="button"
           onClick={toggleTheme}
           aria-label="Toggle dark mode"
-          className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          className={`p-2 rounded-full transition ${
+            isDarkMode
+              ? "text-gray-200 hover:bg-gray-700"
+              : "text-gray-800 hover:bg-gray-100"
+          }`}
         >
           {isDarkMode ? (
             <Sun className="w-5 h-5" />
@@ -122,17 +142,29 @@ const Navbar: React.FC<NavbarProps> = ({
 
         {/* Bookmark */}
         <button
+          type="button"
           title="Bookmarks"
-          className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          aria-label="Bookmarks"
+          className={`hidden sm:block p-2 rounded-full transition ${
+            isDarkMode
+              ? "text-gray-200 hover:bg-gray-700"
+              : "text-gray-800 hover:bg-gray-100"
+          }`}
         >
           <Bookmark className="w-5 h-5" />
         </button>
 
         {/* Notifications */}
-        <div className="relative">
+        <div className="relative hidden sm:block">
           <button
+            type="button"
             title="Notifications"
-            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            aria-label="Notifications"
+            className={`p-2 rounded-full transition ${
+              isDarkMode
+                ? "text-gray-200 hover:bg-gray-700"
+                : "text-gray-800 hover:bg-gray-100"
+            }`}
           >
             <Bell className="w-5 h-5" />
           </button>
@@ -140,10 +172,14 @@ const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Profile */}
-        <div ref={dropdownRef} className="relative">
+        <div ref={dropdownRef} className="relative hidden sm:block">
           <button
+            type="button"
             onClick={() => setIsProfileOpen((prev) => !prev)}
-            className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-transparent hover:border-indigo-500 transition"
+            aria-label="User profile menu"
+            className={`flex items-center justify-center w-9 h-9 rounded-full border-2 border-transparent hover:border-indigo-500 transition ${
+              isDarkMode ? "text-gray-200" : "text-gray-800"
+            }`}
           >
             {userProfileImage ? (
               <img
@@ -154,7 +190,9 @@ const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <FontAwesomeIcon
                 icon={faUser}
-                className="w-6 h-6 text-gray-600 dark:text-gray-300"
+                className={`w-6 h-6 ${
+                  isDarkMode ? "text-gray-200" : "text-gray-800"
+                }`}
               />
             )}
           </button>
@@ -169,7 +207,7 @@ const Navbar: React.FC<NavbarProps> = ({
             >
               <div
                 className={`block px-4 py-2 text-sm ${
-                  isDarkMode ? "text-gray-300" : "text-gray-700"
+                  isDarkMode ? "text-gray-200" : "text-gray-800"
                 }`}
               >
                 @{userName}
@@ -178,8 +216,8 @@ const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => navigate("/user/profile")}
                 className={`w-full text-left px-4 py-2 text-sm ${
                   isDarkMode
-                    ? "text-gray-300 hover:bg-gray-700"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "text-gray-200 hover:bg-gray-700"
+                    : "text-gray-800 hover:bg-gray-50"
                 }`}
               >
                 Profile
@@ -188,8 +226,8 @@ const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => navigate("/user/settings")}
                 className={`w-full text-left px-4 py-2 text-sm ${
                   isDarkMode
-                    ? "text-gray-300 hover:bg-gray-700"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "text-gray-200 hover:bg-gray-700"
+                    : "text-gray-800 hover:bg-gray-50"
                 }`}
               >
                 Settings
@@ -198,8 +236,8 @@ const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => navigate("/user/create")}
                 className={`w-full text-left px-4 py-2 text-sm ${
                   isDarkMode
-                    ? "text-gray-300 hover:bg-gray-700"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "text-gray-200 hover:bg-gray-700"
+                    : "text-gray-800 hover:bg-gray-50"
                 }`}
               >
                 Create Blog
@@ -209,7 +247,9 @@ const Navbar: React.FC<NavbarProps> = ({
               />
               <button
                 onClick={onLogout}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-700 ${
+                  isDarkMode ? "text-red-400" : "text-red-600"
+                }`}
               >
                 Logout
               </button>
@@ -217,11 +257,82 @@ const Navbar: React.FC<NavbarProps> = ({
           )}
         </div>
 
-        {/* Mobile Menu */}
-        <button className="p-2 rounded-full text-gray-600 dark:text-gray-300 md:hidden hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-          <Menu className="w-6 h-6" />
+        {/* Mobile Menu Toggle */}
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          title="Menu"
+          aria-label="Toggle mobile menu"
+          className={`p-2 rounded-full md:hidden transition ${
+            isDarkMode
+              ? "text-gray-200 hover:bg-gray-700"
+              : "text-gray-800 hover:bg-gray-100"
+          }`}
+        >
+          {isMobileMenuOpen ? (
+            <X className="w-6 h-6" aria-hidden="true" />
+          ) : (
+            <Menu className="w-6 h-6" aria-hidden="true" />
+          )}
         </button>
       </div>
+
+      {/* Mobile Dropdown Menu */}
+      {isMobileMenuOpen && (
+        <div
+          className={`absolute top-full left-0 w-full flex flex-col md:hidden border-t z-40 ${
+            isDarkMode
+              ? "bg-gray-900 border-gray-700 text-gray-200"
+              : "bg-white border-gray-200 text-gray-800"
+          }`}
+        >
+          <button
+            onClick={() => {
+              navigate("/user");
+              setIsMobileMenuOpen(false);
+            }}
+            className="px-6 py-3 text-left hover:bg-indigo-600 hover:text-white"
+          >
+            Home
+          </button>
+          <button
+            onClick={() => {
+              navigate("/user/explore");
+              setIsMobileMenuOpen(false);
+            }}
+            className="px-6 py-3 text-left hover:bg-indigo-600 hover:text-white"
+          >
+            Explore
+          </button>
+          <button
+            onClick={() => {
+              navigate("/user/profile");
+              setIsMobileMenuOpen(false);
+            }}
+            className="px-6 py-3 text-left hover:bg-indigo-600 hover:text-white"
+          >
+            Profile
+          </button>
+          <button
+            onClick={() => {
+              navigate("/user/create");
+              setIsMobileMenuOpen(false);
+            }}
+            className="px-6 py-3 text-left hover:bg-indigo-600 hover:text-white"
+          >
+            Create Blog
+          </button>
+          <button
+            onClick={() => {
+              onLogout();
+              setIsMobileMenuOpen(false);
+            }}
+            className="px-6 py-3 text-left text-red-500 hover:bg-red-500 hover:text-white"
+          >
+            Logout
+          </button>
+        </div>
+      )}
     </nav>
   );
 };

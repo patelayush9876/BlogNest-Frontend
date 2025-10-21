@@ -2,6 +2,7 @@ import { Heart, MessageSquare } from "lucide-react";
 import CommentSection from "./CommentSection";
 import { toggleLike } from "../services/likeService";
 import { useEffect, useState } from "react";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface ArticleCardProps {
   id: string;
@@ -15,7 +16,7 @@ interface ArticleCardProps {
   likes: number;
   comments: number;
   author: any;
-  profile?: any; // <-- added
+  profile?: any;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
@@ -31,10 +32,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   author,
   profile,
 }) => {
+  const { isDarkMode } = useTheme();
   const [showComments, setShowComments] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [liked, setLiked] = useState(false);
   const [commentCount, setCommentCount] = useState(comments);
+
   useEffect(() => {
     setLikeCount(likes);
     setCommentCount(comments);
@@ -51,7 +54,11 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   };
 
   return (
-    <div className="pb-8 border-b border-gray-200">
+    <div
+      className={`pb-8 border-b transition-colors duration-300 ${
+        isDarkMode ? "border-gray-700" : "border-gray-200"
+      }`}
+    >
       {image && (
         <div className="relative mb-4 overflow-hidden rounded-xl h-96">
           <img
@@ -63,7 +70,11 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       )}
 
       {/* Author */}
-      <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
+      <div
+        className={`flex items-center space-x-2 text-sm mb-4 ${
+          isDarkMode ? "text-gray-400" : "text-gray-500"
+        }`}
+      >
         <div className="w-8 h-8 rounded-full overflow-hidden">
           <img
             className="rounded-full"
@@ -71,17 +82,35 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             alt={author?.name || "author"}
           />
         </div>
-        <span className="font-semibold text-gray-900">{author?.name}</span>
+        <span
+          className={`font-semibold ${
+            isDarkMode ? "text-gray-200" : "text-gray-800"
+          }`}
+        >
+          {author?.name}
+        </span>
         <span>&bull;</span>
         <span>{date}</span>
         <span>&bull;</span>
         <span>{readTime}</span>
       </div>
 
-      <h2 className="mb-2 text-2xl font-bold text-gray-900 cursor-pointer hover:text-indigo-600">
+      <h2
+        className={`mb-2 text-2xl font-bold cursor-pointer transition-colors duration-200 ${
+          isDarkMode
+            ? "text-gray-200 hover:text-indigo-400"
+            : "text-gray-800 hover:text-indigo-600"
+        }`}
+      >
         {title}
       </h2>
-      <p className="mb-4 text-gray-600 line-clamp-2">{excerpt}</p>
+      <p
+        className={`mb-4 line-clamp-2 ${
+          isDarkMode ? "text-gray-400" : "text-gray-600"
+        }`}
+      >
+        {excerpt}
+      </p>
 
       {/* Tags & Actions */}
       <div className="flex items-center justify-between">
@@ -89,17 +118,30 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           {tags.map((tag, i) => (
             <span
               key={i}
-              className="px-3 py-1 text-xs font-medium text-indigo-600 bg-indigo-50 rounded-full hover:bg-indigo-100 transition duration-150"
+              className={`px-3 py-1 text-xs font-medium rounded-full transition duration-150 ${
+                isDarkMode
+                  ? "text-indigo-400 bg-indigo-900/30 hover:bg-indigo-800/40"
+                  : "text-indigo-600 bg-indigo-50 hover:bg-indigo-100"
+              }`}
             >
               {tag}
             </span>
           ))}
         </div>
 
-        <div className="flex items-center space-x-4 text-gray-500">
+        <div
+          className={`flex items-center space-x-4 ${
+            isDarkMode ? "text-gray-400" : "text-gray-500"
+          }`}
+        >
+          {/* Like */}
           <div
-            className={`flex items-center space-x-1 cursor-pointer ${
-              liked ? "text-red-500" : "hover:text-red-500"
+            className={`flex items-center space-x-1 cursor-pointer transition ${
+              liked
+                ? "text-red-500"
+                : isDarkMode
+                ? "hover:text-red-400"
+                : "hover:text-red-500"
             }`}
             onClick={handleLike}
           >
@@ -107,16 +149,22 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             <span className="text-sm">{likeCount}</span>
           </div>
 
+          {/* Comments */}
           <div
-            className="flex items-center space-x-1 cursor-pointer"
+            className="flex items-center space-x-1 cursor-pointer transition hover:text-indigo-500"
             onClick={() => setShowComments(!showComments)}
           >
-            <MessageSquare className="w-5 h-5 text-gray-500" />
+            <MessageSquare
+              className={`w-5 h-5 ${
+                isDarkMode ? "text-gray-400" : "text-gray-500"
+              }`}
+            />
             <span className="text-sm">{commentCount}</span>
           </div>
         </div>
       </div>
 
+      {/* Comments Section */}
       {showComments && (
         <div className="mt-6">
           <CommentSection blogId={id} onCountChange={setCommentCount} />
