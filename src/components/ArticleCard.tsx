@@ -7,18 +7,17 @@ import { useTheme } from "../contexts/ThemeContext";
 interface ArticleCardProps {
   id: string;
   image: string;
-  user: string;
+  user?: string;
   date: string;
-  readTime: string;
+  readTime?: string;
   title: string;
   excerpt: string;
   tags: string[];
-  likes: number;
-  comments: number;
+  likes?: number;
+  comments?: number;
   author: any;
   profile?: any;
 }
-
 const ArticleCard: React.FC<ArticleCardProps> = ({
   id,
   image,

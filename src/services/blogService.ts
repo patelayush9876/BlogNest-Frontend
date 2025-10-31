@@ -15,6 +15,12 @@ export const getAllBlogs = async (): Promise<Blog[]> => {
   return response.data.data.blogs;
 };
 
+// Get my Blogs
+export const getMyBlogs = async (): Promise<Blog[]> => {
+  const response = await api.get("/blogs/my");
+  return response.data.data.blogs;
+};
+
 // Get Blog By ID
 export const getBlogById = async (id: string): Promise<Blog> => {
   const response = await api.get(`/blogs/${id}`);

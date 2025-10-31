@@ -1,115 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Mail, Edit2, Heart, MessageSquare, Bookmark } from "lucide-react";
+import { Mail, Edit2 } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { getMyProfile } from "../../services/profileService";
+import { getMyBlogs } from "../../services/blogService";
 import type { IUserProfile } from "../../interfaces/userProfileInterface";
-
-interface ArticleData {
-  image: string;
-  author: string;
-  date: string;
-  readTime: string;
-  title: string;
-  excerpt: string;
-  tags: string[];
-  likes: number;
-  comments: number;
-}
-
-const mockArticle: ArticleData = {
-  image:
-    "https://images.unsplash.com/photo-1627398242478-f471167905f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-  author: "Sarah Johnson",
-  date: "Sep 28, 2025",
-  readTime: "12 min read",
-  title: "The Art of Code: Principles Every Developer Should Know",
-  excerpt:
-    "Writing clean, maintainable code is an art form. Here are the essential principles that will transform your coding practice.",
-  tags: ["Programming", "Best Practices", "Clean Code"],
-  likes: 629,
-  comments: 57,
-};
-
-const ProfileArticleCard: React.FC<ArticleData> = ({
-  image,
-  author,
-  date,
-  readTime,
-  title,
-  excerpt,
-  tags,
-  likes,
-  comments,
-}) => (
-  <div className="pb-8 mb-8 border-b border-gray-200 dark:border-gray-700">
-    {/* Image */}
-    <div className="relative mb-4 overflow-hidden rounded-xl">
-      <img
-        src={image}
-        alt={title}
-        className="object-cover w-full h-auto max-h-[400px]"
-      />
-    </div>
-
-    {/* Meta */}
-    <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
-      <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-      <span className="font-semibold text-gray-900 dark:text-gray-100">
-        {author}
-      </span>
-      <span>&middot;</span>
-      <span>{date}</span>
-      <span>&middot;</span>
-      <span>{readTime}</span>
-    </div>
-
-    {/* Title */}
-    <h2 className="mb-2 text-xl font-bold leading-snug text-gray-900 dark:text-gray-50 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400">
-      {title}
-    </h2>
-
-    {/* Excerpt */}
-    <p className="mb-4 text-gray-700 dark:text-gray-300 line-clamp-2">
-      {excerpt}
-    </p>
-
-    {/* Tags + Actions */}
-    <div className="flex items-center justify-between">
-      <div className="flex flex-wrap items-center space-x-2">
-        {tags.map((tag, i) => (
-          <span
-            key={i}
-            className="px-3 py-1 text-xs font-medium text-indigo-700 bg-indigo-100 dark:bg-indigo-900/40 dark:text-indigo-300 rounded-full"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-      <div className="flex items-center space-x-4 text-gray-600 dark:text-gray-400">
-        <div className="flex items-center space-x-1">
-          <Heart className="w-5 h-5 text-red-500 fill-current" />
-          <span className="text-sm">{likes}</span>
-        </div>
-        <div className="flex items-center space-x-1">
-          <MessageSquare className="w-5 h-5" />
-          <span className="text-sm">{comments}</span>
-        </div>
-        <button
-          className="p-1 hover:text-gray-900 dark:hover:text-gray-100"
-          aria-label="bookmark"
-        >
-          <Bookmark className="w-5 h-5" />
-        </button>
-      </div>
-    </div>
-  </div>
-);
+import type { BlogWithProfile } from "../../interfaces/blogInterface";
+import ArticleCard from "../../components/ArticleCard";
 
 const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("My Posts");
   const { isDarkMode, toggleTheme } = useTheme();
   const [profile, setProfile] = useState<IUserProfile | null>(null);
+  const [blogs, setBlogs] = useState<BlogWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [blogsLoading, setBlogsLoading] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -125,10 +29,31 @@ const UserProfile: React.FC = () => {
     fetchProfile();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === "My Posts") {
+      const fetchMyBlogs = async () => {
+        setBlogsLoading(true);
+        try {
+          const data = await getMyBlogs();
+          setBlogs(data);
+        } catch (err) {
+          console.error("Failed to fetch blogs:", err);
+        } finally {
+          setBlogsLoading(false);
+        }
+      };
+      fetchMyBlogs();
+    }
+  }, [activeTab]);
+
   if (loading) {
     return (
-      <div className="text-center text-gray-600 dark:text-gray-300 py-10">
-        Loading...
+      <div
+        className={`text-center py-10 ${
+          isDarkMode ? "text-gray-300" : "text-gray-600"
+        }`}
+      >
+        Loading profile...
       </div>
     );
   }
@@ -142,19 +67,17 @@ const UserProfile: React.FC = () => {
       <div className="container mx-auto px-4 py-8 md:px-8 max-w-4xl">
         {/* Theme Toggle */}
         <div className="flex justify-end mb-6">
-          <div className="flex justify-end mb-6">
-            <button
-              onClick={toggleTheme}
-              className={`px-3 py-2 text-sm border rounded-lg transition 
-      ${
-        isDarkMode
-          ? "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
-          : "bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200"
-      }`}
-            >
-              {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className={`px-3 py-2 text-sm border rounded-lg transition ${
+              isDarkMode
+                ? "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
+                : "bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200"
+            }`}
+          >
+            {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+          </button>
         </div>
 
         {/* Profile Header */}
@@ -162,28 +85,30 @@ const UserProfile: React.FC = () => {
           <img
             src={profile?.profilePic}
             alt={profile?.user.name}
-            className="object-cover w-24 h-24 rounded-full flex-shrink-0 border border-gray-300 dark:border-gray-700"
+            className={`object-cover w-24 h-24 rounded-full flex-shrink-0 border ${
+              isDarkMode ? "border-gray-700" : "border-gray-300"
+            }`}
           />
 
           <div className="flex-1">
             <h2
               className={`text-xl font-bold ${
-                isDarkMode ? "text-gray-200 " : "text-gray-800"
+                isDarkMode ? "text-gray-200" : "text-gray-800"
               }`}
             >
               @{profile?.user.name}
             </h2>
-            <p className={`${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+            <p className={isDarkMode ? "text-gray-300" : "text-gray-700"}>
               {profile?.user.name}
             </p>
-            <p className={` ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+            <p className={isDarkMode ? "text-gray-300" : "text-gray-700"}>
               {profile?.bio}
             </p>
 
             {/* Stats */}
             <div
               className={`text-sm flex space-x-4 mt-3 ${
-                isDarkMode ? "text-gray-200" : "text-gray-800"
+                isDarkMode ? "text-gray-300" : "text-gray-800"
               }`}
             >
               <span>
@@ -206,11 +131,25 @@ const UserProfile: React.FC = () => {
 
             {/* Actions */}
             <div className="mt-4 flex space-x-3">
-              <button className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-gray-900 dark:bg-indigo-600 rounded-full hover:bg-gray-800 dark:hover:bg-indigo-700 transition duration-150">
+              <button
+                type="button"
+                className={`flex items-center px-4 py-2 text-sm font-semibold rounded-full transition duration-150 ${
+                  isDarkMode
+                    ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                    : "bg-gray-900 hover:bg-gray-800 text-white"
+                }`}
+              >
                 <Edit2 className="w-4 h-4 mr-1" />
                 Edit Profile
               </button>
-              <button className="flex items-center px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-150">
+              <button
+                type="button"
+                className={`flex items-center px-4 py-2 text-sm font-semibold border rounded-full transition duration-150 ${
+                  isDarkMode
+                    ? "text-gray-200 border-gray-600 hover:bg-gray-700"
+                    : "text-gray-700 border-gray-300 hover:bg-gray-100"
+                }`}
+              >
                 <Mail className="w-4 h-4 mr-1" />
                 Follow
               </button>
@@ -219,17 +158,26 @@ const UserProfile: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
+        <div
+          className={`border-b mb-8 ${
+            isDarkMode ? "border-gray-700" : "border-gray-200"
+          }`}
+        >
           <div className="flex space-x-6 text-base font-medium">
             {["My Posts", "Saved Blogs", "Following", "Followers"].map(
               (tab) => (
                 <button
                   key={tab}
+                  type="button"
                   onClick={() => setActiveTab(tab)}
                   className={`px-1 pb-3 transition duration-150 ${
                     activeTab === tab
-                      ? "text-gray-900 dark:text-gray-50 border-b-2 border-black dark:border-indigo-500 font-semibold"
-                      : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                      ? `border-b-2 border-indigo-500 font-semibold ${
+                          isDarkMode ? "text-gray-200" : "text-gray-800"
+                        }`
+                      : isDarkMode
+                      ? "text-gray-400 hover:text-gray-200"
+                      : "text-gray-500 hover:text-gray-900"
                   }`}
                 >
                   {tab}
@@ -241,19 +189,49 @@ const UserProfile: React.FC = () => {
 
         {/* Content */}
         {activeTab === "My Posts" ? (
-          <div className="space-y-8">
-            <ProfileArticleCard {...mockArticle} />
-            <ProfileArticleCard
-              {...mockArticle}
-              image="https://images.unsplash.com/photo-1542831371-29b0f74f9d13?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
-              title="A Deep Dive into JavaScript Closures"
-              likes={912}
-              comments={105}
-              date="Sep 15, 2025"
-            />
-          </div>
+          blogsLoading ? (
+            <div
+              className={`text-center py-10 ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              Loading blogs...
+            </div>
+          ) : blogs.length > 0 ? (
+            <div className="space-y-8">
+              {blogs.map((blog) => (
+                <ArticleCard
+                  key={blog._id}
+                  id={blog._id}
+                  image={blog.attachment || ""}
+                  user={blog.author?.name || "Unknown"}
+                  date={new Date(blog.createdAt).toLocaleDateString()}
+                  readTime={blog.readTime || "5 min read"}
+                  title={blog.title}
+                  excerpt={(blog.content || "").slice(0, 100) + "..."}
+                  tags={blog.tags || []}
+                  likes={blog.likeCount}
+                  comments={blog.commentCount}
+                  author={blog.author}
+                  profile={blog.profile} // pass profile for ArticleCard
+                />
+              ))}
+            </div>
+          ) : (
+            <div
+              className={`py-16 text-center ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              You haven’t posted any blogs yet.
+            </div>
+          )
         ) : (
-          <div className="py-16 text-center text-gray-600 dark:text-gray-400">
+          <div
+            className={`py-16 text-center ${
+              isDarkMode ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
             Content for <strong>{activeTab}</strong> goes here.
           </div>
         )}
