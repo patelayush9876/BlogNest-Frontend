@@ -205,15 +205,16 @@ const UserProfile: React.FC = () => {
                   id={blog._id}
                   image={blog.attachment || ""}
                   user={blog.author?.name || "Unknown"}
-                  date={new Date(blog.createdAt).toLocaleDateString()}
+                  date={blog.createdAt}
                   readTime={blog.readTime || "5 min read"}
                   title={blog.title}
-                  excerpt={(blog.content || "").slice(0, 100) + "..."}
+                  content={(blog.content || "")}
                   tags={blog.tags || []}
                   likes={blog.likeCount}
                   comments={blog.commentCount}
                   author={blog.author}
-                  profile={blog.profile} // pass profile for ArticleCard
+                  profile={blog.profile}
+                  likedByCurrentUser={blog.likedByCurrentUser}
                 />
               ))}
             </div>
