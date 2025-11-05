@@ -222,7 +222,7 @@ const Navbar: React.FC<NavbarProps> = ({
               >
                 Profile
               </button>
-              <button
+              <button 
                 onClick={() => navigate("/user/settings")}
                 className={`w-full text-left px-4 py-2 text-sm ${
                   isDarkMode

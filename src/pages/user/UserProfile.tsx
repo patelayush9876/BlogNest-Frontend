@@ -6,6 +6,7 @@ import { getMyBlogs } from "../../services/blogService";
 import type { IUserProfile } from "../../interfaces/userProfileInterface";
 import type { BlogWithProfile } from "../../interfaces/blogInterface";
 import ArticleCard from "../../components/ArticleCard";
+import { useNavigate } from "react-router-dom";
 
 const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("My Posts");
@@ -14,6 +15,7 @@ const UserProfile: React.FC = () => {
   const [blogs, setBlogs] = useState<BlogWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [blogsLoading, setBlogsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -138,6 +140,7 @@ const UserProfile: React.FC = () => {
                     ? "bg-indigo-600 hover:bg-indigo-700 text-white"
                     : "bg-gray-900 hover:bg-gray-800 text-white"
                 }`}
+                onClick={() => navigate("/user/settings")}
               >
                 <Edit2 className="w-4 h-4 mr-1" />
                 Edit Profile
