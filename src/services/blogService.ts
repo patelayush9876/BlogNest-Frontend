@@ -1,4 +1,4 @@
-import type { Blog } from "../interfaces/blogInterface";
+import type { BlogWithProfile as Blog} from "../interfaces/blogInterface";
 import api from "./api";
 
 // Create Blog
