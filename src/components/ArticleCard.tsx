@@ -3,45 +3,51 @@ import CommentSection from "./CommentSection";
 import { toggleLike } from "../services/likeService";
 import { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import { formatRelativeDate } from "../utils/dateUtils";
 
 interface ArticleCardProps {
   id: string;
   image: string;
-  user: string;
+  user?: string;
   date: string;
-  readTime: string;
+  readTime?: string;
   title: string;
-  excerpt: string;
+  content?: string;
   tags: string[];
-  likes: number;
-  comments: number;
+  likes?: number;
+  comments?: number;
   author: any;
   profile?: any;
+  likedByCurrentUser?: boolean;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
   id,
   image,
   date,
-  readTime,
   title,
-  excerpt,
+  content = "",
   tags,
-  likes,
-  comments,
+  likes = 0,
+  comments = 0,
   author,
   profile,
+  likedByCurrentUser = false, 
 }) => {
   const { isDarkMode } = useTheme();
   const [showComments, setShowComments] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(likedByCurrentUser);
   const [commentCount, setCommentCount] = useState(comments);
+  const [expanded, setExpanded] = useState(false);
+
+  const TRUNCATE_LENGTH = 130;
 
   useEffect(() => {
     setLikeCount(likes);
     setCommentCount(comments);
-  }, [likes, comments]);
+    setLiked(likedByCurrentUser);
+  }, [likes, comments, likedByCurrentUser]);
 
   const handleLike = async () => {
     try {
@@ -53,12 +59,19 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
     }
   };
 
+  const safeContent = content || "";
+  const isTruncated = safeContent.length > TRUNCATE_LENGTH;
+  const displayedText = expanded
+    ? safeContent
+    : safeContent.slice(0, TRUNCATE_LENGTH).trimEnd();
+
   return (
     <div
       className={`pb-8 border-b transition-colors duration-300 ${
         isDarkMode ? "border-gray-700" : "border-gray-200"
       }`}
     >
+      {/* Image */}
       {image && (
         <div className="relative mb-4 overflow-hidden rounded-xl h-96">
           <img
@@ -69,32 +82,34 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         </div>
       )}
 
-      {/* Author */}
+      {/* Author Info */}
       <div
-        className={`flex items-center space-x-2 text-sm mb-4 ${
+        className={`flex flex-row items-center justify-between pr-5 space-x-2 text-sm mb-4 ${
           isDarkMode ? "text-gray-400" : "text-gray-500"
         }`}
       >
-        <div className="w-8 h-8 rounded-full overflow-hidden">
-          <img
-            className="rounded-full"
-            src={profile?.profilePic || ""}
-            alt={author?.name || "author"}
-          />
+        <div className="flex flex-row justify-center items-center">
+          <div className="w-8 h-8 rounded-full overflow-hidden">
+            <img
+              className="rounded-full"
+              src={profile?.profilePic || ""}
+              alt={author?.name || "author"}
+            />
+          </div>
+          <span
+            className={`ml-2 font-semibold ${
+              isDarkMode ? "text-gray-200" : "text-gray-800"
+            }`}
+          >
+            {author?.name}
+          </span>
         </div>
-        <span
-          className={`font-semibold ${
-            isDarkMode ? "text-gray-200" : "text-gray-800"
-          }`}
-        >
-          {author?.name}
-        </span>
-        <span>&bull;</span>
-        <span>{date}</span>
-        <span>&bull;</span>
-        <span>{readTime}</span>
+        <div>
+          {/* <span>&bull;</span> */}
+          <span>{formatRelativeDate(date)}</span>
+        </div>
       </div>
-
+      {/* Title */}
       <h2
         className={`mb-2 text-2xl font-bold cursor-pointer transition-colors duration-200 ${
           isDarkMode
@@ -104,16 +119,47 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       >
         {title}
       </h2>
-      <p
-        className={`mb-4 line-clamp-2 ${
-          isDarkMode ? "text-gray-400" : "text-gray-600"
-        }`}
-      >
-        {excerpt}
-      </p>
+
+      {/* Content */}
+      <div className="mb-4">
+        <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+          {displayedText}
+          {isTruncated && !expanded && (
+            <span
+              onClick={() => setExpanded(true)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") setExpanded(true);
+              }}
+              className={`ml-1 cursor-pointer font-medium inline-block no-underline ${
+                isDarkMode
+                  ? "text-indigo-400 hover:text-indigo-300"
+                  : "text-gray-600 hover:text-indigo-500"
+              }`}
+            >
+              ... Read more
+            </span>
+          )}
+          {expanded && isTruncated && (
+            <button
+              type="button"
+              onClick={() => setExpanded(false)}
+              className={`ml-2 text-sm font-medium ${
+                isDarkMode
+                  ? "text-indigo-400 hover:text-indigo-300"
+                  : "text-gray-600 hover:text-indigo-500"
+              }`}
+            >
+              Show less ▲
+            </button>
+          )}
+        </p>
+      </div>
 
       {/* Tags & Actions */}
       <div className="flex items-center justify-between">
+        {/* Tags */}
         <div className="flex flex-wrap items-center space-x-2">
           {tags.map((tag, i) => (
             <span
@@ -129,6 +175,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           ))}
         </div>
 
+        {/* Like / Comment */}
         <div
           className={`flex items-center space-x-4 ${
             isDarkMode ? "text-gray-400" : "text-gray-500"
@@ -138,14 +185,18 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           <div
             className={`flex items-center space-x-1 cursor-pointer transition ${
               liked
-                ? "text-red-500"
+                ? "text-red-500 fill-red-500"
                 : isDarkMode
                 ? "hover:text-red-400"
                 : "hover:text-red-500"
             }`}
             onClick={handleLike}
           >
-            <Heart className="w-5 h-5" />
+            <Heart
+              className="w-5 h-5"
+              fill={liked ? "currentColor" : "none"}
+              stroke="currentColor"
+            />
             <span className="text-sm">{likeCount}</span>
           </div>
 

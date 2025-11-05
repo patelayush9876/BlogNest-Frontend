@@ -9,7 +9,7 @@ import CreateNewPasswordPage from "./pages/Auth/CreateNewPasswordPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastContainer } from "react-toastify";
 import UserLayout from "./layouts/userLayout";
-import SettingsPage from "./pages/user/SettingsPage";
+import SettingsPage from "./pages/user/settings/SettingsPage";
 import UserProfile from "./pages/user/UserProfile";
 import ContentLayout from "./layouts/ContentLayout";
 import PostEditor from "./pages/user/PostEditor";
