@@ -4,6 +4,7 @@ export interface IUserProfile {
     role:string;
     email:string;
   };
+  username: string;
   bio?: string;
   profilePic?: string;
   postsCount: number;

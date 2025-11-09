@@ -7,9 +7,9 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { setSessionExpiredCallback } from "../services/api";
-import { showToast } from "../services/toastService";
-import { login, logoutApi } from "../services/authService";
-import { getLoggedInUser } from "../services/userService";
+import { showToast } from "../services/toast.service";
+import { login, logoutApi } from "../services/auth.service";
+import { getLoggedInUser } from "../services/user.service";
 import type { LoginResponse } from "../interfaces/userInterface";
 
 interface AuthContextType {

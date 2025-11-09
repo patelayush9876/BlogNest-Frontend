@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ArticleCard from "../components/ArticleCard";
 import Sidebar from "../components/Sidebar";
 import clsx from "clsx";
-import * as BlogService from "../services/blogService";
+import * as BlogService from "../services/blog.service";
 import { useTheme } from "../contexts/ThemeContext";
 
 const ContentLayout: React.FC = () => {

@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/navbar/Navbar";
 import { useEffect, useState } from "react";
 import type { IUserProfile } from "../interfaces/userProfileInterface";
-import { getMyProfile } from "../services/profileService";
+import { getMyProfile } from "../services/profile.service";
 import { useAuth } from "../contexts/AuthContext";
 
 

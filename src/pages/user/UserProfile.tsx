@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Mail, Edit2 } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import { getMyProfile } from "../../services/profileService";
-import { getMyBlogs } from "../../services/blogService";
+import { getMyProfile } from "../../services/profile.service";
+import { getMyBlogs } from "../../services/blog.service";
 import type { IUserProfile } from "../../interfaces/userProfileInterface";
 import type { BlogWithProfile } from "../../interfaces/blogInterface";
 import ArticleCard from "../../components/ArticleCard";

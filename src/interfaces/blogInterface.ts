@@ -13,6 +13,11 @@ export interface Author {
   email: string;
 }
 
+export interface Category {
+  _id: string;
+  name: string;
+}
+
 export interface Profile {
   _id: string;
   user: string;
@@ -32,6 +37,7 @@ export interface BlogWithProfile {
   title: string;
   content: string;
   author: Author;
+  category: Category;
   attachment?: string | null;
   tags: string[];
   published: boolean;

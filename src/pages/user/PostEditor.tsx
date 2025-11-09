@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload, Eye, Save } from "lucide-react";
-import { createBlog } from "../../services/blogService";
+import { createBlog } from "../../services/blog.service";
 import { useTheme } from "../../contexts/ThemeContext";
+import { getAllCategories, type BlogCategory } from "../../services/blogCategory.service";
 
 const PostEditor: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -12,6 +13,21 @@ const PostEditor: React.FC = () => {
   const [tagInput, setTagInput] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getAllCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error("Failed to load categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleAddTag = () => {
     const newTag = tagInput.trim();
@@ -42,6 +58,7 @@ const PostEditor: React.FC = () => {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("content", content);
+      if (selectedCategory) formData.append("category", selectedCategory);
       tags.forEach((tag) => formData.append("tags", tag));
 
       if (selectedFile) formData.append("attachment", selectedFile);
@@ -54,6 +71,7 @@ const PostEditor: React.FC = () => {
       setTags([]);
       setCoverImageUrl("");
       setSelectedFile(null);
+      setSelectedCategory("");
 
       alert(`Blog "${blog.title}" published successfully!`);
     } catch (error) {
@@ -117,6 +135,30 @@ const PostEditor: React.FC = () => {
         className={`container mx-auto px-4 md:px-8 max-w-4xl p-4 sm:p-6 rounded-lg shadow-md space-y-8 transition-colors duration-300
         ${isDarkMode ? "bg-gray-900 shadow-gray-800" : "bg-white shadow-gray-100"}`}
       >
+        {/* Category Dropdown */}
+        <div>
+          <label className="block text-base sm:text-lg font-semibold mb-2">
+            Category
+          </label>
+          
+          <select
+          aria-label="select"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md text-base border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150
+            ${isDarkMode
+              ? "bg-gray-800 border-gray-700 text-gray-100"
+              : "bg-white border-gray-300 text-gray-900"}`}
+          >
+            <option value="">Select a category</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Cover Image */}
         <div>
           <label className="block text-base sm:text-lg font-semibold mb-3">Cover Image</label>

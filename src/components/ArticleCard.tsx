@@ -1,6 +1,6 @@
 import { Heart, MessageSquare } from "lucide-react";
 import CommentSection from "./CommentSection";
-import { toggleLike } from "../services/likeService";
+import { toggleLike } from "../services/like.service";
 import { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { formatRelativeDate } from "../utils/dateUtils";

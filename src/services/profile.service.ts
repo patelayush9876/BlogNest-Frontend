@@ -20,7 +20,7 @@ export const updateMyProfile = async (
 ): Promise<IUserProfile> => {
   try {
     const response = await api.put<{ success: boolean; data: IUserProfile }>(
-      "/update",
+      "/profile/update",
       profileData,
       {
         headers: {

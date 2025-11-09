@@ -1,10 +1,15 @@
 import { useTheme } from "../../../contexts/ThemeContext";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Edit2, User } from "lucide-react";
+import type { IUserProfile } from "../../../interfaces/userProfileInterface";
+import {
+  getMyProfile,
+  updateMyProfile,
+} from "../../../services/profile.service";
+import ImageCropper from "../../../components/ common/ImageCropper";
 
 export const AccountTab: React.FC = () => {
   const { isDarkMode } = useTheme();
-
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -12,18 +17,39 @@ export const AccountTab: React.FC = () => {
     bio: "",
     profilePic: "",
   });
-
+  const [rawImage, setRawImage] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch profile
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data: IUserProfile = await getMyProfile();
+        setFormData({
+          name: data.user.name || "",
+          username: data.username || "",
+          email: data.user.email || "",
+          bio: data.bio || "",
+          profilePic: data.profilePic || "",
+        });
+      } catch (err) {
+        console.error("Error loading profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          profilePic: reader.result as string,
-        }));
+        setRawImage(reader.result as string);
+        setShowCropper(true);
       };
       reader.readAsDataURL(file);
     }
@@ -35,13 +61,63 @@ export const AccountTab: React.FC = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Updated profile:", formData);
+  const handleCropComplete = (croppedImage: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      profilePic: croppedImage,
+    }));
+    setShowCropper(false);
   };
+
+  const handleCancelCrop = () => {
+    setShowCropper(false);
+    setRawImage(null);
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const profileData = new FormData();
+      profileData.append("name", formData.name);
+      profileData.append("username", formData.username);
+      profileData.append("email", formData.email);
+      profileData.append("bio", formData.bio);
+
+      if (formData.profilePic.startsWith("data:image/")) {
+        const blob = await fetch(formData.profilePic).then((r) => r.blob());
+        profileData.append("profilePic", blob, "profile.png");
+      }
+
+      const updatedProfile = await updateMyProfile(profileData);
+      console.log("Profile updated successfully:", updatedProfile);
+      alert("Profile updated successfully!");
+    } catch (err) {
+      console.error("Profile update failed:", err);
+      alert("Failed to update profile.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div
+        className={`p-6 text-center rounded-lg ${
+          isDarkMode ? "text-gray-300" : "text-gray-700"
+        }`}
+      >
+        Loading profile...
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
+      {showCropper && rawImage && (
+        <ImageCropper
+          image={rawImage}
+          onCancel={handleCancelCrop}
+          onCropComplete={handleCropComplete}
+        />
+      )}
+
       {/* Profile Picture Section */}
       <div
         className={`p-4 sm:p-6 rounded-lg shadow-sm border transition-colors duration-300 flex flex-col items-center justify-center ${
@@ -75,7 +151,6 @@ export const AccountTab: React.FC = () => {
             </div>
           )}
 
-          {/* Small edit icon overlay (bottom-right corner on hover) */}
           <button
             aria-label="edit"
             type="button"

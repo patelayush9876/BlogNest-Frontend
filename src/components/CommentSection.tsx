@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Heart, ArrowUp } from "lucide-react";
-import { addComment, getComments, toggleLikeComment } from "../services/commentService";
+import { addComment, getComments, toggleLikeComment } from "../services/comment.service";
 import { useTheme } from "../contexts/ThemeContext";
 
 interface CommentDTO {
