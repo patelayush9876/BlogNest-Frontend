@@ -1,13 +1,7 @@
+
 import api from "./api";
 
 
-interface SignupInput {
-  name: string;
-  email: string;
-  phoneNumber?: string;
-  password: string;
-  role?: "user" | "admin";
-}
 interface UpdateUserInput {
   name?: string;
   email?: string;
@@ -15,11 +9,6 @@ interface UpdateUserInput {
   role?: "user" | "admin";
   isActive?: boolean;
 }
-
-export const signupUser = async (data: SignupInput) => {
-  const response = await api.post("/users/signup", data);
-  return response.data;
-};
 
 
 export const updateUser = async (id: string, data: UpdateUserInput) => {

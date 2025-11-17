@@ -8,9 +8,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { setSessionExpiredCallback } from "../services/api";
 import { showToast } from "../services/toast.service";
-import { login, logoutApi } from "../services/auth.service";
+import { login, logoutApi, signupUser } from "../services/auth.service";
 import { getLoggedInUser } from "../services/user.service";
-import type { LoginResponse } from "../interfaces/userInterface";
+import type { LoginResponse, SignupInput } from "../interfaces/userInterface";
 
 interface AuthContextType {
   user: any | null;
@@ -21,9 +21,11 @@ interface AuthContextType {
     password: string,
     captchaToken: string
   ) => Promise<void>;
+  registerUser: (data: SignupInput) => Promise<void>;
   logoutUser: () => Promise<void>;
   setTokens: (accessToken: string, refreshToken?: string) => void;
   refreshUser: () => Promise<void>;
+  
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -104,6 +106,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Register user
+const registerUser = async (data: SignupInput) => {
+  try {
+    const response = await signupUser(data);
+
+    const { user, accessToken, refreshToken } = response.data || response;
+
+    if (accessToken && refreshToken) {
+      setUser(user);
+      setAccessToken(accessToken);
+      setRefreshToken(refreshToken);
+
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+    }
+
+    showToast("Account created successfully!", "success");
+    navigate("/user"); // redirect as needed
+  } catch (err: any) {
+    const message =
+      err.response?.data?.message ||
+      err.message ||
+      "Signup failed. Please try again.";
+    showToast(message, "error");
+    throw err;
+  }
+};
+
+
   // Logout user
   const logoutUser = async () => {
     try {
@@ -148,9 +180,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         accessToken,
         refreshToken,
         loginUser,
+        registerUser,
         logoutUser,
         setTokens,
         refreshUser,
+        
       }}
     >
       {children}

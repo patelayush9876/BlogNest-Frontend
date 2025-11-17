@@ -1,6 +1,7 @@
 export interface User {
   _id: string;
   name: string;
+  username: string;
   email: string;
   phoneNumber: string;
   isActive: boolean;
@@ -23,4 +24,22 @@ export interface LoginRequest {
   email: string;
   password: string;
   captchaToken: string;
+}
+export interface SignupInput {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword?: string;
+  captchaToken: string;
+}
+
+export interface SignupResponse {
+  status: boolean;
+  message: string;
+  data: {
+    user: User;
+    accessToken: string;
+    refreshToken: string;
+  };
 }

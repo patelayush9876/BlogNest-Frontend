@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Mail, Edit2 } from "lucide-react";
+import { Mail, Edit2, User } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { getMyProfile } from "../../services/profile.service";
 import { getMyBlogs } from "../../services/blog.service";
@@ -84,13 +84,32 @@ const UserProfile: React.FC = () => {
 
         {/* Profile Header */}
         <div className="mb-10 flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-8">
-          <img
+          {/* <img
             src={profile?.profilePic}
             alt={profile?.user.name}
             className={`object-cover w-24 h-24 rounded-full flex-shrink-0 border ${
               isDarkMode ? "border-gray-700" : "border-gray-300"
             }`}
-          />
+          /> */}
+          {profile?.profilePic ? (
+            <img
+              src={profile?.profilePic}
+              alt="Profile"
+              className={`w-32 h-32 object-cover rounded-full border ${
+                isDarkMode ? "border-gray-700" : "border-gray-300"
+              }`}
+            />
+          ) : (
+            <div
+              className={`w-32 h-32 flex items-center justify-center rounded-full border ${
+                isDarkMode
+                  ? "border-gray-700 bg-gray-700/30 text-gray-400"
+                  : "border-gray-300 bg-gray-100 text-gray-500"
+              }`}
+            >
+              <User className="h-16 w-16" />
+            </div>
+          )}
 
           <div className="flex-1">
             <h2
@@ -98,7 +117,7 @@ const UserProfile: React.FC = () => {
                 isDarkMode ? "text-gray-200" : "text-gray-800"
               }`}
             >
-              @{profile?.user.name}
+              @{profile?.username}
             </h2>
             <p className={isDarkMode ? "text-gray-300" : "text-gray-700"}>
               {profile?.user.name}
@@ -167,7 +186,7 @@ const UserProfile: React.FC = () => {
           }`}
         >
           <div className="flex space-x-6 text-base font-medium">
-            {["My Posts", "Saved Blogs", "Following", "Followers"].map(
+            {["My Posts", "Drafts", "Saved Blogs", "Following", "Followers"].map(
               (tab) => (
                 <button
                   key={tab}

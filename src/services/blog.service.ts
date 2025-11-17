@@ -46,3 +46,28 @@ export const publishBlog = async (id: string): Promise<Blog> => {
   const response = await api.patch(`/blogs/${id}/publish`);
   return response.data.data.blog;
 };
+
+// create draft
+export const createDraft = async (data: FormData): Promise<Blog> => {
+  const response = await api.post("/blogs/draft", data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data.data.blog;
+};
+
+// update draft
+export const updateDraft = async (
+  id: string,
+  data: FormData
+): Promise<Blog> => {
+  const response = await api.put(`/blogs/draft/${id}`, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data.data.blog;
+};
+
+// publish draft
+export const publishDraft = async (id: string): Promise<Blog> => {
+  const response = await api.put(`/blogs/publish/${id}`);
+  return response.data.data.blog;
+};

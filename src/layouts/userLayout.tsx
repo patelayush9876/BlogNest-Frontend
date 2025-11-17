@@ -39,7 +39,7 @@ const UserLayout: React.FC<UserLayoutProps> = () => {
   return (
     <div className="flex flex-col min-h-screen w-screen">
       {/* Navbar */}
-      <Navbar userProfileImage={profile?.profilePic || "/vite.svg"} userName={profile?.user?.name as any} onLogout={logoutUser} />
+      <Navbar userProfileImage={profile?.profilePic || ""} userName={profile?.user?.name as any} onLogout={logoutUser} />
 
       {/* Main content */}
       <main className="flex-1 w-full pt-16">

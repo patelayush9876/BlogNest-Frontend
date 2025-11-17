@@ -13,6 +13,7 @@ import SettingsPage from "./pages/user/settings/SettingsPage";
 import UserProfile from "./pages/user/UserProfile";
 import ContentLayout from "./layouts/ContentLayout";
 import PostEditor from "./pages/user/PostEditor";
+import SignupPage from "./pages/Auth/SignupPage";
 
 
 const lazyLoad = (Component: ComponentType) => (
@@ -28,6 +29,7 @@ function AppRoutes() {
       element: <AuthLayout />,
       children: [
         { path: "", element: lazyLoad(LoginPage) },
+        { path: "signup", element: lazyLoad(SignupPage) },
         { path: "forgot-password", element: lazyLoad(ForgotPasswordPage) },
         { path: "create-password", element: lazyLoad(CreateNewPasswordPage) },
       ],

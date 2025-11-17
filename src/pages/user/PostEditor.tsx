@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Upload, Eye, Save } from "lucide-react";
-import { createBlog } from "../../services/blog.service";
+import { createBlog, createDraft } from "../../services/blog.service";
 import { useTheme } from "../../contexts/ThemeContext";
-import { getAllCategories, type BlogCategory } from "../../services/blogCategory.service";
+import {
+  getAllCategories,
+  type BlogCategory,
+} from "../../services/blogCategory.service";
+import { showToast } from "../../services/toast.service";
+import { useNavigate } from "react-router-dom";
 
 const PostEditor: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -13,7 +18,7 @@ const PostEditor: React.FC = () => {
   const [tagInput, setTagInput] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
@@ -44,6 +49,38 @@ const PostEditor: React.FC = () => {
     }
   };
 
+  const handleSaveAsDraft = async () => {
+    try {
+      if (!title || !content) {
+        showToast("Both Title and content are required", "error");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      if (selectedCategory) formData.append("category", selectedCategory);
+      tags.forEach((tag) => formData.append("tags", tag));
+
+      if (selectedFile) formData.append("attachment", selectedFile);
+      else if (coverImageUrl) formData.append("coverImageUrl", coverImageUrl);
+
+      const blog = await createDraft(formData);
+
+      setTitle("");
+      setContent("");
+      setTags([]);
+      setCoverImageUrl("");
+      setSelectedFile(null);
+      setSelectedCategory("");
+
+      showToast(`Blog "${blog.title}" saved to draft!`,"success")
+      navigate("/user/profile")
+    } catch (error) {
+      console.error("Error publishing blog:", error);
+      alert("Failed to save as draft. Please try again.");
+    }
+  };
   const handleRemoveTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
@@ -59,6 +96,7 @@ const PostEditor: React.FC = () => {
       formData.append("title", title);
       formData.append("content", content);
       if (selectedCategory) formData.append("category", selectedCategory);
+      if (selectedCategory) formData.append("category", selectedCategory);
       tags.forEach((tag) => formData.append("tags", tag));
 
       if (selectedFile) formData.append("attachment", selectedFile);
@@ -73,10 +111,12 @@ const PostEditor: React.FC = () => {
       setSelectedFile(null);
       setSelectedCategory("");
 
-      alert(`Blog "${blog.title}" published successfully!`);
+      showToast(`Blog "${blog.title}" published successfully!`,"success");
+      navigate("/user/profile")
+
     } catch (error) {
       console.error("Error publishing blog:", error);
-      alert("Failed to publish the blog. Please try again.");
+      showToast("Failed to publish the blog. Please try again", "error");
     }
   };
 
@@ -96,8 +136,12 @@ const PostEditor: React.FC = () => {
             type="button"
             title="Preview post"
             aria-label="Preview post"
-            className={`flex items-center space-x-1 text-sm px-3 py-2 rounded-md transition duration-150
-            ${isDarkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"}`}
+            className={`flex cursor-pointer items-center space-x-1 text-sm px-3 py-2 rounded-md transition duration-150
+            ${
+              isDarkMode
+                ? "text-gray-300 hover:text-white"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
           >
             <Eye className="w-5 h-5" aria-hidden="true" />
             <span>Preview</span>
@@ -107,8 +151,13 @@ const PostEditor: React.FC = () => {
             type="button"
             title="Save draft"
             aria-label="Save draft"
-            className={`flex items-center space-x-1 text-sm px-3 py-2 rounded-md transition duration-150
-            ${isDarkMode ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"}`}
+            className={`flex cursor-pointer items-center space-x-1 text-sm px-3 py-2 rounded-md transition duration-150
+            ${
+              isDarkMode
+                ? "text-gray-300 hover:text-white"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+            onClick={() => handleSaveAsDraft()}
           >
             <Save className="w-5 h-5" aria-hidden="true" />
             <span>Save Draft</span>
@@ -119,10 +168,11 @@ const PostEditor: React.FC = () => {
             title="Publish blog"
             aria-label="Publish blog"
             onClick={handlePublish}
-            className={`px-4 sm:px-5 py-2 text-sm font-semibold rounded-lg transition duration-150
-            ${isDarkMode
-              ? "bg-indigo-600 text-white hover:bg-indigo-500"
-              : "text-white bg-black hover:bg-gray-800"
+            className={`px-4 cursor-pointer sm:px-5 py-2 text-sm font-semibold rounded-lg transition duration-150
+            ${
+              isDarkMode
+                ? "bg-indigo-600 text-white hover:bg-indigo-500"
+                : "text-white bg-black hover:bg-gray-800"
             }`}
           >
             Publish
@@ -133,26 +183,42 @@ const PostEditor: React.FC = () => {
       {/* Editor Form */}
       <div
         className={`container mx-auto px-4 md:px-8 max-w-4xl p-4 sm:p-6 rounded-lg shadow-md space-y-8 transition-colors duration-300
-        ${isDarkMode ? "bg-gray-900 shadow-gray-800" : "bg-white shadow-gray-100"}`}
+        ${
+          isDarkMode
+            ? "bg-gray-900 shadow-gray-800"
+            : "bg-white shadow-gray-100"
+        }`}
       >
         {/* Category Dropdown */}
         <div>
           <label className="block text-base sm:text-lg font-semibold mb-2">
             Category
           </label>
-          
+
           <select
-          aria-label="select"
+            aria-label="select"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md text-base border focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150
-            ${isDarkMode
-              ? "bg-gray-800 border-gray-700 text-gray-100"
-              : "bg-white border-gray-300 text-gray-900"}`}
+            className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-base border-0 border-b focus:outline-none focus:ring-0 focus:border-indigo-500 transition duration-150
+      ${
+        isDarkMode
+          ? "bg-transparent border-gray-700 text-gray-100 placeholder-gray-500"
+          : "bg-transparent border-gray-300 text-gray-900 placeholder-gray-400"
+      }`}
           >
-            <option value="">Select a category</option>
+            <option
+              value=""
+              className={isDarkMode ? "text-gray-400" : "text-gray-500"}
+            >
+              Select a category
+            </option>
+
             {categories.map((cat) => (
-              <option key={cat._id} value={cat._id}>
+              <option
+                key={cat._id}
+                value={cat._id}
+                className={isDarkMode ? "text-gray-200" : "text-gray-900"}
+              >
                 {cat.name}
               </option>
             ))}
@@ -161,16 +227,29 @@ const PostEditor: React.FC = () => {
 
         {/* Cover Image */}
         <div>
-          <label className="block text-base sm:text-lg font-semibold mb-3">Cover Image</label>
+          <label className="block text-base sm:text-lg font-semibold mb-3">
+            Cover Image
+          </label>
 
           <div
             className={`border-2 border-dashed rounded-lg p-6 sm:p-10 text-center cursor-pointer transition duration-150
-            ${isDarkMode ? "border-gray-700 hover:border-indigo-500 bg-gray-800"
-                         : "border-gray-300 hover:border-indigo-500 bg-white"}`}
+            ${
+              isDarkMode
+                ? "border-gray-700 hover:border-indigo-500 bg-gray-800"
+                : "border-gray-300 hover:border-indigo-500 bg-white"
+            }`}
             onClick={() => document.getElementById("coverImageInput")?.click()}
           >
-            <Upload className={`w-8 sm:w-10 h-8 sm:h-10 mx-auto ${isDarkMode ? "text-gray-400" : "text-gray-500"}`} />
-            <p className={`mt-2 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+            <Upload
+              className={`w-8 sm:w-10 h-8 sm:h-10 mx-auto ${
+                isDarkMode ? "text-gray-400" : "text-gray-500"
+              }`}
+            />
+            <p
+              className={`mt-2 text-sm ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
               Upload a cover image
               <br />
               <span className={isDarkMode ? "text-gray-500" : "text-gray-400"}>
@@ -181,7 +260,11 @@ const PostEditor: React.FC = () => {
             {(coverImageUrl || selectedFile) && (
               <div className="mt-4 flex justify-center">
                 <img
-                  src={selectedFile ? URL.createObjectURL(selectedFile) : coverImageUrl}
+                  src={
+                    selectedFile
+                      ? URL.createObjectURL(selectedFile)
+                      : coverImageUrl
+                  }
                   alt="Cover Preview"
                   className="h-32 sm:h-40 w-auto rounded-md shadow-md object-cover"
                 />
@@ -193,9 +276,11 @@ const PostEditor: React.FC = () => {
                 type="url"
                 placeholder="Or paste image URL"
                 className={`w-full sm:w-80 px-3 py-2 text-sm text-center border-b focus:outline-none focus:border-indigo-500 transition duration-150
-                ${isDarkMode
-                  ? "bg-transparent border-gray-700 text-gray-200 placeholder-gray-500"
-                  : "border-gray-300 text-gray-700 placeholder-gray-400"}`}
+                ${
+                  isDarkMode
+                    ? "bg-transparent border-gray-700 text-gray-200 placeholder-gray-500"
+                    : "border-gray-300 text-gray-700 placeholder-gray-400"
+                }`}
                 value={coverImageUrl}
                 onChange={(e) => setCoverImageUrl(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
@@ -221,15 +306,19 @@ const PostEditor: React.FC = () => {
 
         {/* Title */}
         <div>
-          <label className="block text-base sm:text-lg font-semibold mb-2">Title</label>
+          <label className="block text-base sm:text-lg font-semibold mb-2">
+            Title
+          </label>
           <input
             id="post-title"
             type="text"
             placeholder="Enter your post title..."
             className={`w-full px-3 sm:px-4 py-2 sm:py-3 text-lg sm:text-xl font-medium border-0 border-b focus:ring-0 focus:outline-none transition duration-150
-            ${isDarkMode
-              ? "bg-transparent border-gray-700 text-gray-100 placeholder-gray-500 focus:border-indigo-500"
-              : "border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"}`}
+            ${
+              isDarkMode
+                ? "bg-transparent border-gray-700 text-gray-100 placeholder-gray-500 focus:border-indigo-500"
+                : "border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"
+            }`}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -237,15 +326,19 @@ const PostEditor: React.FC = () => {
 
         {/* Content */}
         <div>
-          <label className="block text-base sm:text-lg font-semibold mb-2">Content</label>
+          <label className="block text-base sm:text-lg font-semibold mb-2">
+            Content
+          </label>
           <textarea
             id="post-content"
             placeholder="Write your story..."
             rows={10}
             className={`w-full px-3 sm:px-4 py-3 text-base border-0 focus:ring-0 resize-none transition duration-150
-            ${isDarkMode
-              ? "bg-transparent text-gray-100 placeholder-gray-500"
-              : "text-gray-900 placeholder-gray-400"}`}
+            ${
+              isDarkMode
+                ? "bg-transparent text-gray-100 placeholder-gray-500"
+                : "text-gray-900 placeholder-gray-400"
+            }`}
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
@@ -253,15 +346,19 @@ const PostEditor: React.FC = () => {
 
         {/* Tags */}
         <div>
-          <label className="block text-base sm:text-lg font-semibold mb-2">Tags</label>
+          <label className="block text-base sm:text-lg font-semibold mb-2">
+            Tags
+          </label>
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <input
               type="text"
               placeholder="Add a tag..."
               className={`flex-1 px-3 sm:px-4 py-2 sm:py-3 text-base border-b focus:ring-0 focus:outline-none transition duration-150
-              ${isDarkMode
-                ? "bg-transparent border-gray-700 text-gray-100 placeholder-gray-500 focus:border-indigo-500"
-                : "border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"}`}
+              ${
+                isDarkMode
+                  ? "bg-transparent border-gray-700 text-gray-100 placeholder-gray-500 focus:border-indigo-500"
+                  : "border-gray-200 text-gray-900 placeholder-gray-400 focus:border-indigo-500"
+              }`}
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -272,9 +369,11 @@ const PostEditor: React.FC = () => {
               aria-label="Add tag"
               onClick={handleAddTag}
               className={`w-full sm:w-auto px-4 sm:px-5 py-2 text-sm font-semibold rounded-lg transition duration-150
-              ${isDarkMode
-                ? "bg-indigo-600 text-white hover:bg-indigo-500"
-                : "bg-black text-white hover:bg-gray-800"}`}
+              ${
+                isDarkMode
+                  ? "bg-indigo-600 text-white hover:bg-indigo-500"
+                  : "bg-black text-white hover:bg-gray-800"
+              }`}
             >
               Add
             </button>
@@ -285,7 +384,11 @@ const PostEditor: React.FC = () => {
               <span
                 key={tag}
                 className={`flex items-center px-3 py-1 text-sm font-medium rounded-full
-                ${isDarkMode ? "bg-indigo-800 text-indigo-200" : "bg-indigo-100 text-indigo-700"}`}
+                ${
+                  isDarkMode
+                    ? "bg-indigo-800 text-indigo-200"
+                    : "bg-indigo-100 text-indigo-700"
+                }`}
               >
                 {tag}
                 <button
