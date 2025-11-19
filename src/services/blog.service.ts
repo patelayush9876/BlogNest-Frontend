@@ -71,3 +71,9 @@ export const publishDraft = async (id: string): Promise<Blog> => {
   const response = await api.put(`/blogs/publish/${id}`);
   return response.data.data.blog;
 };
+
+// Get my Drafts
+export const getMyDrafts = async (): Promise<Blog[]> => {
+  const response = await api.get("/blogs/drafts/my");
+  return response.data.data.blogs;
+};

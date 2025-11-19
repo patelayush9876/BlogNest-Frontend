@@ -111,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="flex items-center space-x-3 sm:space-x-4">
         {/* Create Blog */}
         <button
-          onClick={() => navigate("/user/create")}
+          onClick={() => navigate("/user/blogs/new")}
           className={`hidden sm:flex flex-row items-center px-3 py-2 rounded-lg border transition ${
             isDarkMode
               ? "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"

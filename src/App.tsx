@@ -1,4 +1,4 @@
-import  { Suspense, type ComponentType } from "react";
+import { Suspense, type ComponentType } from "react";
 import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
 
 import AuthLayout from "./layouts/AuthLayout/AuthLayout";
@@ -14,7 +14,6 @@ import UserProfile from "./pages/user/UserProfile";
 import ContentLayout from "./layouts/ContentLayout";
 import PostEditor from "./pages/user/PostEditor";
 import SignupPage from "./pages/Auth/SignupPage";
-
 
 const lazyLoad = (Component: ComponentType) => (
   <Suspense fallback={<LoadingSpinner />}>
@@ -36,16 +35,18 @@ function AppRoutes() {
     },
     {
       path: "/user",
-      element: <UserLayout/>,
+      element: <UserLayout />,
       children: [
         { path: "", element: lazyLoad(ContentLayout) },
         { path: "settings", element: lazyLoad(SettingsPage) },
         { path: "profile", element: lazyLoad(UserProfile) },
-        { path: "create", element: lazyLoad(PostEditor) },
+        { path: "blogs/new", element: lazyLoad(PostEditor) }, // Create new blog
+        { path: "blogs/:id/edit", element: lazyLoad(PostEditor) }, // Edit published blog
+        { path: "drafts/:id/edit", element: lazyLoad(PostEditor) }, // Edit draft
+
         // You can later add more routes like:
         // { path: "profile", element: lazyLoad(UserProfilePage) },
       ],
-    
     },
     { path: "*", element: <Navigate to="/" replace /> },
   ]);

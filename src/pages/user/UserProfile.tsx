@@ -2,21 +2,30 @@ import React, { useEffect, useState } from "react";
 import { Mail, Edit2, User } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { getMyProfile } from "../../services/profile.service";
-import { getMyBlogs } from "../../services/blog.service";
+import { getMyBlogs, getMyDrafts } from "../../services/blog.service";
 import type { IUserProfile } from "../../interfaces/userProfileInterface";
 import type { BlogWithProfile } from "../../interfaces/blogInterface";
 import ArticleCard from "../../components/ArticleCard";
+import DraftCard from "../../components/DraftCard";
 import { useNavigate } from "react-router-dom";
 
 const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("My Posts");
   const { isDarkMode, toggleTheme } = useTheme();
+
   const [profile, setProfile] = useState<IUserProfile | null>(null);
+
   const [blogs, setBlogs] = useState<BlogWithProfile[]>([]);
-  const [loading, setLoading] = useState(true);
   const [blogsLoading, setBlogsLoading] = useState(false);
+
+  const [drafts, setDrafts] = useState<BlogWithProfile[]>([]);
+  const [draftsLoading, setDraftsLoading] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
+  // Fetch profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -31,6 +40,7 @@ const UserProfile: React.FC = () => {
     fetchProfile();
   }, []);
 
+  // Fetch my blogs
   useEffect(() => {
     if (activeTab === "My Posts") {
       const fetchMyBlogs = async () => {
@@ -45,6 +55,24 @@ const UserProfile: React.FC = () => {
         }
       };
       fetchMyBlogs();
+    }
+  }, [activeTab]);
+
+  // Fetch drafts
+  useEffect(() => {
+    if (activeTab === "Drafts") {
+      const fetchDrafts = async () => {
+        setDraftsLoading(true);
+        try {
+          const data = await getMyDrafts();
+          setDrafts(data);
+        } catch (err) {
+          console.error("Failed to fetch drafts:", err);
+        } finally {
+          setDraftsLoading(false);
+        }
+      };
+      fetchDrafts();
     }
   }, [activeTab]);
 
@@ -84,13 +112,6 @@ const UserProfile: React.FC = () => {
 
         {/* Profile Header */}
         <div className="mb-10 flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-8">
-          {/* <img
-            src={profile?.profilePic}
-            alt={profile?.user.name}
-            className={`object-cover w-24 h-24 rounded-full flex-shrink-0 border ${
-              isDarkMode ? "border-gray-700" : "border-gray-300"
-            }`}
-          /> */}
           {profile?.profilePic ? (
             <img
               src={profile?.profilePic}
@@ -186,30 +207,36 @@ const UserProfile: React.FC = () => {
           }`}
         >
           <div className="flex space-x-6 text-base font-medium">
-            {["My Posts", "Drafts", "Saved Blogs", "Following", "Followers"].map(
-              (tab) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-1 pb-3 transition duration-150 ${
-                    activeTab === tab
-                      ? `border-b-2 border-indigo-500 font-semibold ${
-                          isDarkMode ? "text-gray-200" : "text-gray-800"
-                        }`
-                      : isDarkMode
-                      ? "text-gray-400 hover:text-gray-200"
-                      : "text-gray-500 hover:text-gray-900"
-                  }`}
-                >
-                  {tab}
-                </button>
-              )
-            )}
+            {[
+              "My Posts",
+              "Drafts",
+              "Saved Blogs",
+              "Following",
+              "Followers",
+            ].map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={`px-1 pb-3 transition duration-150 ${
+                  activeTab === tab
+                    ? `border-b-2 border-indigo-500 font-semibold ${
+                        isDarkMode ? "text-gray-200" : "text-gray-800"
+                      }`
+                    : isDarkMode
+                    ? "text-gray-400 hover:text-gray-200"
+                    : "text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Content */}
+        {/* -------------------- CONTENT -------------------- */}
+
+        {/* My Posts */}
         {activeTab === "My Posts" ? (
           blogsLoading ? (
             <div
@@ -230,7 +257,7 @@ const UserProfile: React.FC = () => {
                   date={blog.createdAt}
                   readTime={blog.readTime || "5 min read"}
                   title={blog.title}
-                  content={(blog.content || "")}
+                  content={blog.content || ""}
                   tags={blog.tags || []}
                   likes={blog.likeCount}
                   comments={blog.commentCount}
@@ -249,7 +276,46 @@ const UserProfile: React.FC = () => {
               You haven’t posted any blogs yet.
             </div>
           )
-        ) : (
+        ) : null}
+
+        {/* -------------------- Drafts -------------------- */}
+
+        {activeTab === "Drafts" ? (
+          draftsLoading ? (
+            <div
+              className={`text-center py-10 ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              Loading drafts...
+            </div>
+          ) : drafts.length > 0 ? (
+            <div className="space-y-8">
+              {drafts.map((draft) => (
+                <DraftCard
+                  key={draft._id}
+                  id={draft._id}
+                  title={draft.title}
+                  content={draft.content}
+                  image={draft.attachment}
+                  tags={draft.tags || []}
+                  updatedAt={draft.updatedAt}
+                />
+              ))}
+            </div>
+          ) : (
+            <div
+              className={`py-16 text-center ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              You haven’t saved any drafts yet.
+            </div>
+          )
+        ) : null}
+
+        {/* Fallback Content */}
+        {["Saved Blogs", "Following", "Followers"].includes(activeTab) && (
           <div
             className={`py-16 text-center ${
               isDarkMode ? "text-gray-400" : "text-gray-600"
