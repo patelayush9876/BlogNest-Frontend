@@ -1,9 +1,10 @@
-import { Heart, MessageSquare } from "lucide-react";
+import { Bookmark, Heart, MessageSquare } from "lucide-react";
 import CommentSection from "./CommentSection";
 import { toggleLike } from "../services/like.service";
 import { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { formatRelativeDate } from "../utils/dateUtils";
+import { toggleSave } from "../services/savedBlog.service";
 
 interface ArticleCardProps {
   id: string;
@@ -19,6 +20,7 @@ interface ArticleCardProps {
   author: any;
   profile?: any;
   likedByCurrentUser?: boolean;
+  saved?: boolean;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
@@ -32,7 +34,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   comments = 0,
   author,
   profile,
-  likedByCurrentUser = false, 
+  likedByCurrentUser = false,
+  saved = false,
 }) => {
   const { isDarkMode } = useTheme();
   const [showComments, setShowComments] = useState(false);
@@ -40,6 +43,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   const [liked, setLiked] = useState(likedByCurrentUser);
   const [commentCount, setCommentCount] = useState(comments);
   const [expanded, setExpanded] = useState(false);
+  const [isSaved, setIsSaved] = useState(saved);
 
   const TRUNCATE_LENGTH = 130;
 
@@ -56,6 +60,15 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       setLiked(data.liked);
     } catch (err) {
       console.error("Error toggling like:", err);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const result = await toggleSave(id);
+      setIsSaved(result.saved);
+    } catch (err) {
+      console.error("Error toggling save:", err);
     }
   };
 
@@ -211,6 +224,23 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
               }`}
             />
             <span className="text-sm">{commentCount}</span>
+          </div>
+
+          {/* Saved */}
+          <div
+            className="flex items-center space-x-1 cursor-pointer transition"
+            onClick={handleSave}
+          >
+            <Bookmark
+              className={`w-5 h-5 ${
+                isSaved
+                  ? "text-indigo-500 fill-indigo-500"
+                  : isDarkMode
+                  ? "text-gray-400"
+                  : "text-gray-500"
+              }`}
+              fill={isSaved ? "currentColor" : "none"}
+            />
           </div>
         </div>
       </div>

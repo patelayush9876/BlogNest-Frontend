@@ -8,21 +8,19 @@ import type { BlogWithProfile } from "../../interfaces/blogInterface";
 import ArticleCard from "../../components/ArticleCard";
 import DraftCard from "../../components/DraftCard";
 import { useNavigate } from "react-router-dom";
+import { getMySavedBlogs } from "../../services/savedBlog.service";
 
 const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("My Posts");
   const { isDarkMode, toggleTheme } = useTheme();
-
   const [profile, setProfile] = useState<IUserProfile | null>(null);
-
   const [blogs, setBlogs] = useState<BlogWithProfile[]>([]);
   const [blogsLoading, setBlogsLoading] = useState(false);
-
   const [drafts, setDrafts] = useState<BlogWithProfile[]>([]);
   const [draftsLoading, setDraftsLoading] = useState(false);
-
+  const [savedBlogs, setSavedBlogs] = useState<BlogWithProfile[]>([]);
+  const [savedBlogsLoading, setSavedBlogsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
-
   const navigate = useNavigate();
 
   // Fetch profile
@@ -76,6 +74,23 @@ const UserProfile: React.FC = () => {
     }
   }, [activeTab]);
 
+  // fetch saved
+  useEffect(() => {
+    if (activeTab === "Saved Blogs") {
+      const fetchSaved = async () => {
+        setSavedBlogsLoading(true);
+        try {
+          const data = await getMySavedBlogs();
+          setSavedBlogs(data);
+        } catch (err) {
+          console.error("Failed to fetch saved blogs:", err);
+        } finally {
+          setSavedBlogsLoading(false);
+        }
+      };
+      fetchSaved();
+    }
+  }, [activeTab]);
   if (loading) {
     return (
       <div
@@ -314,8 +329,47 @@ const UserProfile: React.FC = () => {
           )
         ) : null}
 
+        {activeTab === "Saved Blogs" &&
+          (savedBlogsLoading ? (
+            <div
+              className={`text-center py-10 ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              Loading saved blogs...
+            </div>
+          ) : savedBlogs.length > 0 ? (
+            <div className="space-y-8">
+              {savedBlogs.map((blog) => (
+                <ArticleCard
+                  key={blog._id}
+                  id={blog._id}
+                  image={blog.attachment || ""}
+                  date={blog.createdAt}
+                  title={blog.title}
+                  content={blog.content}
+                  tags={blog.tags || []}
+                  likes={blog.likeCount}
+                  comments={blog.commentCount}
+                  author={blog.author}
+                  profile={blog.profile}
+                  likedByCurrentUser={blog.likedByCurrentUser}
+                  saved={true}
+                />
+              ))}
+            </div>
+          ) : (
+            <div
+              className={`py-16 text-center ${
+                isDarkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              You haven’t saved any blogs yet.
+            </div>
+          ))}
+
         {/* Fallback Content */}
-        {["Saved Blogs", "Following", "Followers"].includes(activeTab) && (
+        {["Following", "Followers"].includes(activeTab) && (
           <div
             className={`py-16 text-center ${
               isDarkMode ? "text-gray-400" : "text-gray-600"
