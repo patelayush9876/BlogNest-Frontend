@@ -13,7 +13,6 @@ interface UserLayoutProps {
 
 const UserLayout: React.FC<UserLayoutProps> = () => {
   const [profile, setProfile] = useState<IUserProfile | null>(null);
-  console.log("profile", profile)
   const [loading, setLoading] = useState(true);
   const { logoutUser } = useAuth();
   useEffect(() => {

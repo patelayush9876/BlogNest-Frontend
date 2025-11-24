@@ -24,41 +24,40 @@ const ContentLayout: React.FC = () => {
   };
 
   useEffect(() => {
-  const fetchBlogs = async () => {
-    try {
-      setLoading(true);
-      const blogs = await BlogService.getAllBlogs(); // blogs is already Blog[]
-      const blogsData = blogs.map((blog: any) => {
-        let parsedTags: string[] = [];
-        try {
-          if (Array.isArray(blog.tags)) {
-            parsedTags =
-              blog.tags.length === 1 && blog.tags[0].startsWith("[")
-                ? JSON.parse(blog.tags[0])
-                : blog.tags;
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+        const blogs = await BlogService.getAllBlogs();
+        const blogsData = blogs.map((blog: any) => {
+          let parsedTags: string[] = [];
+          try {
+            if (Array.isArray(blog.tags)) {
+              parsedTags =
+                blog.tags.length === 1 && blog.tags[0].startsWith("[")
+                  ? JSON.parse(blog.tags[0])
+                  : blog.tags;
+            }
+          } catch (err) {
+            console.log("Error fetching blogs", err);
+            parsedTags = [];
           }
-        } catch (err) {
-          console.log("Error fetching blogs",err)
-          parsedTags = [];
-        }
 
-        return {
-          ...blog,
-          tags: parsedTags,
-          likes: blog.likeCount || 0,
-          comments: blog.commentCount || 0,
-        };
-      });
-      setBlogs(blogsData);
-    } catch (err) {
-      console.error("Error fetching blogs:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchBlogs();
-}, []);
-
+          return {
+            ...blog,
+            tags: parsedTags,
+            likes: blog.likeCount || 0,
+            comments: blog.commentCount || 0,
+          };
+        });
+        setBlogs(blogsData);
+      } catch (err) {
+        console.error("Error fetching blogs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlogs();
+  }, []);
 
   return (
     <div
@@ -103,13 +102,18 @@ const ContentLayout: React.FC = () => {
                   date={blog.createdAt}
                   readTime={blog.readTime || "5 min read"}
                   title={blog.title}
-                  content={(blog.content)}
+                  content={blog.content}
                   tags={blog.tags || []}
                   likes={blog.likes}
                   comments={blog.comments}
                   author={blog.author}
                   profile={blog.profile}
                   likedByCurrentUser={blog.likedByCurrentUser}
+                
+                  // ONLY THESE 3 LINES WERE ADDED
+                  isFollowed={blog.isFollowed}
+                  authorId={blog.author?._id}
+                  saved={blog.isSaved || false}
                 />
               ))
             ) : (

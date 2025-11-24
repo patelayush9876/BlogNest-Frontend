@@ -1,10 +1,13 @@
 import { Bookmark, Heart, MessageSquare } from "lucide-react";
 import CommentSection from "./CommentSection";
 import { toggleLike } from "../services/like.service";
-import { useEffect, useState } from "react";
+import { followUser } from "../services/follow.service";
+import { useEffect, useState, useRef } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { formatRelativeDate } from "../utils/dateUtils";
 import { toggleSave } from "../services/savedBlog.service";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface ArticleCardProps {
   id: string;
@@ -21,6 +24,8 @@ interface ArticleCardProps {
   profile?: any;
   likedByCurrentUser?: boolean;
   saved?: boolean;
+  isFollowed?: boolean; // NEW
+  authorId?: string; // NEW
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
@@ -36,14 +41,23 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   profile,
   likedByCurrentUser = false,
   saved = false,
+  isFollowed = false,
+  authorId,
 }) => {
   const { isDarkMode } = useTheme();
+  console.log("aaaa", authorId);
   const [showComments, setShowComments] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [liked, setLiked] = useState(likedByCurrentUser);
   const [commentCount, setCommentCount] = useState(comments);
   const [expanded, setExpanded] = useState(false);
   const [isSaved, setIsSaved] = useState(saved);
+  const [following, setFollowing] = useState(isFollowed); // NEW
+  const [showMenu, setShowMenu] = useState(false); // NEW
+  const menuRef = useRef<HTMLDivElement>(null); // NEW
+  const { user } = useAuth();
+    const navigate = useNavigate();
+
 
   const TRUNCATE_LENGTH = 130;
 
@@ -52,6 +66,17 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
     setCommentCount(comments);
     setLiked(likedByCurrentUser);
   }, [likes, comments, likedByCurrentUser]);
+
+  // Close popup on outside click
+  useEffect(() => {
+    function handleClickOutside(e: any) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLike = async () => {
     try {
@@ -69,6 +94,16 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       setIsSaved(result.saved);
     } catch (err) {
       console.error("Error toggling save:", err);
+    }
+  };
+
+  const handleFollow = async () => {
+    try {
+      await followUser(authorId!);
+      setFollowing(true);
+      setShowMenu(false);
+    } catch (err) {
+      console.error("Error following:", err);
     }
   };
 
@@ -101,14 +136,47 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           isDarkMode ? "text-gray-400" : "text-gray-500"
         }`}
       >
-        <div className="flex flex-row justify-center items-center">
-          <div className="w-8 h-8 rounded-full overflow-hidden">
+        <div className="flex flex-row justify-center items-center relative">
+          {/* Profile Image Trigger */}
+          <div
+            className="w-8 h-8 rounded-full overflow-hidden cursor-pointer"
+            onClick={() => setShowMenu(!showMenu)}
+          >
             <img
               className="rounded-full"
               src={profile?.profilePic || ""}
               alt={author?.name || "author"}
             />
           </div>
+
+          {/* Mini Popup Menu */}
+          {showMenu && (
+            <div
+              ref={menuRef}
+              className={`absolute top-10 left-0 w-40 rounded-lg shadow-lg p-3 z-50 ${
+                isDarkMode
+                  ? "bg-gray-800 text-gray-200"
+                  : "bg-white text-gray-800"
+              }`}
+            >
+              <button
+                className="w-full text-left py-1 px-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                onClick={() => {navigate(`/user/userProfile/${authorId}`)}}
+              >
+                View Profile
+              </button>
+
+              {!following && authorId !== user?._id && (
+                <button
+                  className="w-full text-left py-1 px-2 text-indigo-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                  onClick={handleFollow}
+                >
+                  Follow
+                </button>
+              )}
+            </div>
+          )}
+
           <span
             className={`ml-2 font-semibold ${
               isDarkMode ? "text-gray-200" : "text-gray-800"
@@ -116,12 +184,23 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           >
             {author?.name}
           </span>
+
+          {/* Inline Follow Button */}
+          {!following && authorId !== user?._id && (
+            <button
+              onClick={handleFollow}
+              className="ml-3 px-3 py-1 text-xs font-medium rounded-full border border-indigo-500 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+            >
+              Follow
+            </button>
+          )}
         </div>
+
         <div>
-          {/* <span>&bull;</span> */}
           <span>{formatRelativeDate(date)}</span>
         </div>
       </div>
+
       {/* Title */}
       <h2
         className={`mb-2 text-2xl font-bold cursor-pointer transition-colors duration-200 ${

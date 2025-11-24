@@ -34,3 +34,8 @@ export const updateMyProfile = async (
     throw err;
   }
 };
+
+export const getProfileById = async (userId: string) => {
+  const response = await api.get(`/profile/${userId}`);
+  return response.data.data;
+};

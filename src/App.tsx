@@ -14,6 +14,7 @@ import UserProfile from "./pages/user/UserProfile";
 import ContentLayout from "./layouts/ContentLayout";
 import PostEditor from "./pages/user/PostEditor";
 import SignupPage from "./pages/Auth/SignupPage";
+import PublicUserProfile from "./pages/user/PublicUserProfile";
 
 const lazyLoad = (Component: ComponentType) => (
   <Suspense fallback={<LoadingSpinner />}>
@@ -40,6 +41,7 @@ function AppRoutes() {
         { path: "", element: lazyLoad(ContentLayout) },
         { path: "settings", element: lazyLoad(SettingsPage) },
         { path: "profile", element: lazyLoad(UserProfile) },
+        { path: "userProfile/:authorId", element: lazyLoad(PublicUserProfile) },
         { path: "blogs/new", element: lazyLoad(PostEditor) }, // Create new blog
         { path: "blogs/:id/edit", element: lazyLoad(PostEditor) }, // Edit published blog
         { path: "drafts/:id/edit", element: lazyLoad(PostEditor) }, // Edit draft
