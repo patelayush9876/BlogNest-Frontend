@@ -9,6 +9,10 @@ import ArticleCard from "../../components/ArticleCard";
 import DraftCard from "../../components/DraftCard";
 import { useNavigate } from "react-router-dom";
 import { getMySavedBlogs } from "../../services/savedBlog.service";
+import { ArticleCardSkeleton } from "../../components/loaders/ArticleSkeleton";
+import { getFollowers, getFollowing } from "../../services/follow.service";
+import { useAuth } from "../../contexts/AuthContext";
+import { ListSkeleton } from "../../components/loaders/ListSkeleton";
 
 const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("My Posts");
@@ -21,8 +25,13 @@ const UserProfile: React.FC = () => {
   const [savedBlogs, setSavedBlogs] = useState<BlogWithProfile[]>([]);
   const [savedBlogsLoading, setSavedBlogsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [followers, setFollowers] = useState<any[]>([]);
+  const [following, setFollowing] = useState<any[]>([]);
+  const [followersLoading, setFollowersLoading] = useState(false);
+  const [followingLoading, setFollowingLoading] = useState(false);
   const navigate = useNavigate();
-
+  const { user } = useAuth();
+  const userId = user?._id;
   // Fetch profile
   useEffect(() => {
     const fetchProfile = async () => {
@@ -91,6 +100,42 @@ const UserProfile: React.FC = () => {
       fetchSaved();
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab === "Followers" && userId) {
+      const fetchFollowers = async () => {
+        setFollowersLoading(true);
+        try {
+          const { followers } = await getFollowers(userId);
+          setFollowers(followers);
+        } catch (err) {
+          console.error("Failed to fetch followers:", err);
+        } finally {
+          setFollowersLoading(false);
+        }
+      };
+
+      fetchFollowers();
+    }
+  }, [activeTab, userId]);
+
+  useEffect(() => {
+    if (activeTab === "Following" && userId) {
+      const fetchFollowing = async () => {
+        setFollowingLoading(true);
+        try {
+          const { following } = await getFollowing(userId);
+          setFollowing(following);
+        } catch (err) {
+          console.error("Failed to fetch following:", err);
+        } finally {
+          setFollowingLoading(false);
+        }
+      };
+
+      fetchFollowing();
+    }
+  }, [activeTab, userId]);
   if (loading) {
     return (
       <div
@@ -174,13 +219,13 @@ const UserProfile: React.FC = () => {
               </span>
               <span>
                 <strong className="font-bold">
-                  {profile?.followers.length}
+                  {profile?.followersCount}
                 </strong>{" "}
                 Followers
               </span>
               <span>
                 <strong className="font-bold">
-                  {profile?.following.length}
+                  {profile?.followingCount}
                 </strong>{" "}
                 Following
               </span>
@@ -254,12 +299,10 @@ const UserProfile: React.FC = () => {
         {/* My Posts */}
         {activeTab === "My Posts" ? (
           blogsLoading ? (
-            <div
-              className={`text-center py-10 ${
-                isDarkMode ? "text-gray-400" : "text-gray-600"
-              }`}
-            >
-              Loading blogs...
+            <div className="space-y-10">
+              <ArticleCardSkeleton isDarkMode={isDarkMode} />
+              <ArticleCardSkeleton isDarkMode={isDarkMode} />
+              <ArticleCardSkeleton isDarkMode={isDarkMode} />
             </div>
           ) : blogs.length > 0 ? (
             <div className="space-y-8">
@@ -369,13 +412,74 @@ const UserProfile: React.FC = () => {
           ))}
 
         {/* Fallback Content */}
-        {["Following", "Followers"].includes(activeTab) && (
+        {/* {["Following", "Followers"].includes(activeTab) && (
           <div
             className={`py-16 text-center ${
               isDarkMode ? "text-gray-400" : "text-gray-600"
             }`}
           >
             Content for <strong>{activeTab}</strong> goes here.
+          </div>
+        )} */}
+        {activeTab === "Followers" && (
+          <div className="space-y-4">
+            {followersLoading ? (
+              <ListSkeleton isDarkMode={isDarkMode} />
+            ) : followers.length === 0 ? (
+              <div className="py-10 text-center opacity-70">
+                No followers yet.
+              </div>
+            ) : (
+              followers.map((item) => (
+                <div
+                  key={item._id}
+                  className={`flex items-center space-x-4 p-4 rounded-lg border ${
+                    isDarkMode
+                      ? "border-gray-700 bg-gray-800"
+                      : "border-gray-200 bg-white"
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                    <User size={20} />
+                  </div>
+                  <div>
+                    <p className="font-medium">{item.follower.name}</p>
+                    <p className="text-sm opacity-70">{item.follower.email}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {activeTab === "Following" && (
+          <div className="space-y-4">
+            {followingLoading ? (
+              <ListSkeleton isDarkMode={isDarkMode} />
+            ) : following.length === 0 ? (
+              <div className="py-10 text-center opacity-70">
+                Not following anyone yet.
+              </div>
+            ) : (
+              following.map((item) => (
+                <div
+                  key={item._id}
+                  className={`flex items-center space-x-4 p-4 rounded-lg border ${
+                    isDarkMode
+                      ? "border-gray-700 bg-gray-800"
+                      : "border-gray-200 bg-white"
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                    <User size={20} />
+                  </div>
+                  <div>
+                    <p className="font-medium">{item.following.name}</p>
+                    <p className="text-sm opacity-70">{item.following.email}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>

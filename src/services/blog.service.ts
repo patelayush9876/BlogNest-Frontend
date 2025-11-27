@@ -77,3 +77,9 @@ export const getMyDrafts = async (): Promise<Blog[]> => {
   const response = await api.get("/blogs/drafts/my");
   return response.data.data.blogs;
 };
+
+// Get blogs of any user
+export const getBlogsByUserId = async (userId: string): Promise<Blog[]> => {
+  const response = await api.get(`/blogs/user/${userId}`);
+  return response.data.data.blogs;
+};

@@ -9,8 +9,8 @@ export interface IUserProfile {
   profilePic?: string;
   postsCount: number;
   likesCount: number;
-  followers: string[];    // array of user IDs
-  following: string[];    // array of user IDs
+  followersCount: number;  
+  followingCount: number;   
   createdAt: string;      // ISO string
   updatedAt: string;      // ISO string
 }

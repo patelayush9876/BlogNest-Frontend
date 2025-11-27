@@ -45,16 +45,15 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   authorId,
 }) => {
   const { isDarkMode } = useTheme();
-  console.log("aaaa", authorId);
   const [showComments, setShowComments] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [liked, setLiked] = useState(likedByCurrentUser);
   const [commentCount, setCommentCount] = useState(comments);
   const [expanded, setExpanded] = useState(false);
   const [isSaved, setIsSaved] = useState(saved);
-  const [following, setFollowing] = useState(isFollowed); // NEW
-  const [showMenu, setShowMenu] = useState(false); // NEW
-  const menuRef = useRef<HTMLDivElement>(null); // NEW
+  const [following, setFollowing] = useState(isFollowed);
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
     const navigate = useNavigate();
 

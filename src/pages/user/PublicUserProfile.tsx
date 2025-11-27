@@ -3,23 +3,31 @@ import { User } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 
-
 import {
   followUser,
+  getFollowers,
+  getFollowing,
   unfollowUser,
 } from "../../services/follow.service";
 
 import ArticleCard from "../../components/ArticleCard";
 import { getProfileById } from "../../services/profile.service";
+import { getBlogsByUserId } from "../../services/blog.service";
+import { ListSkeleton } from "../../components/loaders/ListSkeleton";
+import { ArticleCardSkeleton } from "../../components/loaders/ArticleSkeleton";
 
 const PublicUserProfile: React.FC = () => {
-  const { authorId : userId } = useParams(); // /user/:userId
+  const { authorId } = useParams();
+  const { authorId: userId } = useParams();
+
   const { isDarkMode, toggleTheme } = useTheme();
 
   const [profile, setProfile] = useState<any>(null);
   const [blogs, setBlogs] = useState<any[]>([]);
-//   const [followers, setFollowers] = useState<any[]>([]);
-//   const [following, setFollowing] = useState<any[]>([]);
+  const [followers, setFollowers] = useState<any[]>([]);
+  const [following, setFollowing] = useState<any[]>([]);
+  const [followersLoading, setFollowersLoading] = useState(false);
+  const [followingLoading, setFollowingLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState("Posts");
   const [isFollowingUser, setIsFollowingUser] = useState(false);
@@ -33,7 +41,6 @@ const PublicUserProfile: React.FC = () => {
         if (!userId) return;
 
         const data = await getProfileById(userId);
-        console.log("data", data)
         setProfile(data);
 
         // check if current user follows this profile
@@ -49,12 +56,48 @@ const PublicUserProfile: React.FC = () => {
   }, [userId]);
 
   useEffect(() => {
-    if (activeTab === "Posts" && userId) {
+    if (activeTab === "Followers" && authorId) {
+      const fetchFollowers = async () => {
+        setFollowersLoading(true);
+        try {
+          const { followers } = await getFollowers(authorId);
+          setFollowers(followers);
+        } catch (err) {
+          console.error("Failed to fetch followers:", err);
+        } finally {
+          setFollowersLoading(false);
+        }
+      };
+
+      fetchFollowers();
+    }
+  }, [activeTab, authorId]);
+
+  useEffect(() => {
+    if (activeTab === "Following" && authorId) {
+      const fetchFollowing = async () => {
+        setFollowingLoading(true);
+        try {
+          const { following } = await getFollowing(authorId);
+          setFollowing(following);
+        } catch (err) {
+          console.error("Failed to fetch following:", err);
+        } finally {
+          setFollowingLoading(false);
+        }
+      };
+
+      fetchFollowing();
+    }
+  }, [activeTab, authorId]);
+
+  useEffect(() => {
+    if (activeTab === "Posts" && authorId) {
       const fetchPosts = async () => {
         setBlogsLoading(true);
         try {
-        //   const data = await getBlogsByUser(userId);
-        //   setBlogs(data);
+          const data = await getBlogsByUserId(authorId);
+          setBlogs(data);
         } catch (err) {
           console.error("Failed to fetch posts:", err);
         } finally {
@@ -63,7 +106,7 @@ const PublicUserProfile: React.FC = () => {
       };
       fetchPosts();
     }
-  }, [activeTab, userId]);
+  }, [activeTab, authorId]);
 
   const handleFollow = async () => {
     if (!userId) return;
@@ -103,9 +146,7 @@ const PublicUserProfile: React.FC = () => {
 
   if (!profile) {
     return (
-      <div className="text-center py-10 text-red-500">
-        User not found.
-      </div>
+      <div className="text-center py-10 text-red-500">User not found.</div>
     );
   }
 
@@ -218,8 +259,10 @@ const PublicUserProfile: React.FC = () => {
         {/* -------------------- POSTS -------------------- */}
         {activeTab === "Posts" &&
           (blogsLoading ? (
-            <div className="py-12 text-center opacity-70">
-              Loading posts...
+            <div className="space-y-10">
+              <ArticleCardSkeleton isDarkMode={isDarkMode} />
+              <ArticleCardSkeleton isDarkMode={isDarkMode} />
+              <ArticleCardSkeleton isDarkMode={isDarkMode} />
             </div>
           ) : blogs.length > 0 ? (
             <div className="space-y-8">
@@ -249,15 +292,65 @@ const PublicUserProfile: React.FC = () => {
 
         {/* -------------------- FOLLOWERS -------------------- */}
         {activeTab === "Followers" && (
-          <div className="py-6 text-center opacity-70">
-            Followers list goes here.
+          <div className="space-y-4">
+            {followersLoading ? (
+              <ListSkeleton isDarkMode={isDarkMode} />
+            ) : followers.length === 0 ? (
+              <div className="py-10 text-center opacity-70">
+                No followers yet.
+              </div>
+            ) : (
+              followers.map((item) => (
+                <div
+                  key={item._id}
+                  className={`flex items-center space-x-4 p-4 rounded-lg border ${
+                    isDarkMode
+                      ? "border-gray-700 bg-gray-800"
+                      : "border-gray-200 bg-white"
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                    <User size={20} />
+                  </div>
+                  <div>
+                    <p className="font-medium">{item.follower.name}</p>
+                    <p className="text-sm opacity-70">{item.follower.email}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
 
         {/* -------------------- FOLLOWING -------------------- */}
         {activeTab === "Following" && (
-          <div className="py-6 text-center opacity-70">
-            Following list goes here.
+          <div className="space-y-4">
+            {followingLoading ? (
+              <ListSkeleton isDarkMode={isDarkMode} />
+            ) : following.length === 0 ? (
+              <div className="py-10 text-center opacity-70">
+                Not following anyone yet.
+              </div>
+            ) : (
+              following.map((item) => (
+                <div
+                  key={item._id}
+                  className={`flex items-center space-x-4 p-4 rounded-lg border ${
+                    isDarkMode
+                      ? "border-gray-700 bg-gray-800"
+                      : "border-gray-200 bg-white"
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                    <User size={20} />
+                  </div>
+                  <div>
+                    <p className="font-medium">{item.following.name}</p>
+                    <p className="text-sm opacity-70">{item.following.email}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>
