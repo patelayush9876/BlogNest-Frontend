@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Mail, Edit2, User } from "lucide-react";
+import { Edit2, User } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { getMyProfile } from "../../services/profile.service";
 import { getMyBlogs, getMyDrafts } from "../../services/blog.service";
@@ -13,6 +13,7 @@ import { ArticleCardSkeleton } from "../../components/loaders/ArticleSkeleton";
 import { getFollowers, getFollowing } from "../../services/follow.service";
 import { useAuth } from "../../contexts/AuthContext";
 import { ListSkeleton } from "../../components/loaders/ListSkeleton";
+import { useLocation } from "react-router-dom";
 
 const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("My Posts");
@@ -32,6 +33,15 @@ const UserProfile: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const userId = user?._id;
+  const location = useLocation();
+
+  // If navigation passed a tab, update the state
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
+
   // Fetch profile
   useEffect(() => {
     const fetchProfile = async () => {
@@ -218,15 +228,11 @@ const UserProfile: React.FC = () => {
                 Posts
               </span>
               <span>
-                <strong className="font-bold">
-                  {profile?.followersCount}
-                </strong>{" "}
+                <strong className="font-bold">{profile?.followersCount}</strong>{" "}
                 Followers
               </span>
               <span>
-                <strong className="font-bold">
-                  {profile?.followingCount}
-                </strong>{" "}
+                <strong className="font-bold">{profile?.followingCount}</strong>{" "}
                 Following
               </span>
             </div>
@@ -245,7 +251,7 @@ const UserProfile: React.FC = () => {
                 <Edit2 className="w-4 h-4 mr-1" />
                 Edit Profile
               </button>
-              <button
+              {/* <button
                 type="button"
                 className={`flex items-center px-4 py-2 text-sm font-semibold border rounded-full transition duration-150 ${
                   isDarkMode
@@ -255,7 +261,7 @@ const UserProfile: React.FC = () => {
               >
                 <Mail className="w-4 h-4 mr-1" />
                 Follow
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
