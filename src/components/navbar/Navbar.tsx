@@ -57,7 +57,7 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="flex items-center space-x-4 sm:space-x-6">
         <img
         
-          src={isDarkMode ? "logo-dark.png":"logo-light.png"}
+          src={isDarkMode ? "/Images/logo-dark.png":"/Images/logo-light.png"}
           alt="BlogNest"
           className="w-34 cursor-pointer"
           onClick={() => navigate("/user")}
@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({
             Home
           </p>
           <p
-            onClick={() => navigate("")}
+            onClick={() => navigate("/user/about")}
             className={`cursor-pointer ${
               isDarkMode
                 ? "text-gray-200 hover:text-indigo-400"

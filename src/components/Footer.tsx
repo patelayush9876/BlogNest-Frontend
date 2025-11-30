@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
           <div className="col-span-2">
             <div className="flex items-center space-x-2 mb-3">
               <img
-                src={isDarkMode ? "logo-dark.png" : "logo-light.png"}
+                src={isDarkMode ? "/Images/logo-dark.png" : "/Images/logo-light.png"}
                 alt="BlogNest"
                 className="w-34 cursor-pointer"
               />

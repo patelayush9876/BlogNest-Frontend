@@ -15,6 +15,7 @@ import ContentLayout from "./layouts/ContentLayout";
 import PostEditor from "./pages/user/PostEditor";
 import SignupPage from "./pages/Auth/SignupPage";
 import PublicUserProfile from "./pages/user/PublicUserProfile";
+import AboutPage from "./pages/user/About";
 
 const lazyLoad = (Component: ComponentType) => (
   <Suspense fallback={<LoadingSpinner />}>
@@ -45,8 +46,9 @@ function AppRoutes() {
         { path: "blogs/new", element: lazyLoad(PostEditor) }, // Create new blog
         { path: "blogs/:id/edit", element: lazyLoad(PostEditor) }, // Edit published blog
         { path: "drafts/:id/edit", element: lazyLoad(PostEditor) }, // Edit draft
+        { path: "about", element: lazyLoad(AboutPage) },
 
-        // You can later add more routes like:
+
         // { path: "profile", element: lazyLoad(UserProfilePage) },
       ],
     },
