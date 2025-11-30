@@ -51,4 +51,5 @@ export interface BlogWithProfile {
   commentCount?: number;
   readTime?: string;
   likedByCurrentUser?: boolean;
+  isFollowed?: boolean;
 }

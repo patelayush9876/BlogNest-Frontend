@@ -4,13 +4,16 @@ import Sidebar from "../components/Sidebar";
 import clsx from "clsx";
 import * as BlogService from "../services/blog.service";
 import { useTheme } from "../contexts/ThemeContext";
+import { useAuth } from "../contexts/AuthContext";
+import SidebarSkeleton from "../components/loaders/SidebarSkeleton";
+import { ArticleCardSkeleton } from "../components/loaders/ArticleSkeleton";
 
 const ContentLayout: React.FC = () => {
   const { isDarkMode } = useTheme();
   const [activeTab, setActiveTab] = useState("forYou");
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const { user } = useAuth();
   const tabs = [
     { id: "forYou", label: "For You" },
     { id: "following", label: "Following" },
@@ -91,7 +94,11 @@ const ContentLayout: React.FC = () => {
           {/* Blog Feed */}
           <div className="mt-6 space-y-8">
             {loading ? (
-              <p className="text-center text-gray-500">Loading blogs...</p>
+              <>
+                {[...Array(4)].map((_, i) => (
+                  <ArticleCardSkeleton key={i} isDarkMode={isDarkMode} />
+                ))}
+              </>
             ) : blogs.length > 0 ? (
               blogs.map((blog) => (
                 <ArticleCard
@@ -109,9 +116,7 @@ const ContentLayout: React.FC = () => {
                   author={blog.author}
                   profile={blog.profile}
                   likedByCurrentUser={blog.likedByCurrentUser}
-                
-                  // ONLY THESE 3 LINES WERE ADDED
-                  isFollowed={blog.isFollowed}
+                  isFollowed={blog.isFollowed || blog.author._id === user._id}
                   authorId={blog.author?._id}
                   saved={blog.isSaved || false}
                 />
@@ -124,7 +129,7 @@ const ContentLayout: React.FC = () => {
 
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <Sidebar />
+          {loading ? <SidebarSkeleton /> : <Sidebar />}
         </div>
       </div>
     </div>

@@ -14,6 +14,7 @@ import { getFollowers, getFollowing } from "../../services/follow.service";
 import { useAuth } from "../../contexts/AuthContext";
 import { ListSkeleton } from "../../components/loaders/ListSkeleton";
 import { useLocation } from "react-router-dom";
+import { UserProfileSkeleton } from "../../components/loaders/UserProfileSkeleton";
 
 const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("My Posts");
@@ -146,16 +147,9 @@ const UserProfile: React.FC = () => {
       fetchFollowing();
     }
   }, [activeTab, userId]);
+
   if (loading) {
-    return (
-      <div
-        className={`text-center py-10 ${
-          isDarkMode ? "text-gray-300" : "text-gray-600"
-        }`}
-      >
-        Loading profile...
-      </div>
-    );
+    return <UserProfileSkeleton isDarkMode={isDarkMode} />;
   }
 
   return (
@@ -328,6 +322,7 @@ const UserProfile: React.FC = () => {
                   author={blog.author}
                   profile={blog.profile}
                   likedByCurrentUser={blog.likedByCurrentUser}
+                  isFollowed={true}
                 />
               ))}
             </div>
@@ -380,12 +375,10 @@ const UserProfile: React.FC = () => {
 
         {activeTab === "Saved Blogs" &&
           (savedBlogsLoading ? (
-            <div
-              className={`text-center py-10 ${
-                isDarkMode ? "text-gray-400" : "text-gray-600"
-              }`}
-            >
-              Loading saved blogs...
+            <div className="space-y-10">
+              <ArticleCardSkeleton isDarkMode={isDarkMode} />
+              <ArticleCardSkeleton isDarkMode={isDarkMode} />
+              <ArticleCardSkeleton isDarkMode={isDarkMode} />
             </div>
           ) : savedBlogs.length > 0 ? (
             <div className="space-y-8">
@@ -404,6 +397,7 @@ const UserProfile: React.FC = () => {
                   profile={blog.profile}
                   likedByCurrentUser={blog.likedByCurrentUser}
                   saved={true}
+                  isFollowed={blog.isFollowed || blog.author._id === user._id}
                 />
               ))}
             </div>

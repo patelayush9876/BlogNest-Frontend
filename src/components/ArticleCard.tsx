@@ -24,8 +24,8 @@ interface ArticleCardProps {
   profile?: any;
   likedByCurrentUser?: boolean;
   saved?: boolean;
-  isFollowed?: boolean; // NEW
-  authorId?: string; // NEW
+  isFollowed?: boolean;
+  authorId?: string;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({

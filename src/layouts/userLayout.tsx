@@ -6,7 +6,6 @@ import type { IUserProfile } from "../interfaces/userProfileInterface";
 import { getMyProfile } from "../services/profile.service";
 import { useAuth } from "../contexts/AuthContext";
 
-
 interface UserLayoutProps {
   toggleTheme?: () => void; // optional for now
 }
@@ -31,14 +30,21 @@ const UserLayout: React.FC<UserLayoutProps> = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // You can replace this with a spinner
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
-
 
   return (
     <div className="flex flex-col min-h-screen w-screen">
       {/* Navbar */}
-      <Navbar userProfileImage={profile?.profilePic || ""} userName={profile?.user?.name as any} onLogout={logoutUser} />
+      <Navbar
+        userProfileImage={profile?.profilePic || ""}
+        userName={profile?.user?.name as any}
+        onLogout={logoutUser}
+      />
 
       {/* Main content */}
       <main className="flex-1 w-full pt-16">
