@@ -4,12 +4,13 @@ export interface IUserProfile {
     role:string;
     email:string;
   };
+  username: string;
   bio?: string;
   profilePic?: string;
   postsCount: number;
   likesCount: number;
-  followers: string[];    // array of user IDs
-  following: string[];    // array of user IDs
+  followersCount: number;  
+  followingCount: number;   
   createdAt: string;      // ISO string
   updatedAt: string;      // ISO string
 }

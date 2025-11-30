@@ -20,7 +20,7 @@ export const updateMyProfile = async (
 ): Promise<IUserProfile> => {
   try {
     const response = await api.put<{ success: boolean; data: IUserProfile }>(
-      "/update",
+      "/profile/update",
       profileData,
       {
         headers: {
@@ -33,4 +33,9 @@ export const updateMyProfile = async (
     console.error("Updating profile failed:", err);
     throw err;
   }
+};
+
+export const getProfileById = async (userId: string) => {
+  const response = await api.get(`/profile/${userId}`);
+  return response.data.data;
 };

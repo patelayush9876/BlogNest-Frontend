@@ -2,15 +2,18 @@ import React, { useState, useEffect } from "react";
 import ArticleCard from "../components/ArticleCard";
 import Sidebar from "../components/Sidebar";
 import clsx from "clsx";
-import * as BlogService from "../services/blogService";
+import * as BlogService from "../services/blog.service";
 import { useTheme } from "../contexts/ThemeContext";
+import { useAuth } from "../contexts/AuthContext";
+import SidebarSkeleton from "../components/loaders/SidebarSkeleton";
+import { ArticleCardSkeleton } from "../components/loaders/ArticleSkeleton";
 
 const ContentLayout: React.FC = () => {
   const { isDarkMode } = useTheme();
   const [activeTab, setActiveTab] = useState("forYou");
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const { user } = useAuth();
   const tabs = [
     { id: "forYou", label: "For You" },
     { id: "following", label: "Following" },
@@ -24,41 +27,40 @@ const ContentLayout: React.FC = () => {
   };
 
   useEffect(() => {
-  const fetchBlogs = async () => {
-    try {
-      setLoading(true);
-      const blogs = await BlogService.getAllBlogs(); // blogs is already Blog[]
-      const blogsData = blogs.map((blog: any) => {
-        let parsedTags: string[] = [];
-        try {
-          if (Array.isArray(blog.tags)) {
-            parsedTags =
-              blog.tags.length === 1 && blog.tags[0].startsWith("[")
-                ? JSON.parse(blog.tags[0])
-                : blog.tags;
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+        const blogs = await BlogService.getAllBlogs();
+        const blogsData = blogs.map((blog: any) => {
+          let parsedTags: string[] = [];
+          try {
+            if (Array.isArray(blog.tags)) {
+              parsedTags =
+                blog.tags.length === 1 && blog.tags[0].startsWith("[")
+                  ? JSON.parse(blog.tags[0])
+                  : blog.tags;
+            }
+          } catch (err) {
+            console.log("Error fetching blogs", err);
+            parsedTags = [];
           }
-        } catch (err) {
-          console.log("Error fetching blogs",err)
-          parsedTags = [];
-        }
 
-        return {
-          ...blog,
-          tags: parsedTags,
-          likes: blog.likeCount || 0,
-          comments: blog.commentCount || 0,
-        };
-      });
-      setBlogs(blogsData);
-    } catch (err) {
-      console.error("Error fetching blogs:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchBlogs();
-}, []);
-
+          return {
+            ...blog,
+            tags: parsedTags,
+            likes: blog.likeCount || 0,
+            comments: blog.commentCount || 0,
+          };
+        });
+        setBlogs(blogsData);
+      } catch (err) {
+        console.error("Error fetching blogs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlogs();
+  }, []);
 
   return (
     <div
@@ -92,7 +94,11 @@ const ContentLayout: React.FC = () => {
           {/* Blog Feed */}
           <div className="mt-6 space-y-8">
             {loading ? (
-              <p className="text-center text-gray-500">Loading blogs...</p>
+              <>
+                {[...Array(4)].map((_, i) => (
+                  <ArticleCardSkeleton key={i} isDarkMode={isDarkMode} />
+                ))}
+              </>
             ) : blogs.length > 0 ? (
               blogs.map((blog) => (
                 <ArticleCard
@@ -103,13 +109,16 @@ const ContentLayout: React.FC = () => {
                   date={blog.createdAt}
                   readTime={blog.readTime || "5 min read"}
                   title={blog.title}
-                  content={(blog.content)}
+                  content={blog.content}
                   tags={blog.tags || []}
                   likes={blog.likes}
                   comments={blog.comments}
                   author={blog.author}
                   profile={blog.profile}
                   likedByCurrentUser={blog.likedByCurrentUser}
+                  isFollowed={blog.isFollowed || blog.author._id === user._id}
+                  authorId={blog.author?._id}
+                  saved={blog.isSaved || false}
                 />
               ))
             ) : (
@@ -120,7 +129,7 @@ const ContentLayout: React.FC = () => {
 
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <Sidebar />
+          {loading ? <SidebarSkeleton /> : <Sidebar />}
         </div>
       </div>
     </div>

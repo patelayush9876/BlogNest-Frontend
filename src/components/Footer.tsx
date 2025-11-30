@@ -57,7 +57,11 @@ const Footer: React.FC = () => {
           {/* Logo & Description */}
           <div className="col-span-2">
             <div className="flex items-center space-x-2 mb-3">
-              <img className="h-12" src="/Images/BlogNest.png" alt="BlogNest Logo" />
+              <img
+                src={isDarkMode ? "/Images/logo-dark.png" : "/Images/logo-light.png"}
+                alt="BlogNest"
+                className="w-34 cursor-pointer"
+              />
             </div>
             <p
               className={`max-w-xs text-base ${
@@ -125,7 +129,9 @@ const Footer: React.FC = () => {
                 href="#"
                 aria-label="Twitter"
                 className={`transition transform hover:scale-110 duration-200 ${
-                  isDarkMode ? "text-gray-400 hover:text-indigo-400" : "text-gray-500 hover:text-indigo-600"
+                  isDarkMode
+                    ? "text-gray-400 hover:text-indigo-400"
+                    : "text-gray-500 hover:text-indigo-600"
                 }`}
               >
                 <Twitter className="w-5 h-5" />
@@ -134,7 +140,9 @@ const Footer: React.FC = () => {
                 href="#"
                 aria-label="LinkedIn"
                 className={`transition transform hover:scale-110 duration-200 ${
-                  isDarkMode ? "text-gray-400 hover:text-indigo-400" : "text-gray-500 hover:text-indigo-600"
+                  isDarkMode
+                    ? "text-gray-400 hover:text-indigo-400"
+                    : "text-gray-500 hover:text-indigo-600"
                 }`}
               >
                 <Linkedin className="w-5 h-5" />
@@ -143,7 +151,9 @@ const Footer: React.FC = () => {
                 href="#"
                 aria-label="GitHub"
                 className={`transition transform hover:scale-110 duration-200 ${
-                  isDarkMode ? "text-gray-400 hover:text-indigo-400" : "text-gray-500 hover:text-indigo-600"
+                  isDarkMode
+                    ? "text-gray-400 hover:text-indigo-400"
+                    : "text-gray-500 hover:text-indigo-600"
                 }`}
               >
                 <Github className="w-5 h-5" />
@@ -152,7 +162,9 @@ const Footer: React.FC = () => {
                 href="#"
                 aria-label="Email"
                 className={`transition transform hover:scale-110 duration-200 ${
-                  isDarkMode ? "text-gray-400 hover:text-indigo-400" : "text-gray-500 hover:text-indigo-600"
+                  isDarkMode
+                    ? "text-gray-400 hover:text-indigo-400"
+                    : "text-gray-500 hover:text-indigo-600"
                 }`}
               >
                 <Mail className="w-5 h-5" />

@@ -12,36 +12,69 @@ import {
   validEmail,
 } from "../../utils/validators";
 import API_CONFIG from "../../config/apiConfig";
+import type { SignupInput } from "../../interfaces/userInterface";
 
-const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+const SignupPage: React.FC = () => {
+  const [formData, setFormData] = useState<SignupInput>({
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    captchaToken: "",
+  });
+
   const [errors, setErrors] = useState<{
+    name?: string[];
+    username?: string[];
     email?: string[];
     password?: string[];
+    confirmPassword?: string[];
     captcha?: string;
   }>({});
+
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-
-  const RECAPTCHA_SITE_KEY = FRONTEND_CONFIG.RECAPTCHA_SITE_KEY;
-  const { loginUser } = useAuth();
   const navigate = useNavigate();
+  const { registerUser } = useAuth();
+  const RECAPTCHA_SITE_KEY = FRONTEND_CONFIG.RECAPTCHA_SITE_KEY;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setErrors({});
 
-    // Validate fields
-    const emailErrors = validateField(email, [required("Email"), validEmail]);
-    const passwordErrors = validateField(password, [required("Password")]);
-    const captchaErrors = validateField(captchaToken || "", [validCaptcha]);
+    const nameErrors = validateField(formData.name, [required("Name")]);
+    const emailErrors = validateField(formData.email, [
+      required("Email"),
+      validEmail,
+    ]);
+    const passwordErrors = validateField(formData.password, [
+      required("Password"),
+    ]);
+    const confirmPasswordErrors =
+      formData.confirmPassword !== formData.password
+        ? ["Passwords do not match"]
+        : [];
+    const captchaErrors = validateField(formData.captchaToken || "", [
+      validCaptcha,
+    ]);
 
-    if (emailErrors.length || passwordErrors.length || !captchaToken) {
+    if (
+      nameErrors.length ||
+      emailErrors.length ||
+      passwordErrors.length ||
+      confirmPasswordErrors.length ||
+      captchaErrors.length
+    ) {
       setErrors({
+        name: nameErrors,
         email: emailErrors,
         password: passwordErrors,
+        confirmPassword: confirmPasswordErrors,
         captcha: captchaErrors.length ? captchaErrors[0] : undefined,
       });
       return;
@@ -49,13 +82,17 @@ const LoginPage: React.FC = () => {
 
     setLoading(true);
     try {
-      await loginUser(email, password, captchaToken);
+      await registerUser({
+        name: formData.name,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        captchaToken: formData.captchaToken,
+      });
 
-      // Get stored user from localStorage
       const storedUser = localStorage.getItem("user");
       const user = storedUser ? JSON.parse(storedUser) : null;
 
-      // Redirect based on role
       switch (user?.role) {
         case "admin":
           navigate("/admin/dashboard");
@@ -66,8 +103,8 @@ const LoginPage: React.FC = () => {
         default:
           navigate("/");
       }
-    } catch (err) {
-      console.error("Login failed:", err);
+    } catch (error) {
+      console.error("Signup failed:", error);
     } finally {
       setLoading(false);
     }
@@ -75,7 +112,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center h-screen w-screen bg-white">
-      <div className="w-full max-w-md bg-white p-10 border ">
+      <div className="w-full max-w-md bg-white p-10 border rounded-xl shadow">
         {/* Logo */}
         <div className="flex items-center justify-center mb-6">
           <img src="/Images/BlogNest.png" alt="Logo" className="h-12" />
@@ -83,14 +120,67 @@ const LoginPage: React.FC = () => {
 
         {/* Heading */}
         <h2 className="text-3xl font-bold text-gray-800 text-center mb-2">
-          Welcome Back
+          Create an Account
         </h2>
         <p className="text-gray-600 text-center mb-8">
-          Please enter your credentials to continue
+          Join BlogNest and start sharing your stories
         </p>
 
         {/* Form */}
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          {/* Name Field */}
+          <div>
+            <label
+              htmlFor="name"
+              className="block font-semibold text-gray-700 mb-1"
+            >
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Enter your name"
+              value={formData.name}
+              onChange={handleChange}
+              className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
+                errors.name
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-500"
+              }`}
+            />
+            {errors.name && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.name.join(", ")}
+              </p>
+            )}
+          </div>
+
+          {/* username Field */}
+          <div>
+            <label
+              htmlFor="username"
+              className="block font-semibold text-gray-700 mb-1"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Enter your prefered username"
+              value={formData.username}
+              onChange={handleChange}
+              className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
+                errors.username
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-500"
+              }`}
+            />
+            {errors.username && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.username.join(", ")}
+              </p>
+            )}
+          </div>
           {/* Email Field */}
           <div>
             <label
@@ -103,8 +193,8 @@ const LoginPage: React.FC = () => {
               type="email"
               id="email"
               placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
                 errors.email
                   ? "border-red-500 focus:ring-red-500"
@@ -130,9 +220,9 @@ const LoginPage: React.FC = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a strong password"
+                value={formData.password}
+                onChange={handleChange}
                 className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 pr-10 ${
                   errors.password
                     ? "border-red-500 focus:ring-red-500"
@@ -153,38 +243,58 @@ const LoginPage: React.FC = () => {
             )}
           </div>
 
+          {/* Confirm Password */}
+          <div>
+            <label
+              htmlFor="confirmPassword"
+              className="block font-semibold text-gray-700 mb-1"
+            >
+              Confirm Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              id="confirmPassword"
+              placeholder="Re-enter your password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
+                errors.confirmPassword
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-500"
+              }`}
+            />
+            {errors.confirmPassword && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.confirmPassword.join(", ")}
+              </p>
+            )}
+          </div>
+
           {/* reCAPTCHA */}
           <div className="flex justify-center">
             <ReCAPTCHA
               sitekey={RECAPTCHA_SITE_KEY || ""}
-              onChange={(token: string | null) => setCaptchaToken(token)}
-              onExpired={() => setCaptchaToken(null)}
+              onChange={(token: string | null) =>
+                setFormData((prev) => ({ ...prev, captchaToken: token || "" }))
+              }
+              onExpired={() =>
+                setFormData((prev) => ({ ...prev, captchaToken: "" }))
+              }
             />
           </div>
           {errors.captcha && (
             <p className="text-sm text-red-500 text-center">{errors.captcha}</p>
           )}
 
-          {/* Forgot Password */}
-          <div className="text-right">
-            <button
-              type="button"
-              onClick={() => navigate("/forgot-password")}
-              className="text-sm text-green-600 hover:underline"
-            >
-              Forgot Password?
-            </button>
-          </div>
-
           {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 btn-primary  ${
+            className={`w-full py-3 btn-primary ${
               loading ? "btn-loading" : ""
-            } `}
+            }`}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
 
           {/* Divider */}
@@ -212,15 +322,15 @@ const LoginPage: React.FC = () => {
             </span>
           </button>
 
-          {/* Signup Link */}
+          {/* Login Link */}
           <p className="text-center text-gray-600 text-sm mt-4">
-            Don’t have an account?{" "}
+            Already have an account?{" "}
             <button
               type="button"
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/login")}
               className="text-green-600 font-semibold hover:underline"
             >
-              Sign up
+              Log in
             </button>
           </p>
         </form>
@@ -229,4 +339,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;

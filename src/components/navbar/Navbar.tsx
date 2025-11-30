@@ -56,9 +56,10 @@ const Navbar: React.FC<NavbarProps> = ({
       {/* Left Section */}
       <div className="flex items-center space-x-4 sm:space-x-6">
         <img
-          src="/Images/BlogNest.png"
+        
+          src={isDarkMode ? "/Images/logo-dark.png":"/Images/logo-light.png"}
           alt="BlogNest"
-          className="h-9 sm:h-10 cursor-pointer"
+          className="w-34 cursor-pointer"
           onClick={() => navigate("/user")}
         />
 
@@ -75,14 +76,14 @@ const Navbar: React.FC<NavbarProps> = ({
             Home
           </p>
           <p
-            onClick={() => navigate("/user/explore")}
+            onClick={() => navigate("/user/about")}
             className={`cursor-pointer ${
               isDarkMode
                 ? "text-gray-200 hover:text-indigo-400"
                 : "text-gray-800 hover:text-indigo-700"
             }`}
           >
-            Explore
+            About
           </p>
         </div>
       </div>
@@ -111,7 +112,7 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="flex items-center space-x-3 sm:space-x-4">
         {/* Create Blog */}
         <button
-          onClick={() => navigate("/user/create")}
+          onClick={() => navigate("/user/blogs/new")}
           className={`hidden sm:flex flex-row items-center px-3 py-2 rounded-lg border transition ${
             isDarkMode
               ? "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
@@ -145,6 +146,9 @@ const Navbar: React.FC<NavbarProps> = ({
           type="button"
           title="Bookmarks"
           aria-label="Bookmarks"
+          onClick={() =>
+            navigate("/user/profile", { state: { activeTab: "Saved Blogs" } })
+          }
           className={`hidden sm:block p-2 rounded-full transition ${
             isDarkMode
               ? "text-gray-200 hover:bg-gray-700"
@@ -222,7 +226,7 @@ const Navbar: React.FC<NavbarProps> = ({
               >
                 Profile
               </button>
-              <button 
+              <button
                 onClick={() => navigate("/user/settings")}
                 className={`w-full text-left px-4 py-2 text-sm ${
                   isDarkMode

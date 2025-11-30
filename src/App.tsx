@@ -1,4 +1,4 @@
-import  { Suspense, type ComponentType } from "react";
+import { Suspense, type ComponentType } from "react";
 import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
 
 import AuthLayout from "./layouts/AuthLayout/AuthLayout";
@@ -13,7 +13,9 @@ import SettingsPage from "./pages/user/settings/SettingsPage";
 import UserProfile from "./pages/user/UserProfile";
 import ContentLayout from "./layouts/ContentLayout";
 import PostEditor from "./pages/user/PostEditor";
-
+import SignupPage from "./pages/Auth/SignupPage";
+import PublicUserProfile from "./pages/user/PublicUserProfile";
+import AboutPage from "./pages/user/About";
 
 const lazyLoad = (Component: ComponentType) => (
   <Suspense fallback={<LoadingSpinner />}>
@@ -28,22 +30,27 @@ function AppRoutes() {
       element: <AuthLayout />,
       children: [
         { path: "", element: lazyLoad(LoginPage) },
+        { path: "signup", element: lazyLoad(SignupPage) },
         { path: "forgot-password", element: lazyLoad(ForgotPasswordPage) },
         { path: "create-password", element: lazyLoad(CreateNewPasswordPage) },
       ],
     },
     {
       path: "/user",
-      element: <UserLayout/>,
+      element: <UserLayout />,
       children: [
         { path: "", element: lazyLoad(ContentLayout) },
         { path: "settings", element: lazyLoad(SettingsPage) },
         { path: "profile", element: lazyLoad(UserProfile) },
-        { path: "create", element: lazyLoad(PostEditor) },
-        // You can later add more routes like:
+        { path: "userProfile/:authorId", element: lazyLoad(PublicUserProfile) },
+        { path: "blogs/new", element: lazyLoad(PostEditor) }, // Create new blog
+        { path: "blogs/:id/edit", element: lazyLoad(PostEditor) }, // Edit published blog
+        { path: "drafts/:id/edit", element: lazyLoad(PostEditor) }, // Edit draft
+        { path: "about", element: lazyLoad(AboutPage) },
+
+
         // { path: "profile", element: lazyLoad(UserProfilePage) },
       ],
-    
     },
     { path: "*", element: <Navigate to="/" replace /> },
   ]);
