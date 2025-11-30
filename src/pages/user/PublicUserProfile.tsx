@@ -15,6 +15,7 @@ import { getProfileById } from "../../services/profile.service";
 import { getBlogsByUserId } from "../../services/blog.service";
 import { ListSkeleton } from "../../components/loaders/ListSkeleton";
 import { ArticleCardSkeleton } from "../../components/loaders/ArticleSkeleton";
+import { UserProfileSkeleton } from "../../components/loaders/UserProfileSkeleton";
 
 const PublicUserProfile: React.FC = () => {
   const { authorId } = useParams();
@@ -132,17 +133,9 @@ const PublicUserProfile: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div
-        className={`text-center py-10 ${
-          isDarkMode ? "text-gray-300" : "text-gray-600"
-        }`}
-      >
-        Loading profile...
-      </div>
-    );
-  }
+ if (loading) {
+     return <UserProfileSkeleton isDarkMode={isDarkMode} />;
+   }
 
   if (!profile) {
     return (
