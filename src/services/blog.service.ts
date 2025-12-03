@@ -1,6 +1,14 @@
 import type { BlogWithProfile as Blog} from "../interfaces/blogInterface";
 import api from "./api";
 
+export type PaginatedBlogs = {
+  blogs: Blog[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
 // Create Blog
 export const createBlog = async (data: FormData): Promise<Blog> => {
   const response = await api.post("/blogs", data, {
@@ -10,9 +18,45 @@ export const createBlog = async (data: FormData): Promise<Blog> => {
 };
 
 // Get All Blogs
-export const getAllBlogs = async (): Promise<Blog[]> => {
-  const response = await api.get("/blogs");
-  return response.data.data.blogs;
+export const getAllBlogs = async (
+  page = 1,
+  limit = 10,
+  search = ""
+): Promise<PaginatedBlogs> => {
+  const response = await api.get("/blogs", {
+    params: { page, limit, search },
+  });
+  const { blogs, total, page: p, limit: l, totalPages } = response.data.data;
+  return { blogs, total, page: p, limit: l, totalPages };
+};
+
+export const getFollowingBlogs = async (
+  page = 1,
+  limit = 10,
+  search = ""
+): Promise<PaginatedBlogs> => {
+  const response = await api.get("/blogs/following", {
+    params: { page, limit, search },
+  });
+  const { blogs, total, page: p, limit: l, totalPages } = response.data.data;
+  return { blogs, total, page: p, limit: l, totalPages };
+};
+
+export const getTrendingBlogs = async (
+  page = 1,
+  limit = 10,
+  search = "",
+  decayHours?: number,
+  minHoursWindow?: number
+): Promise<PaginatedBlogs> => {
+  const params: Record<string, string | number> = { page, limit };
+  if (search) params.search = search;
+  if (typeof decayHours === "number") params.decayHours = decayHours;
+  if (typeof minHoursWindow === "number") params.minHoursWindow = minHoursWindow;
+
+  const response = await api.get("/blogs/trending", { params });
+  const { blogs, total, page: p, limit: l, totalPages } = response.data.data;
+  return { blogs, total, page: p, limit: l, totalPages };
 };
 
 // Get my Blogs

@@ -1,24 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ArticleCard from "../components/ArticleCard";
 import Sidebar from "../components/Sidebar";
 import clsx from "clsx";
 import * as BlogService from "../services/blog.service";
+import { type PaginatedBlogs } from "../services/blog.service";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 import SidebarSkeleton from "../components/loaders/SidebarSkeleton";
 import { ArticleCardSkeleton } from "../components/loaders/ArticleSkeleton";
+import Pagination from "../components/Pagination";
 
 const ContentLayout: React.FC = () => {
   const { isDarkMode } = useTheme();
-  const [activeTab, setActiveTab] = useState("forYou");
+  const { user } = useAuth();
+
+  const [activeTab, setActiveTab] = useState<
+    "forYou" | "following" | "trending"
+  >("forYou");
+
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+
+  // pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [perPage, setPerPage] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
+
   const tabs = [
     { id: "forYou", label: "For You" },
     { id: "following", label: "Following" },
     { id: "trending", label: "Trending" },
-  ];
+  ] as const;
 
   const indicatorPosition = {
     forYou: "translate-x-[0%]",
@@ -26,12 +39,24 @@ const ContentLayout: React.FC = () => {
     trending: "translate-x-[200%]",
   };
 
+  // central fetcher: chooses service based on activeTab
   useEffect(() => {
-    const fetchBlogs = async () => {
+    const fetch = async () => {
       try {
         setLoading(true);
-        const blogs = await BlogService.getAllBlogs();
-        const blogsData = blogs.map((blog: any) => {
+
+        let res: PaginatedBlogs;
+        if (activeTab === "forYou") {
+          res = await BlogService.getAllBlogs(currentPage, perPage, "");
+        } else if (activeTab === "following") {
+          res = await BlogService.getFollowingBlogs(currentPage, perPage, "");
+        } else {
+          // trending
+          res = await BlogService.getTrendingBlogs(currentPage, perPage, "");
+        }
+
+        // normalize tags, likes, comments same as before
+        const blogsData = res.blogs.map((blog: any) => {
           let parsedTags: string[] = [];
           try {
             if (Array.isArray(blog.tags)) {
@@ -41,7 +66,6 @@ const ContentLayout: React.FC = () => {
                   : blog.tags;
             }
           } catch (err) {
-            console.log("Error fetching blogs", err);
             parsedTags = [];
           }
 
@@ -52,15 +76,28 @@ const ContentLayout: React.FC = () => {
             comments: blog.commentCount || 0,
           };
         });
+
         setBlogs(blogsData);
+        setTotalItems(res.total || 0);
+        setTotalPages(res.totalPages || 1);
       } catch (err) {
         console.error("Error fetching blogs:", err);
+        setBlogs([]);
+        setTotalItems(0);
+        setTotalPages(1);
       } finally {
         setLoading(false);
       }
     };
-    fetchBlogs();
-  }, []);
+
+    fetch();
+  }, [activeTab, currentPage, perPage]);
+
+
+  const handleTabClick = (tabId: typeof activeTab) => {
+    setActiveTab(tabId);
+    setCurrentPage(1);
+  };
 
   return (
     <div
@@ -83,7 +120,7 @@ const ContentLayout: React.FC = () => {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabClick(tab.id as any)}
                 className={clsx("tab-button", { active: activeTab === tab.id })}
               >
                 {tab.label}
@@ -125,6 +162,19 @@ const ContentLayout: React.FC = () => {
               <p className="text-center text-gray-500">No blogs found.</p>
             )}
           </div>
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            perPage={perPage}
+            totalItems={totalItems}
+            onPageChange={(p) => setCurrentPage(p)}
+            onPerPageChange={(newPer) => {
+              setPerPage(newPer);
+              setCurrentPage(1); 
+            }}
+          />
         </div>
 
         {/* Sidebar */}
