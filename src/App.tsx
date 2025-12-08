@@ -16,6 +16,21 @@ import PostEditor from "./pages/user/PostEditor";
 import SignupPage from "./pages/Auth/SignupPage";
 import PublicUserProfile from "./pages/user/PublicUserProfile";
 import AboutPage from "./pages/user/About";
+import CommunityPage from "./pages/CommunityPage";
+import LegalPage from "./pages/LegalPage";
+import ResourcesPage from "./pages/ResourcesPage";
+import Terms from "./pages/Legal/Terms";
+import Privacy from "./pages/Legal/Privacy";
+import CookiePolicy from "./pages/Legal/Cookies";
+import ContentOwnership from "./pages/Legal/ContentOwnership";
+import WritingTips from "./pages/Resources/WritingTips";
+import PublishingGuide from "./pages/Resources/PublishingGuide";
+import Help from "./pages/Resources/Help";
+import FAQ from "./pages/Resources/FAQ";
+import WriterGuidelines from "./pages/Community/WriterGuidelines";
+import ReportIssue from "./pages/Community/ReportIssue";
+import CommunityStandards from "./pages/Community/CommunityStandards";
+import BecomeContributor from "./pages/Community/BecomeContributor";
 
 const lazyLoad = (Component: ComponentType) => (
   <Suspense fallback={<LoadingSpinner />}>
@@ -47,7 +62,21 @@ function AppRoutes() {
         { path: "blogs/:id/edit", element: lazyLoad(PostEditor) }, // Edit published blog
         { path: "drafts/:id/edit", element: lazyLoad(PostEditor) }, // Edit draft
         { path: "about", element: lazyLoad(AboutPage) },
-
+        { path: "community", element: lazyLoad(CommunityPage) },
+        { path: "legal", element: lazyLoad(LegalPage) },
+        { path: "resources", element: lazyLoad(ResourcesPage) },
+        { path: "becomeContributer", element: lazyLoad(BecomeContributor) },
+        { path: "communityStandards", element: lazyLoad(CommunityStandards) },
+        { path: "reportAnIssue", element: lazyLoad(ReportIssue) },
+        { path: "writerGuidelines", element: lazyLoad(WriterGuidelines) },
+        { path: "faq", element: lazyLoad(FAQ) },
+        { path: "help", element: lazyLoad(Help) },
+        { path: "publishingGuide", element: lazyLoad(PublishingGuide) },
+        { path: "writingTips", element: lazyLoad(WritingTips) },
+        { path: "contentOwnership", element: lazyLoad(ContentOwnership) },
+        { path: "cookies", element: lazyLoad(CookiePolicy) },
+        { path: "privacy", element: lazyLoad(Privacy) },
+        { path: "terms", element: lazyLoad(Terms) },
 
         // { path: "profile", element: lazyLoad(UserProfilePage) },
       ],

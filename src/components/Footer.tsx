@@ -2,10 +2,11 @@
 import React from "react";
 import { Twitter, Linkedin, Github, Mail, Sun, Moon } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
+import { useNavigate } from "react-router-dom";
 
 interface FooterLink {
   label: string;
-  href: string;
+  href: string; // will convert to navigate path
 }
 
 interface FooterColumn {
@@ -13,37 +14,39 @@ interface FooterColumn {
   links: FooterLink[];
 }
 
-// Mock Footer Data
 const footerColumns: FooterColumn[] = [
   {
-    title: "Product",
+    title: "Community",
     links: [
-      { label: "Features", href: "#" },
-      { label: "Pricing", href: "#" },
-      { label: "FAQ", href: "#" },
+      { label: "Become a Contributor", href: "/user/becomeContributer" },
+      { label: "Writer Guidelines", href: "/user/writerGuidelines" },
+      { label: "Community Standards", href: "/user/communityStandards" },
+      { label: "Report an Issue", href: "/user/reportAnIssue" },
     ],
   },
   {
-    title: "Company",
+    title: "Resources",
     links: [
-      { label: "About", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Technical Writing Tips", href: "/user/writingTips" },
+      { label: "Publishing Guide", href: "/user/publishingGuide" },
+      { label: "Help Center", href: "/user/help" },
+      { label: "FAQ", href: "/user/faq" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Cookie Policy", href: "#" },
+      { label: "Privacy Policy", href: "/user/privacy" },
+      { label: "Terms of Service", href: "/user/terms" },
+      { label: "Content Ownership Policy", href: "/user/contentOwnership" },
+      { label: "Cookie Policy", href: "/user/cookies" },
     ],
   },
 ];
 
 const Footer: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <footer
@@ -54,13 +57,20 @@ const Footer: React.FC = () => {
       <div className="px-4 py-12 md:px-8">
         {/* Top Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 md:gap-16">
-          {/* Logo & Description */}
+          {/* Logo */}
           <div className="col-span-2">
-            <div className="flex items-center space-x-2 mb-3">
+            <div
+              className="flex items-center space-x-2 mb-3 cursor-pointer"
+              onClick={() => navigate("/user")}
+            >
               <img
-                src={isDarkMode ? "/Images/logo-dark.png" : "/Images/logo-light.png"}
+                src={
+                  isDarkMode
+                    ? "/Images/logo-dark.png"
+                    : "/Images/logo-light.png"
+                }
                 alt="BlogNest"
-                className="w-34 cursor-pointer"
+                className="w-34"
               />
             </div>
             <p
@@ -73,29 +83,41 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Navigation Columns */}
+          {/* Dynamic Footer Columns Using navigate */}
           {footerColumns.map((column, index) => (
             <div key={index}>
               <h3
-                className={`mb-4 text-lg font-semibold ${
-                  isDarkMode ? "text-gray-200" : "text-gray-900"
+                onClick={() => {
+                  if (column.title === "Community") {
+                    navigate("/user/community");
+                  } else if (column.title === "Resources") {
+                    navigate("/user/resources");
+                  } else if (column.title === "Legal") {
+                    navigate("/user/legal");
+                  }
+                }}
+                className={`mb-4 text-lg font-semibold cursor-pointer ${
+                  isDarkMode
+                    ? "text-gray-200 hover:text-indigo-400"
+                    : "text-gray-900 hover:text-indigo-600"
                 }`}
               >
                 {column.title}
               </h3>
+
               <ul className="space-y-3">
                 {column.links.map((link, i) => (
                   <li key={i}>
-                    <a
-                      href={link.href}
-                      className={`text-base transition duration-150 ${
+                    <button
+                      onClick={() => navigate(link.href)}
+                      className={`text-left text-base transition duration-150 cursor-pointer ${
                         isDarkMode
                           ? "text-gray-400 hover:text-indigo-400"
                           : "text-gray-600 hover:text-indigo-600"
                       }`}
                     >
                       {link.label}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -110,65 +132,28 @@ const Footer: React.FC = () => {
           }`}
         ></div>
 
-        {/* Bottom Section */}
+        {/* Bottom Row */}
         <div className="flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
-          {/* Copyright */}
-          <p
-            className={`transition ${
-              isDarkMode ? "text-gray-500" : "text-gray-500"
-            }`}
-          >
-            &copy; 2025 BlogNest. All rights reserved.
+          <p className={`${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+            © 2025 BlogNest. All rights reserved.
           </p>
 
-          {/* Social + Theme Toggle */}
           <div className="flex items-center space-x-5">
-            {/* Social Links */}
+            {/* Social Links — still href, but you can switch to navigate if internal */}
             <div className="flex space-x-5">
-              <a
-                href="#"
-                aria-label="Twitter"
-                className={`transition transform hover:scale-110 duration-200 ${
-                  isDarkMode
-                    ? "text-gray-400 hover:text-indigo-400"
-                    : "text-gray-500 hover:text-indigo-600"
-                }`}
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                aria-label="LinkedIn"
-                className={`transition transform hover:scale-110 duration-200 ${
-                  isDarkMode
-                    ? "text-gray-400 hover:text-indigo-400"
-                    : "text-gray-500 hover:text-indigo-600"
-                }`}
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                aria-label="GitHub"
-                className={`transition transform hover:scale-110 duration-200 ${
-                  isDarkMode
-                    ? "text-gray-400 hover:text-indigo-400"
-                    : "text-gray-500 hover:text-indigo-600"
-                }`}
-              >
-                <Github className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                aria-label="Email"
-                className={`transition transform hover:scale-110 duration-200 ${
-                  isDarkMode
-                    ? "text-gray-400 hover:text-indigo-400"
-                    : "text-gray-500 hover:text-indigo-600"
-                }`}
-              >
-                <Mail className="w-5 h-5" />
-              </a>
+              {[Twitter, Linkedin, Github, Mail].map((Icon, idx) => (
+                <button
+                  aria-label="social"
+                  key={idx}
+                  className={`transition transform hover:scale-110 duration-200 ${
+                    isDarkMode
+                      ? "text-gray-400 hover:text-indigo-400"
+                      : "text-gray-500 hover:text-indigo-600"
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                </button>
+              ))}
             </div>
 
             {/* Theme Toggle */}
