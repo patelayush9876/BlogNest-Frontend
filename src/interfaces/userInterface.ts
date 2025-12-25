@@ -4,7 +4,7 @@ export interface User {
   username: string;
   email: string;
   phoneNumber: string;
-  isActive: boolean;
+  status: "active" | "inactive" | "banned";
   role: string;
   createdAt: string;
   updatedAt: string;

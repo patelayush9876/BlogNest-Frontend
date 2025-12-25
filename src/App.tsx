@@ -31,6 +31,10 @@ import WriterGuidelines from "./pages/Community/WriterGuidelines";
 import ReportIssue from "./pages/Community/ReportIssue";
 import CommunityStandards from "./pages/Community/CommunityStandards";
 import BecomeContributor from "./pages/Community/BecomeContributor";
+import AdminLayout from "./layouts/AdminLayout/AdminLayout";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminPosts from "./pages/admin/Posts";
+import AdminUsers from "./pages/admin/Users";
 
 const lazyLoad = (Component: ComponentType) => (
   <Suspense fallback={<LoadingSpinner />}>
@@ -50,6 +54,21 @@ function AppRoutes() {
         { path: "create-password", element: lazyLoad(CreateNewPasswordPage) },
       ],
     },
+    {
+      path: "/admin",
+      element: <AdminLayout />,
+      children: [
+        { path: "", element: lazyLoad(AdminDashboard) },
+        { path: "posts", element: lazyLoad(AdminPosts) },
+        { path: "posts/new", element: lazyLoad(PostEditor) },
+        { path: "users", element: lazyLoad(AdminUsers) },
+        { path: "userProfile/:authorId", element: lazyLoad(PublicUserProfile) },
+
+        // { path: "analytics", element: lazyLoad(AdminAnalytics) },
+        // { path: "settings", element: lazyLoad(AdminSettings) },
+      ],
+    },
+
     {
       path: "/user",
       element: <UserLayout />,
