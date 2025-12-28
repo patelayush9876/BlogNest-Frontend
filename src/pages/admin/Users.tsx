@@ -103,11 +103,11 @@ const AdminUsers: React.FC = () => {
 
   return (
   <div
-    className={`min-h-screen transition-colors duration-300 mt-4 ${
+    className={`min-h-auto transition-colors duration-300 ${
       isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
     }`}
   >
-    <div className="container mx-auto px-4 pt-8 pb-16">
+    <div className="container pb-16">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">

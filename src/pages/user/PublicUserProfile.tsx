@@ -133,9 +133,13 @@ const PublicUserProfile: React.FC = () => {
     }
   };
 
- if (loading) {
-     return <UserProfileSkeleton isDarkMode={isDarkMode} />;
-   }
+  const handleBuyMeCoffee = () => {
+    alert("☕ Buy Me a Coffee feature coming soon!");
+  };
+
+  if (loading) {
+    return <UserProfileSkeleton isDarkMode={isDarkMode} />;
+  }
 
   if (!profile) {
     return (
@@ -207,7 +211,8 @@ const PublicUserProfile: React.FC = () => {
             </div>
 
             {/* Follow / Unfollow Button */}
-            <div className="mt-4">
+            {/* Follow / Unfollow Button */}
+            <div className="mt-4 flex flex-wrap gap-3">
               <button
                 onClick={handleFollow}
                 className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
@@ -221,6 +226,18 @@ const PublicUserProfile: React.FC = () => {
                 }`}
               >
                 {isFollowingUser ? "Following" : "Follow"}
+              </button>
+
+              {/* Buy Me a Coffee */}
+              <button
+                onClick={handleBuyMeCoffee}
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition border ${
+                  isDarkMode
+                    ? "border-yellow-500 text-yellow-400 hover:bg-yellow-500/10"
+                    : "border-yellow-600 text-yellow-700 hover:bg-yellow-100"
+                }`}
+              >
+                ☕ Buy Me a Coffee
               </button>
             </div>
           </div>

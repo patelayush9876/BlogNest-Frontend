@@ -43,7 +43,11 @@ const AdminLayout: React.FC = () => {
   }
 
   return (
-    <div className={`flex min-h-screen w-screen ${isDarkMode ? "bg-gray-900" : "bg-gray-50"}`}>
+    <div
+      className={`flex h-screen w-full overflow-hidden ${
+        isDarkMode ? "bg-gray-900" : "bg-gray-50"
+      }`}
+    >
       <Sidebar
         profile={profile}
         onLogout={logoutUser}
@@ -51,19 +55,36 @@ const AdminLayout: React.FC = () => {
         setCollapsed={setCollapsed}
       />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Topbar
           profile={profile}
           collapsed={collapsed}
           setCollapsed={setCollapsed}
           onLogout={logoutUser}
         />
-        <main className="flex-1 p-6 pt-14">
+
+        {/* ONLY this scrolls */}
+        <main className="flex-1 overflow-y-auto p-4 pt-18">
           <Outlet />
         </main>
 
-        <footer className={`px-6 py-4 border-t ${isDarkMode ? "border-gray-700 bg-gray-800 text-gray-400" : "border-gray-100 bg-white text-gray-600"} text-sm`}>
-          © {new Date().getFullYear()} BlogNest — Admin
+        <footer
+          className={`shrink-0 border-t ${
+            isDarkMode
+              ? "border-gray-700 bg-gray-800 text-gray-400"
+              : "border-gray-100 bg-white text-gray-600"
+          }`}
+        >
+          <div className="px-6 py-4 flex items-center justify-between text-sm">
+            {/* Left */}
+            <span>© {new Date().getFullYear()} BlogNest — Admin</span>
+
+            {/* Right */}
+            <span className="flex items-center gap-1">
+              Made with <span className="text-red-500 transition hover:scale-110">♥</span>
+ in India
+            </span>
+          </div>
         </footer>
       </div>
     </div>

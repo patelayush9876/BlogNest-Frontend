@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import type { IUserProfile } from "../../interfaces/userProfileInterface";
 import AdminNavItem from "./AdminNavItem";
 import { useTheme } from "../../contexts/ThemeContext";
+import { LogOut } from "lucide-react";
 
 interface SidebarProps {
   profile: IUserProfile | null;
@@ -83,11 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           }`}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <svg
-            className="w-4 h-4"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
+          <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
             <path d="M6 6h8v2H6zM6 12h8v2H6z" />
           </svg>
         </button>
@@ -135,13 +132,18 @@ const Sidebar: React.FC<SidebarProps> = ({
       >
         <button
           onClick={onLogout}
-          className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${
+          title="Log out"
+          aria-label="Log out"
+          className={`w-full flex items-center justify-center ${
+            collapsed ? "px-2" : "px-3"
+          } py-2 rounded-lg text-sm transition ${
             isDarkMode
               ? "text-red-400 hover:bg-red-900/30"
               : "text-red-600 hover:bg-red-50"
           }`}
         >
-          Log out
+          <LogOut className="w-5 h-5" />
+          {!collapsed && <span className="ml-2">Log out</span>}
         </button>
       </div>
     </aside>

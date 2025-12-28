@@ -38,7 +38,7 @@ const UserLayout: React.FC<UserLayoutProps> = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-screen">
+    <div className="flex flex-col min-h-screen w-full overflow-x-hidden">
       {/* Navbar */}
       <Navbar
         userProfileImage={profile?.profilePic || ""}
@@ -48,7 +48,7 @@ const UserLayout: React.FC<UserLayoutProps> = () => {
 
       {/* Main content */}
       <main className="flex-1 w-full pt-16">
-        <Outlet /> {/* renders nested route content */}
+        <Outlet />
       </main>
 
       {/* Footer */}

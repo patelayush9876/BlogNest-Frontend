@@ -134,12 +134,27 @@ const Footer: React.FC = () => {
 
         {/* Bottom Row */}
         <div className="flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
+          {/* Left */}
           <p className={`${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
             © 2025 BlogNest. All rights reserved.
           </p>
 
+          {/* Center */}
+          <span
+            className={`flex items-center gap-1 text-xs md:text-sm ${
+              isDarkMode ? "text-gray-400" : "text-gray-500"
+            }`}
+          >
+            Made with
+            <span className="text-red-500 transition-transform hover:scale-110">
+              ♥
+            </span>
+            in India
+          </span>
+
+          {/* Right */}
           <div className="flex items-center space-x-5">
-            {/* Social Links — still href, but you can switch to navigate if internal */}
+            {/* Social Links */}
             <div className="flex space-x-5">
               {[Twitter, Linkedin, Github, Mail].map((Icon, idx) => (
                 <button

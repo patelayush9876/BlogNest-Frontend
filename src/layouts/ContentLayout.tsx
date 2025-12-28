@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import ArticleCard from "../components/ArticleCard";
-import Sidebar from "../components/Sidebar";
 import clsx from "clsx";
 import * as BlogService from "../services/blog.service";
 import { type PaginatedBlogs } from "../services/blog.service";
@@ -9,6 +8,8 @@ import { useAuth } from "../contexts/AuthContext";
 import SidebarSkeleton from "../components/loaders/SidebarSkeleton";
 import { ArticleCardSkeleton } from "../components/loaders/ArticleSkeleton";
 import Pagination from "../components/Pagination";
+import LeftSidebar from "../components/UserSidebar/LeftSidebar";
+import RightSidebar from "../components/UserSidebar/RightSidebar";
 
 const ContentLayout: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -67,6 +68,7 @@ const ContentLayout: React.FC = () => {
             }
           } catch (err) {
             parsedTags = [];
+            console.log("Error:",err)
           }
 
           return {
@@ -93,7 +95,6 @@ const ContentLayout: React.FC = () => {
     fetch();
   }, [activeTab, currentPage, perPage]);
 
-
   const handleTabClick = (tabId: typeof activeTab) => {
     setActiveTab(tabId);
     setCurrentPage(1);
@@ -106,80 +107,91 @@ const ContentLayout: React.FC = () => {
         isDarkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"
       )}
     >
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Main Content */}
-        <div className="lg:col-span-2">
-          {/* Tabs */}
-          <div className={`p-1 tab-container ${isDarkMode ? "dark" : ""}`}>
-            <div
-              className={clsx(
-                "tab-indicator",
-                indicatorPosition[activeTab as keyof typeof indicatorPosition]
-              )}
-            />
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => handleTabClick(tab.id as any)}
-                className={clsx("tab-button", { active: activeTab === tab.id })}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+      <div className="mx-auto max-w-auto">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          {/* LEFT SIDEBAR */}
+          <aside className="hidden lg:block lg:col-span-3">
+            <div className="sticky top-24 space-y-6">
+              {loading ? <SidebarSkeleton /> : <LeftSidebar />}
+            </div>
+          </aside>
 
-          {/* Blog Feed */}
-          <div className="mt-6 space-y-8">
-            {loading ? (
-              <>
-                {[...Array(4)].map((_, i) => (
+          {/* CENTER FEED */}
+          <main className="lg:col-span-6">
+            {/* Tabs */}
+            <div className={`p-1 tab-container ${isDarkMode ? "dark" : ""}`}>
+              <div
+                className={clsx(
+                  "tab-indicator",
+                  indicatorPosition[activeTab as keyof typeof indicatorPosition]
+                )}
+              />
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabClick(tab.id as any)}
+                  className={clsx("tab-button", {
+                    active: activeTab === tab.id,
+                  })}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Blog Feed */}
+            <div className="mt-6 space-y-8">
+              {loading ? (
+                [...Array(4)].map((_, i) => (
                   <ArticleCardSkeleton key={i} isDarkMode={isDarkMode} />
-                ))}
-              </>
-            ) : blogs.length > 0 ? (
-              blogs.map((blog) => (
-                <ArticleCard
-                  key={blog._id}
-                  id={blog._id}
-                  image={blog.attachment || ""}
-                  user={blog.author?.name || "Unknown"}
-                  date={blog.createdAt}
-                  readTime={blog.readTime || "5 min read"}
-                  title={blog.title}
-                  content={blog.content}
-                  tags={blog.tags || []}
-                  likes={blog.likes}
-                  comments={blog.comments}
-                  author={blog.author}
-                  profile={blog.profile}
-                  likedByCurrentUser={blog.likedByCurrentUser}
-                  isFollowed={blog.isFollowed || blog.author._id === user._id}
-                  authorId={blog.author?._id}
-                  saved={blog.isSaved || false}
-                />
-              ))
-            ) : (
-              <p className="text-center text-gray-500">No blogs found.</p>
-            )}
-          </div>
+                ))
+              ) : blogs.length ? (
+                blogs.map((blog) => (
+                  <ArticleCard
+                    key={blog._id}
+                    id={blog._id}
+                    image={blog.attachment || ""}
+                    user={blog.author?.name || "Unknown"}
+                    date={blog.createdAt}
+                    readTime={blog.readTime || "5 min read"}
+                    title={blog.title}
+                    content={blog.content}
+                    tags={blog.tags || []}
+                    likes={blog.likes}
+                    comments={blog.comments}
+                    author={blog.author}
+                    profile={blog.profile}
+                    likedByCurrentUser={blog.likedByCurrentUser}
+                    isFollowed={blog.isFollowed || blog.author._id === user._id}
+                    authorId={blog.author?._id}
+                    saved={blog.isSaved || false}
+                  />
+                ))
+              ) : (
+                <p className="text-center text-gray-500">No blogs found.</p>
+              )}
+            </div>
 
-          {/* Pagination */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            perPage={perPage}
-            totalItems={totalItems}
-            onPageChange={(p) => setCurrentPage(p)}
-            onPerPageChange={(newPer) => {
-              setPerPage(newPer);
-              setCurrentPage(1); 
-            }}
-          />
-        </div>
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              perPage={perPage}
+              totalItems={totalItems}
+              onPageChange={(p) => setCurrentPage(p)}
+              onPerPageChange={(newPer) => {
+                setPerPage(newPer);
+                setCurrentPage(1);
+              }}
+            />
+          </main>
 
-        {/* Sidebar */}
-        <div className="lg:col-span-1">
-          {loading ? <SidebarSkeleton /> : <Sidebar />}
+          {/* RIGHT SIDEBAR */}
+          <aside className="hidden lg:block lg:col-span-3">
+            <div className="sticky top-24 space-y-6">
+              {loading ? <SidebarSkeleton /> : <RightSidebar />}
+            </div>
+          </aside>
         </div>
       </div>
     </div>

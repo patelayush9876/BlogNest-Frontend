@@ -35,6 +35,8 @@ import AdminLayout from "./layouts/AdminLayout/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminPosts from "./pages/admin/Posts";
 import AdminUsers from "./pages/admin/Users";
+import AdminAnalytics from "./pages/admin/Analytics";
+import AdminSettingsPage from "./pages/admin/settings/SettingsPage";
 
 const lazyLoad = (Component: ComponentType) => (
   <Suspense fallback={<LoadingSpinner />}>
@@ -63,7 +65,11 @@ function AppRoutes() {
         { path: "posts/new", element: lazyLoad(PostEditor) },
         { path: "users", element: lazyLoad(AdminUsers) },
         { path: "userProfile/:authorId", element: lazyLoad(PublicUserProfile) },
+        { path: "analytics", element: lazyLoad(AdminAnalytics) },
+        { path: "settings", element: lazyLoad(AdminSettingsPage) },
 
+
+        
         // { path: "analytics", element: lazyLoad(AdminAnalytics) },
         // { path: "settings", element: lazyLoad(AdminSettings) },
       ],

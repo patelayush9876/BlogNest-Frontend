@@ -35,7 +35,7 @@ const Sidebar: React.FC = () => {
   );
 
   return (
-    <div className="space-y-8 sticky top-4">
+    <div className="space-y-8 ">
       {/* Trending Topics */}
       <div
         className={`p-5 border rounded-xl transition-colors duration-200
