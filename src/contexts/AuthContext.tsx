@@ -25,7 +25,6 @@ interface AuthContextType {
   logoutUser: () => Promise<void>;
   setTokens: (accessToken: string, refreshToken?: string) => void;
   refreshUser: () => Promise<void>;
-  
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -76,7 +75,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     captchaToken: string
   ) => {
     try {
-      const response: LoginResponse = await login({ email, password, captchaToken });
+      const response: LoginResponse = await login({
+        email,
+        password,
+        captchaToken,
+      });
 
       // Handle both possible response shapes
       const data = (response as any).data || response;
@@ -107,34 +110,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Register user
-const registerUser = async (data: SignupInput) => {
-  try {
-    const response = await signupUser(data);
+  const registerUser = async (data: SignupInput) => {
+    try {
+      const response = await signupUser(data);
 
-    const { user, accessToken, refreshToken } = response.data || response;
+      const { user, accessToken, refreshToken } = response.data || response;
 
-    if (accessToken && refreshToken) {
-      setUser(user);
-      setAccessToken(accessToken);
-      setRefreshToken(refreshToken);
+      if (accessToken && refreshToken) {
+        setUser(user);
+        setAccessToken(accessToken);
+        setRefreshToken(refreshToken);
 
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+      }
+
+      showToast("Account created successfully!", "success");
+      navigate("/user");
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message ||
+        err.message ||
+        "Signup failed. Please try again.";
+      showToast(message, "error");
+      throw err;
     }
-
-    showToast("Account created successfully!", "success");
-    navigate("/user"); // redirect as needed
-  } catch (err: any) {
-    const message =
-      err.response?.data?.message ||
-      err.message ||
-      "Signup failed. Please try again.";
-    showToast(message, "error");
-    throw err;
-  }
-};
-
+  };
 
   // Logout user
   const logoutUser = async () => {
@@ -184,7 +186,6 @@ const registerUser = async (data: SignupInput) => {
         logoutUser,
         setTokens,
         refreshUser,
-        
       }}
     >
       {children}

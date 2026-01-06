@@ -68,7 +68,7 @@ const ContentLayout: React.FC = () => {
             }
           } catch (err) {
             parsedTags = [];
-            console.log("Error:",err)
+            console.log("Error:", err);
           }
 
           return {
@@ -103,21 +103,21 @@ const ContentLayout: React.FC = () => {
   return (
     <div
       className={clsx(
-        "p-4 w-full md:p-8 transition-colors duration-300",
+        "p-4 w-full md:p-8 h-screen overflow-auto transition-colors duration-300",
         isDarkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"
       )}
     >
-      <div className="mx-auto max-w-auto">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+      <div className="mx-auto max-w-auto h-full">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 h-full">
           {/* LEFT SIDEBAR */}
           <aside className="hidden lg:block lg:col-span-3">
-            <div className="sticky top-24 space-y-6">
+            <div className="sticky space-y-6">
               {loading ? <SidebarSkeleton /> : <LeftSidebar />}
             </div>
           </aside>
 
           {/* CENTER FEED */}
-          <main className="lg:col-span-6">
+          <main className="lg:col-span-6 h-full overflow-y-auto">
             {/* Tabs */}
             <div className={`p-1 tab-container ${isDarkMode ? "dark" : ""}`}>
               <div
@@ -188,7 +188,7 @@ const ContentLayout: React.FC = () => {
 
           {/* RIGHT SIDEBAR */}
           <aside className="hidden lg:block lg:col-span-3">
-            <div className="sticky top-24 space-y-6">
+            <div className="sticky  space-y-6">
               {loading ? <SidebarSkeleton /> : <RightSidebar />}
             </div>
           </aside>

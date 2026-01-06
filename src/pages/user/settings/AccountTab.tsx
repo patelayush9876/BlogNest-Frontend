@@ -1,15 +1,28 @@
 import { useTheme } from "../../../contexts/ThemeContext";
 import { useState, useRef, useEffect } from "react";
-import { Edit2, User } from "lucide-react";
+import { Edit2, Eye, EyeOff, User } from "lucide-react";
 import type { IUserProfile } from "../../../interfaces/userProfileInterface";
 import {
   getMyProfile,
   updateMyProfile,
 } from "../../../services/profile.service";
 import ImageCropper from "../../../components/ common/ImageCropper";
+import { changePassword, deleteAccount } from "../../../services/auth.service";
+import { showToast } from "../../../services/toast.service";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext";
+import ConfirmDialog from "../../../components/popups/ConfirmDialog";
 
 export const AccountTab: React.FC = () => {
   const { isDarkMode } = useTheme();
+  const navigate = useNavigate();
+  const { logoutUser } = useAuth();
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [rawImage, setRawImage] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -17,10 +30,18 @@ export const AccountTab: React.FC = () => {
     bio: "",
     profilePic: "",
   });
-  const [rawImage, setRawImage] = useState<string | null>(null);
-  const [showCropper, setShowCropper] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [loading, setLoading] = useState(true);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    currentPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  });
 
   // Fetch profile
   useEffect(() => {
@@ -59,6 +80,91 @@ export const AccountTab: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordData({
+      ...passwordData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const { currentPassword, newPassword, confirmPassword } = passwordData;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      showToast("All password fields are required", "warn");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      showToast("New password and confirm password do not match", "warn");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      showToast("Password must be at least 8 characters", "warn");
+      return;
+    }
+
+    try {
+      setPasswordLoading(true);
+
+      await changePassword({
+        oldPassword: currentPassword,
+        newPassword,
+      });
+
+      showToast("Password updated successfully", "success");
+
+      // reset form
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (err: any) {
+      showToast(
+        err?.response?.data?.message || "Failed to update password",
+        "error"
+      );
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const togglePasswordVisibility = (field: keyof typeof showPassword) => {
+    setShowPassword((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteLoading) return;
+
+    try {
+      setDeleteLoading(true);
+
+      await deleteAccount();
+
+      showToast(
+        "Account deletion requested. You have 14 days to recover it.",
+        "success"
+      );
+
+      await logoutUser();
+      navigate("/login");
+    } catch (err: any) {
+      showToast(
+        err?.response?.data?.message || "Failed to delete account",
+        "error"
+      );
+    } finally {
+      setDeleteLoading(false);
+    }
   };
 
   const handleCropComplete = (croppedImage: string) => {
@@ -281,33 +387,62 @@ export const AccountTab: React.FC = () => {
           Ensure your account uses a strong password.
         </p>
 
-        <form className="space-y-4">
-          {["Current Password", "New Password", "Confirm New Password"].map(
-            (label, i) => (
-              <div key={i}>
-                <label
-                  htmlFor={label.toLowerCase().replace(/ /g, "-")}
-                  className="block text-sm font-medium"
-                >
+        <form className="space-y-4" onSubmit={handlePasswordSubmit}>
+          {[
+            { label: "Current Password", id: "currentPassword" },
+            { label: "New Password", id: "newPassword" },
+            { label: "Confirm New Password", id: "confirmPassword" },
+          ].map(({ label, id }) => {
+            const fieldId = id as keyof typeof passwordData;
+
+            return (
+              <div key={id}>
+                <label htmlFor={id} className="block text-sm font-medium">
                   {label}
                 </label>
-                <input
-                  type="password"
-                  id={label.toLowerCase().replace(/ /g, "-")}
-                  className={`w-full px-4 py-2 border rounded-lg mt-1 focus:ring-indigo-500 focus:border-indigo-500 ${
-                    isDarkMode
-                      ? "bg-gray-700 border-gray-600 text-gray-200"
-                      : "bg-gray-50 border-gray-300 text-gray-900"
-                  }`}
-                />
+
+                <div className="relative mt-1">
+                  <input
+                    type={showPassword[fieldId] ? "text" : "password"}
+                    id={id}
+                    value={passwordData[fieldId]}
+                    onChange={handlePasswordChange}
+                    className={`w-full px-4 py-2 pr-10 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 ${
+                      isDarkMode
+                        ? "bg-gray-700 border-gray-600 text-gray-200"
+                        : "bg-gray-50 border-gray-300 text-gray-900"
+                    }`}
+                  />
+
+                  <button
+                    type="button"
+                    aria-label="Toggle password visibility"
+                    onClick={() => togglePasswordVisibility(fieldId)}
+                    className={`absolute inset-y-0 right-3 flex items-center ${
+                      isDarkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    {showPassword[fieldId] ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
-            )
-          )}
+            );
+          })}
+
           <button
             type="submit"
-            className="w-full sm:w-auto px-5 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition"
+            disabled={passwordLoading}
+            className={`w-full sm:w-auto px-5 py-2 text-sm font-semibold text-white rounded-lg transition ${
+              passwordLoading
+                ? "bg-indigo-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"
+            }`}
           >
-            Update Password
+            {passwordLoading ? "Updating..." : "Update Password"}
           </button>
         </form>
       </div>
@@ -342,12 +477,33 @@ export const AccountTab: React.FC = () => {
           </div>
           <button
             type="button"
-            className="px-5 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition"
+            disabled={deleteLoading}
+            onClick={() => setShowDeleteConfirm(true)}
+            className={`px-5 py-2 text-sm font-semibold text-white rounded-lg transition ${
+              deleteLoading
+                ? "bg-red-400 cursor-not-allowed"
+                : "bg-red-600 hover:bg-red-700"
+            }`}
           >
-            Delete
+            {deleteLoading ? "Deleting..." : "Delete"}
           </button>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="Delete Account"
+        message="Are you sure you want to delete your account?
+Your account will be deactivated immediately and permanently deleted after 14 days.
+You can recover it during this period."
+        confirmText="Delete Account"
+        cancelText="Cancel"
+        loading={deleteLoading}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={async () => {
+          setShowDeleteConfirm(false);
+          await handleDeleteAccount();
+        }}
+      />
     </div>
   );
 };

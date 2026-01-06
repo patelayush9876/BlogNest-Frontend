@@ -10,6 +10,11 @@ export interface User {
   updatedAt: string;
 }
 
+export interface ApiResponse {
+  status: boolean;
+  message: string;
+  data?: any;
+}
 export interface LoginResponse {
   status: boolean;
   message: string;
@@ -43,3 +48,9 @@ export interface SignupResponse {
     refreshToken: string;
   };
 }
+
+export interface ChangePasswordInput {
+  oldPassword: string;
+  newPassword: string;
+}
+
