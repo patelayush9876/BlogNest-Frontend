@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       );
       navigate("/");
     });
-  }, []);
+  }, [navigate]);
 
   // Helper to clear auth data
   const clearAuthData = () => {

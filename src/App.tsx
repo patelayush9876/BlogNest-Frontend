@@ -1,11 +1,10 @@
 import { Suspense, type ComponentType } from "react";
 import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
-
 import AuthLayout from "./layouts/AuthLayout/AuthLayout";
 import LoadingSpinner from "./components/ common/ loadingSpinner";
 import LoginPage from "./pages/Auth/LoginPage";
 import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage";
-import CreateNewPasswordPage from "./pages/Auth/CreateNewPasswordPage";
+
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastContainer } from "react-toastify";
 import UserLayout from "./layouts/userLayout";
@@ -37,6 +36,11 @@ import AdminPosts from "./pages/admin/Posts";
 import AdminUsers from "./pages/admin/Users";
 import AdminAnalytics from "./pages/admin/Analytics";
 import AdminSettingsPage from "./pages/admin/settings/SettingsPage";
+import VerifyEmailPage from "./pages/Auth/VerifyEmailPage";
+import OnboardingLayout from "./layouts/OnboardingLayout/OnboardingLayout";
+import Welcome from "./pages/Auth/Welcome";
+import VerifyOtpPage from "./pages/Auth/VerifyOtpPage";
+import CreateNewPasswordPage from "./pages/Auth/CreateNewPasswordPage";
 
 const lazyLoad = (Component: ComponentType) => (
   <Suspense fallback={<LoadingSpinner />}>
@@ -52,8 +56,22 @@ function AppRoutes() {
       children: [
         { path: "", element: lazyLoad(LoginPage) },
         { path: "signup", element: lazyLoad(SignupPage) },
+        { path: "verify-email", element: lazyLoad(VerifyEmailPage) },
+        { path: "verify-otp", element: lazyLoad(VerifyOtpPage) },
+
         { path: "forgot-password", element: lazyLoad(ForgotPasswordPage) },
         { path: "create-password", element: lazyLoad(CreateNewPasswordPage) },
+      ],
+    },
+    {
+      path: "/onboard",
+
+      element: <OnboardingLayout />,
+      children: [
+        { path: "welcome", element: lazyLoad(Welcome) },
+
+        // { path: "/notifications", element: lazyLoad(Notifications) },
+        // { path: "/policy-update", element: lazyLoad(PolicyUpdate) },
       ],
     },
     {
@@ -67,9 +85,6 @@ function AppRoutes() {
         { path: "userProfile/:authorId", element: lazyLoad(PublicUserProfile) },
         { path: "analytics", element: lazyLoad(AdminAnalytics) },
         { path: "settings", element: lazyLoad(AdminSettingsPage) },
-
-
-        
         // { path: "analytics", element: lazyLoad(AdminAnalytics) },
         // { path: "settings", element: lazyLoad(AdminSettings) },
       ],

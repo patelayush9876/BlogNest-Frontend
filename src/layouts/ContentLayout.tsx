@@ -140,7 +140,7 @@ const ContentLayout: React.FC = () => {
             </div>
 
             {/* Blog Feed */}
-            <div className="mt-6 space-y-8">
+            <div className="mt-6 space-y-8 p-1.8">
               {loading ? (
                 [...Array(4)].map((_, i) => (
                   <ArticleCardSkeleton key={i} isDarkMode={isDarkMode} />
@@ -162,7 +162,9 @@ const ContentLayout: React.FC = () => {
                     author={blog.author}
                     profile={blog.profile}
                     likedByCurrentUser={blog.likedByCurrentUser}
-                    isFollowed={blog.isFollowed || blog.author._id === user._id}
+                    isFollowed={
+                      blog.isFollowed || (user && blog.author?._id === user._id)
+                    }
                     authorId={blog.author?._id}
                     saved={blog.isSaved || false}
                   />

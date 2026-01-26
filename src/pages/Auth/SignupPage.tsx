@@ -82,7 +82,7 @@ const SignupPage: React.FC = () => {
 
     setLoading(true);
     try {
-      await registerUser({
+      const res = await registerUser({
         name: formData.name,
         username: formData.username,
         email: formData.email,
@@ -90,19 +90,13 @@ const SignupPage: React.FC = () => {
         captchaToken: formData.captchaToken,
       });
 
-      const storedUser = localStorage.getItem("user");
-      const user = storedUser ? JSON.parse(storedUser) : null;
+      // ✅ store email temporarily
+      localStorage.setItem("pendingEmail", formData.email);
 
-      switch (user?.role) {
-        case "admin":
-          navigate("/admin/dashboard");
-          break;
-        case "user":
-          navigate("/user");
-          break;
-        default:
-          navigate("/");
-      }
+      // ✅ go to OTP page
+      navigate("/verify-email", {
+        state: { email: formData.email },
+      });
     } catch (error) {
       console.error("Signup failed:", error);
     } finally {
