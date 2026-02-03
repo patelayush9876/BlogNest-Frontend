@@ -19,7 +19,6 @@ const PostEditor: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { id } = useParams();
   const isEdit = Boolean(id);
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
@@ -29,6 +28,7 @@ const PostEditor: React.FC = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [imageChanged, setImageChanged] = useState(false);
 
   // Load Categories
   useEffect(() => {
@@ -96,7 +96,6 @@ const PostEditor: React.FC = () => {
       if (selectedFile) formData.append("attachment", selectedFile);
       else if (coverImageUrl) formData.append("attachment", coverImageUrl);
 
-
       let blog;
 
       if (isEdit) blog = await updateDraft(id!, formData);
@@ -124,15 +123,26 @@ const PostEditor: React.FC = () => {
       if (selectedCategory) formData.append("category", selectedCategory);
       tags.forEach((tag) => formData.append("tags", tag));
 
-      if (selectedFile) formData.append("attachment", selectedFile);
-      else if (coverImageUrl) formData.append("coverImageUrl", coverImageUrl);
+      // ADD THIS BLOCK
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
+      } else if (!isEdit && coverImageUrl) {
+        // create mode
+        formData.append("coverImageUrl", coverImageUrl);
+      } else if (isEdit && imageChanged && coverImageUrl) {
+        // edit mode image replacement
+        formData.append("attachment", coverImageUrl);
+      }
 
       let blog;
-
       if (isEdit) blog = await updateBlog(id!, formData);
       else blog = await createBlog(formData);
 
-      showToast(`Blog "${blog.title}" published successfully!`, "success");
+      showToast(
+        `Blog "${blog.title}" ${isEdit ? "updated" : "published"} successfully!`,
+        "success",
+      );
+
       navigate("/user/profile");
     } catch (error) {
       console.error("Error publishing blog:", error);
@@ -213,7 +223,7 @@ const PostEditor: React.FC = () => {
             Category
           </label>
           <select
-          aria-label="category"
+            aria-label="category"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className={`w-full px-3 py-2 sm:py-3 border-b focus:outline-none ${
@@ -266,7 +276,7 @@ const PostEditor: React.FC = () => {
             )}
 
             <input
-            aria-label="coverInput"
+              aria-label="coverInput"
               id="coverImageInput"
               type="file"
               accept="image/*"
@@ -276,6 +286,7 @@ const PostEditor: React.FC = () => {
                 if (file) {
                   setSelectedFile(file);
                   setCoverImageUrl("");
+                  setImageChanged(true);
                 }
               }}
             />
@@ -341,9 +352,7 @@ const PostEditor: React.FC = () => {
             <button
               onClick={handleAddTag}
               className={`px-5 py-2 rounded-lg font-semibold ${
-                isDarkMode
-                  ? "bg-indigo-600 text-white"
-                  : "bg-black text-white"
+                isDarkMode ? "bg-indigo-600 text-white" : "bg-black text-white"
               }`}
             >
               Add

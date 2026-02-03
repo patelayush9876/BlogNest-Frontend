@@ -23,6 +23,8 @@ export const AccountTab: React.FC = () => {
   const [showCropper, setShowCropper] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(true);
+  const [isProfileEditing, setIsProfileEditing] = useState(false);
+  const [isPasswordEditing, setIsPasswordEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -77,7 +79,7 @@ export const AccountTab: React.FC = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -116,6 +118,7 @@ export const AccountTab: React.FC = () => {
         oldPassword: currentPassword,
         newPassword,
       });
+      setIsPasswordEditing(false);
 
       showToast("Password updated successfully", "success");
 
@@ -128,7 +131,7 @@ export const AccountTab: React.FC = () => {
     } catch (err: any) {
       showToast(
         err?.response?.data?.message || "Failed to update password",
-        "error"
+        "error",
       );
     } finally {
       setPasswordLoading(false);
@@ -152,7 +155,7 @@ export const AccountTab: React.FC = () => {
 
       showToast(
         "Account deletion requested. You have 14 days to recover it.",
-        "success"
+        "success",
       );
 
       await logoutUser();
@@ -160,7 +163,7 @@ export const AccountTab: React.FC = () => {
     } catch (err: any) {
       showToast(
         err?.response?.data?.message || "Failed to delete account",
-        "error"
+        "error",
       );
     } finally {
       setDeleteLoading(false);
@@ -193,12 +196,14 @@ export const AccountTab: React.FC = () => {
         profileData.append("profilePic", blob, "profile.png");
       }
 
-      const updatedProfile = await updateMyProfile(profileData);
-      console.log("Profile updated successfully:", updatedProfile);
-      alert("Profile updated successfully!");
-    } catch (err) {
-      console.error("Profile update failed:", err);
-      alert("Failed to update profile.");
+      updateMyProfile(profileData);
+      setIsProfileEditing(false);
+      showToast("Profile updated successfully", "success");
+    } catch (err: any) {
+      showToast(
+        err?.response?.data?.message || "Profile update failed:",
+        "error",
+      );
     }
   };
 
@@ -285,9 +290,26 @@ export const AccountTab: React.FC = () => {
             : "bg-white border-gray-100 text-gray-900"
         }`}
       >
-        <h3 className="text-lg sm:text-xl font-semibold mb-2">
-          Profile Information
-        </h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg sm:text-xl font-semibold">
+            Profile Information
+          </h3>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (isProfileEditing) {
+                setIsProfileEditing(false);
+              } else {
+                setIsProfileEditing(true);
+              }
+            }}
+            className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+          >
+            {isProfileEditing ? "Cancel" : "Edit"}
+          </button>
+        </div>
+
         <p
           className={`text-sm mb-6 ${
             isDarkMode ? "text-gray-400" : "text-gray-500"
@@ -330,7 +352,7 @@ export const AccountTab: React.FC = () => {
                 value={formData[id as keyof typeof formData]}
                 onChange={handleChange}
                 placeholder={placeholder}
-                disabled={!editable}
+                disabled={!isProfileEditing || !editable}
                 className={`w-full px-4 py-2 border rounded-lg mt-1 focus:ring-indigo-500 focus:border-indigo-500 ${
                   isDarkMode
                     ? "bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400"
@@ -350,6 +372,7 @@ export const AccountTab: React.FC = () => {
               rows={4}
               value={formData.bio}
               onChange={handleChange}
+              disabled={!isProfileEditing}
               placeholder="Tell us something about yourself..."
               className={`w-full px-4 py-2 border rounded-lg mt-1 resize-none focus:ring-indigo-500 focus:border-indigo-500 ${
                 isDarkMode
@@ -359,12 +382,14 @@ export const AccountTab: React.FC = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full sm:w-auto px-5 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition"
-          >
-            Save Changes
-          </button>
+          {isProfileEditing && (
+            <button
+              type="submit"
+              className="w-full sm:w-auto px-5 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition"
+            >
+              Save Changes
+            </button>
+          )}
         </form>
       </div>
 
@@ -376,15 +401,35 @@ export const AccountTab: React.FC = () => {
             : "bg-white border-gray-100 text-gray-900"
         }`}
       >
-        <h3 className="text-lg sm:text-xl font-semibold mb-2">
-          Change Password
-        </h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg sm:text-xl font-semibold">Account Password</h3>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (isPasswordEditing) {
+                setPasswordData({
+                  currentPassword: "",
+                  newPassword: "",
+                  confirmPassword: "",
+                });
+                setIsPasswordEditing(false);
+              } else {
+                setIsPasswordEditing(true);
+              }
+            }}
+            className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+          >
+            {isPasswordEditing ? "Cancel" : "Update"}
+          </button>
+        </div>
+
         <p
           className={`text-sm mb-6 ${
             isDarkMode ? "text-gray-400" : "text-gray-500"
           }`}
         >
-          Ensure your account uses a strong password.
+          Account should always use a strong password.
         </p>
 
         <form className="space-y-4" onSubmit={handlePasswordSubmit}>
@@ -397,53 +442,58 @@ export const AccountTab: React.FC = () => {
 
             return (
               <div key={id}>
-                <label htmlFor={id} className="block text-sm font-medium">
-                  {label}
-                </label>
+                {isPasswordEditing && (
+                  <div className="relative mt-1">
+                    <label htmlFor={id} className="block text-sm font-medium">
+                      {label}
+                    </label>
+                    <input
+                      type={showPassword[fieldId] ? "text" : "password"}
+                      id={id}
+                      value={passwordData[fieldId]}
+                      onChange={handlePasswordChange}
+                      disabled={!isPasswordEditing}
+                      className={`w-full px-4 py-2 pr-10 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 ${
+                        isDarkMode
+                          ? "bg-gray-700 border-gray-600 text-gray-200"
+                          : "bg-gray-50 border-gray-300 text-gray-900"
+                      }`}
+                    />
 
-                <div className="relative mt-1">
-                  <input
-                    type={showPassword[fieldId] ? "text" : "password"}
-                    id={id}
-                    value={passwordData[fieldId]}
-                    onChange={handlePasswordChange}
-                    className={`w-full px-4 py-2 pr-10 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500 ${
-                      isDarkMode
-                        ? "bg-gray-700 border-gray-600 text-gray-200"
-                        : "bg-gray-50 border-gray-300 text-gray-900"
-                    }`}
-                  />
-
-                  <button
-                    type="button"
-                    aria-label="Toggle password visibility"
-                    onClick={() => togglePasswordVisibility(fieldId)}
-                    className={`absolute inset-y-0 right-3 flex items-center ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    {showPassword[fieldId] ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      aria-label="Toggle password visibility"
+                      onClick={() => togglePasswordVisibility(fieldId)}
+                      disabled={!isPasswordEditing}
+                      className={`absolute inset-y-0 right-3 flex items-center ${
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      {showPassword[fieldId] ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}
 
-          <button
-            type="submit"
-            disabled={passwordLoading}
-            className={`w-full sm:w-auto px-5 py-2 text-sm font-semibold text-white rounded-lg transition ${
-              passwordLoading
-                ? "bg-indigo-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700"
-            }`}
-          >
-            {passwordLoading ? "Updating..." : "Update Password"}
-          </button>
+          {isPasswordEditing && (
+            <button
+              type="submit"
+              disabled={passwordLoading}
+              className={`w-full sm:w-auto px-5 py-2 text-sm font-semibold text-white rounded-lg transition ${
+                passwordLoading
+                  ? "bg-indigo-400 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700"
+              }`}
+            >
+              {passwordLoading ? "Updating..." : "Update Password"}
+            </button>
+          )}
         </form>
       </div>
 

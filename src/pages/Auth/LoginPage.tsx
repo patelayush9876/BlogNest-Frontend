@@ -11,7 +11,6 @@ import {
   validCaptcha,
   validEmail,
 } from "../../utils/validators";
-import API_CONFIG from "../../config/apiConfig";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");

@@ -73,7 +73,7 @@ export const getBlogById = async (id: string): Promise<Blog> => {
 
 // Update Blog
 export const updateBlog = async (id: string, data: FormData): Promise<Blog> => {
-  const response = await api.put(`/${id}`, data, {
+  const response = await api.put(`/blogs/${id}`, data, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return response.data.data.blog;
@@ -81,7 +81,7 @@ export const updateBlog = async (id: string, data: FormData): Promise<Blog> => {
 
 // Delete Blog
 export const deleteBlog = async (id: string) => {
-  const response = await api.delete(`/${id}`);
+  const response = await api.delete(`/blogs/${id}`);
   return response.data;
 };
 
@@ -113,6 +113,12 @@ export const updateDraft = async (
 // publish draft
 export const publishDraft = async (id: string): Promise<Blog> => {
   const response = await api.put(`/blogs/publish/${id}`);
+  return response.data.data.blog;
+};
+
+// archive blog
+export const archivePost = async (id: string): Promise<Blog> => {
+  const response = await api.put(`/blogs/archive/${id}`);
   return response.data.data.blog;
 };
 

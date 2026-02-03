@@ -323,6 +323,7 @@ const UserProfile: React.FC = () => {
                   profile={blog.profile}
                   likedByCurrentUser={blog.likedByCurrentUser}
                   isFollowed={true}
+                  isOwner={blog.author._id === user?._id}
                 />
               ))}
             </div>

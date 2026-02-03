@@ -1,13 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "../../../contexts/ThemeContext";
 import Switch from "../../../components/molecules/Switch";
 import { RefreshCw } from "lucide-react";
+import {
+  getMySettings,
+  updateMySettings,
+} from "../../../services/userSettings.service";
 
 export const PreferencesTab: React.FC = () => {
   const [isPrivateProfile, setIsPrivateProfile] = useState(false);
   const [isShowEmail, setIsShowEmail] = useState(false);
   const [isAllowComments, setIsAllowComments] = useState(true);
   const { isDarkMode, toggleTheme } = useTheme();
+
+  /* =======================
+     Fetch existing settings
+  ======================= */
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getMySettings();
+        const s = res.data;
+
+        setIsPrivateProfile(s.privacy.privateProfile);
+        setIsShowEmail(s.privacy.showEmail);
+        setIsAllowComments(s.privacy.allowComments);
+      } catch (err) {
+        console.error("Failed to fetch preferences", err);
+      }
+    })();
+  }, []);
+
+  /* =======================
+     Optimistic toggle helper
+  ======================= */
+  const toggleSetting = async (
+    current: boolean,
+    setter: (v: boolean) => void,
+    payload: Record<string, boolean>,
+  ) => {
+    setter(!current);
+    try {
+      await updateMySettings(payload);
+    } catch (err) {
+      setter(current); // rollback
+      console.error("Failed to update setting", err);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -76,19 +115,28 @@ export const PreferencesTab: React.FC = () => {
             title: "Private Profile",
             desc: "Make your profile visible only to followers",
             state: isPrivateProfile,
-            toggle: () => setIsPrivateProfile(!isPrivateProfile),
+            toggle: () =>
+              toggleSetting(isPrivateProfile, setIsPrivateProfile, {
+                "privacy.privateProfile": !isPrivateProfile,
+              }),
           },
           {
             title: "Show Email",
             desc: "Display email on your public profile",
             state: isShowEmail,
-            toggle: () => setIsShowEmail(!isShowEmail),
+            toggle: () =>
+              toggleSetting(isShowEmail, setIsShowEmail, {
+                "privacy.showEmail": !isShowEmail,
+              }),
           },
           {
             title: "Allow Comments",
             desc: "Let others comment on your posts",
             state: isAllowComments,
-            toggle: () => setIsAllowComments(!isAllowComments),
+            toggle: () =>
+              toggleSetting(isAllowComments, setIsAllowComments, {
+                "privacy.allowComments": !isAllowComments,
+              }),
           },
         ].map((item, i) => (
           <div

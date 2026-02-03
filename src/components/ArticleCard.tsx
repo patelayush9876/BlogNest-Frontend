@@ -8,6 +8,8 @@ import { formatRelativeDate } from "../utils/dateUtils";
 import { toggleSave } from "../services/savedBlog.service";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { MoreVertical, Edit, Trash2, Archive } from "lucide-react";
+import { archivePost, deleteBlog } from "../services/blog.service";
 
 interface ArticleCardProps {
   id: string;
@@ -26,6 +28,7 @@ interface ArticleCardProps {
   saved?: boolean;
   isFollowed?: boolean;
   authorId?: string;
+  isOwner?: boolean;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
@@ -43,6 +46,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   saved = false,
   isFollowed = false,
   authorId,
+  isOwner = false,
 }) => {
   const { isDarkMode } = useTheme();
   const [showComments, setShowComments] = useState(false);
@@ -54,9 +58,11 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   const [following, setFollowing] = useState(isFollowed);
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
-    const navigate = useNavigate();
+  const [showOptions, setShowOptions] = useState(false);
+  const optionsRef = useRef<HTMLDivElement>(null);
 
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const TRUNCATE_LENGTH = 130;
 
@@ -71,6 +77,19 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
     function handleClickOutside(e: any) {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setShowMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        optionsRef.current &&
+        !optionsRef.current.contains(e.target as Node)
+      ) {
+        setShowOptions(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -105,6 +124,33 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       console.error("Error following:", err);
     }
   };
+  const handleArchive = async () => {
+    try {
+      await archivePost(id);
+      setShowOptions(false);
+
+      // window.location.reload();
+    } catch (error) {
+      console.error("Failed to archive blog:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const confirmed = window.confirm(
+        "Are you sure you want to delete this blog? This action cannot be undone.",
+      );
+      if (!confirmed) return;
+
+      await deleteBlog(id);
+      setShowOptions(false);
+
+      // Remove from UI
+      // window.location.reload();
+    } catch (error) {
+      console.error("Failed to delete blog:", error);
+    }
+  };
 
   const safeContent = content || "";
   const isTruncated = safeContent.length > TRUNCATE_LENGTH;
@@ -131,7 +177,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
       {/* Author Info */}
       <div
-        className={`flex flex-row items-center justify-between pr-5 space-x-2 text-sm mb-4 ${
+        className={`flex flex-row items-center justify-between space-x-2 text-sm mb-4 ${
           isDarkMode ? "text-gray-400" : "text-gray-500"
         }`}
       >
@@ -139,7 +185,9 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           {/* Profile Image Trigger */}
           <div
             className="w-8 h-8 rounded-full overflow-hidden cursor-pointer"
-            onClick={() => setShowMenu(!showMenu)}
+            onClick={() => {
+              navigate(`/user/userProfile/${authorId}`);
+            }}
           >
             <img
               className="rounded-full"
@@ -149,32 +197,36 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           </div>
 
           {/* Mini Popup Menu */}
-          {showMenu && (
+          {/* {showMenu && (
             <div
               ref={menuRef}
-              className={`absolute top-10 left-0 w-40 rounded-lg shadow-lg p-3 z-50 ${
+              className={`absolute top-10 left-0 w-40 rounded-lg shadow-lg p-2 z-50 ${
                 isDarkMode
-                  ? "bg-gray-800 text-gray-200"
-                  : "bg-white text-gray-800"
+                  ? "bg-gray-800 text-gray-200 hover:bg-gray-700"
+                  : "bg-white text-gray-800 hover:bg-gray-100"
               }`}
             >
               <button
-                className="w-full text-left py-1 px-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                onClick={() => {navigate(`/user/userProfile/${authorId}`)}}
+                className={`w-full text-left py-1 px-2 rounded `}
+                onClick={() => {
+                  navigate(`/user/userProfile/${authorId}`);
+                }}
               >
                 View Profile
               </button>
 
               {!following && authorId !== user?._id && (
                 <button
-                  className="w-full text-left py-1 px-2 text-indigo-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                  className={`w-full text-left py-1 px-2 text-indigo-600 rounded ${
+                    isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                  }`}
                   onClick={handleFollow}
                 >
                   Follow
                 </button>
               )}
             </div>
-          )}
+          )} */}
 
           <span
             className={`ml-2 font-semibold ${
@@ -188,15 +240,74 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           {!following && authorId !== user?._id && (
             <button
               onClick={handleFollow}
-              className="ml-3 px-3 py-1 text-xs font-medium rounded-full border border-indigo-500 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+              className={`ml-3 px-3 py-1 text-xs font-medium rounded-full border border-indigo-500 text-indigo-500 ${
+                isDarkMode ? "hover:bg-indigo-900/30" : "hover:bg-indigo-50"
+              }`}
             >
               Follow
             </button>
           )}
         </div>
 
-        <div>
+        <div className="flex items-center space-x-2">
           <span>{formatRelativeDate(date)}</span>
+
+          {isOwner && (
+            <div className="relative" ref={optionsRef}>
+              <button
+                aria-label="post options"
+                onClick={() => setShowOptions(!showOptions)}
+                className={`p-1 rounded-full transition ${
+                  isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"
+                }`}
+              >
+                <MoreVertical className="w-4 h-4" />
+              </button>
+
+              {showOptions && (
+                <div
+                  className={`absolute right-0 mt-2 w-36 rounded-lg shadow-lg z-50 ${
+                    isDarkMode
+                      ? "bg-gray-800 text-gray-200"
+                      : "bg-white text-gray-800"
+                  }`}
+                >
+                  <button
+                    className={`flex items-center w-full px-3 py-2 text-sm ${
+                      isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                    }`}
+                    onClick={() => {
+                      navigate(`/user/blogs/${id}/edit`);
+                      setShowOptions(false);
+                    }}
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                  </button>
+
+                  <button
+                    className={`flex items-center w-full px-3 py-2 text-sm ${
+                      isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                    }`}
+                    onClick={handleArchive}
+                  >
+                    <Archive className="w-4 h-4 mr-2" />
+                    Archive
+                  </button>
+
+                  <button
+                    className={`flex items-center w-full px-3 py-2 text-sm text-red-500 ${
+                      isDarkMode ? "hover:bg-red-900/30" : "hover:bg-red-50"
+                    }`}
+                    onClick={handleDelete}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -250,7 +361,6 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
       {/* Tags & Actions */}
       <div className="flex items-center justify-between">
-        {/* Tags */}
         <div className="flex flex-wrap items-center space-x-2">
           {tags.map((tag, i) => (
             <span
@@ -266,20 +376,18 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           ))}
         </div>
 
-        {/* Like / Comment */}
         <div
           className={`flex items-center space-x-4 ${
             isDarkMode ? "text-gray-400" : "text-gray-500"
           }`}
         >
-          {/* Like */}
           <div
             className={`flex items-center space-x-1 cursor-pointer transition ${
               liked
                 ? "text-red-500 fill-red-500"
                 : isDarkMode
-                ? "hover:text-red-400"
-                : "hover:text-red-500"
+                  ? "hover:text-red-400"
+                  : "hover:text-red-500"
             }`}
             onClick={handleLike}
           >
@@ -291,7 +399,6 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             <span className="text-sm">{likeCount}</span>
           </div>
 
-          {/* Comments */}
           <div
             className="flex items-center space-x-1 cursor-pointer transition hover:text-indigo-500"
             onClick={() => setShowComments(!showComments)}
@@ -304,7 +411,6 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             <span className="text-sm">{commentCount}</span>
           </div>
 
-          {/* Saved */}
           <div
             className="flex items-center space-x-1 cursor-pointer transition"
             onClick={handleSave}
@@ -314,8 +420,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
                 isSaved
                   ? "text-indigo-500 fill-indigo-500"
                   : isDarkMode
-                  ? "text-gray-400"
-                  : "text-gray-500"
+                    ? "text-gray-400"
+                    : "text-gray-500"
               }`}
               fill={isSaved ? "currentColor" : "none"}
             />
@@ -323,7 +429,6 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         </div>
       </div>
 
-      {/* Comments Section */}
       {showComments && (
         <div className="mt-6">
           <CommentSection blogId={id} onCountChange={setCommentCount} />
