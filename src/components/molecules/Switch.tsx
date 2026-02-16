@@ -6,7 +6,7 @@ interface SwitchProps {
   isOn: boolean;
   handleToggle: () => void;
   // Optional: allows the toggle to be customized (e.g., color)
-  onColor?: string; 
+  onColor?: string;
 }
 
 const Switch: React.FC<SwitchProps> = ({ isOn, handleToggle, onColor = 'bg-black' }) => {

@@ -1,7 +1,6 @@
-import React from "react";
-import { BookOpen, FileText, LifeBuoy, HelpCircle } from "lucide-react";
-import { useTheme } from "../contexts/ThemeContext";
-
+import React from 'react';
+import { BookOpen, FileText, LifeBuoy, HelpCircle } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 const ResourcesPage: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -9,17 +8,21 @@ const ResourcesPage: React.FC = () => {
   return (
     <div
       className={`min-h-screen pt-20 pb-16 transition-colors duration-300 ${
-        isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+        isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'
       }`}
     >
       <div className="max-w-4xl mx-auto px-6 md:px-10">
-
         <div className="text-center mb-14">
-          <h1 className={`text-4xl font-bold mb-3 ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+          <h1
+            className={`text-4xl font-bold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+          >
             BlogNest <span className="text-indigo-500">Resources</span>
           </h1>
-          <p className={`text-lg max-w-2xl mx-auto ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-            Tools, guides, and help materials designed to enhance your writing and publishing experience.
+          <p
+            className={`text-lg max-w-2xl mx-auto ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
+          >
+            Tools, guides, and help materials designed to enhance your writing and publishing
+            experience.
           </p>
         </div>
 
@@ -67,14 +70,14 @@ const ResourceCard = ({
 }) => (
   <div
     className={`p-7 rounded-xl shadow-sm border transition ${
-      isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+      isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
     }`}
   >
     <div className="flex items-center mb-3">
       {icon}
       <h3 className="text-lg font-semibold">{title}</h3>
     </div>
-    <p className={isDarkMode ? "text-gray-300" : "text-gray-700"}>{description}</p>
+    <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>{description}</p>
   </div>
 );
 

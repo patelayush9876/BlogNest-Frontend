@@ -1,10 +1,10 @@
-import { Outlet } from "react-router-dom";
-import Footer from "../components/Footer";
-import Navbar from "../components/navbar/Navbar";
-import { useEffect, useState } from "react";
-import type { IUserProfile } from "../interfaces/userProfileInterface";
-import { getMyProfile } from "../services/profile.service";
-import { useAuth } from "../contexts/AuthContext";
+import { Outlet } from 'react-router-dom';
+import Footer from '../components/Footer';
+import Navbar from '../components/navbar/Navbar';
+import { useEffect, useState } from 'react';
+import type { IUserProfile } from '../interfaces/userProfileInterface';
+import { getMyProfile } from '../services/profile.service';
+import { useAuth } from '../contexts/AuthContext';
 
 interface UserLayoutProps {
   toggleTheme?: () => void; // optional for now
@@ -20,7 +20,7 @@ const UserLayout: React.FC<UserLayoutProps> = () => {
         const data = await getMyProfile();
         setProfile(data);
       } catch (err) {
-        console.error("Failed to fetch profile:", err);
+        console.error('Failed to fetch profile:', err);
       } finally {
         setLoading(false);
       }
@@ -41,7 +41,7 @@ const UserLayout: React.FC<UserLayoutProps> = () => {
     <div className="flex flex-col min-h-screen w-full overflow-x-hidden">
       {/* Navbar */}
       <Navbar
-        userProfileImage={profile?.profilePic || ""}
+        userProfileImage={profile?.profilePic || ''}
         userName={profile?.user?.name as any}
         onLogout={logoutUser}
       />

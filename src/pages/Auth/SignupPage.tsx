@@ -1,27 +1,22 @@
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import ReCAPTCHA from "react-google-recaptcha";
-import { FRONTEND_CONFIG } from "../../config/keyConfig";
-import {
-  required,
-  validateField,
-  validCaptcha,
-  validEmail,
-} from "../../utils/validators";
-import API_CONFIG from "../../config/apiConfig";
-import type { SignupInput } from "../../interfaces/userInterface";
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { FRONTEND_CONFIG } from '../../config/keyConfig';
+import { required, validateField, validCaptcha, validEmail } from '../../utils/validators';
+import API_CONFIG from '../../config/apiConfig';
+import type { SignupInput } from '../../interfaces/userInterface';
 
 const SignupPage: React.FC = () => {
   const [formData, setFormData] = useState<SignupInput>({
-    name: "",
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    captchaToken: "",
+    name: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    captchaToken: '',
   });
 
   const [errors, setErrors] = useState<{
@@ -47,21 +42,12 @@ const SignupPage: React.FC = () => {
     event.preventDefault();
     setErrors({});
 
-    const nameErrors = validateField(formData.name, [required("Name")]);
-    const emailErrors = validateField(formData.email, [
-      required("Email"),
-      validEmail,
-    ]);
-    const passwordErrors = validateField(formData.password, [
-      required("Password"),
-    ]);
+    const nameErrors = validateField(formData.name, [required('Name')]);
+    const emailErrors = validateField(formData.email, [required('Email'), validEmail]);
+    const passwordErrors = validateField(formData.password, [required('Password')]);
     const confirmPasswordErrors =
-      formData.confirmPassword !== formData.password
-        ? ["Passwords do not match"]
-        : [];
-    const captchaErrors = validateField(formData.captchaToken || "", [
-      validCaptcha,
-    ]);
+      formData.confirmPassword !== formData.password ? ['Passwords do not match'] : [];
+    const captchaErrors = validateField(formData.captchaToken || '', [validCaptcha]);
 
     if (
       nameErrors.length ||
@@ -91,14 +77,14 @@ const SignupPage: React.FC = () => {
       });
 
       // ✅ store email temporarily
-      localStorage.setItem("pendingEmail", formData.email);
+      localStorage.setItem('pendingEmail', formData.email);
 
       // ✅ go to OTP page
-      navigate("/verify-email", {
+      navigate('/verify-email', {
         state: { email: formData.email },
       });
     } catch (error) {
-      console.error("Signup failed:", error);
+      console.error('Signup failed:', error);
     } finally {
       setLoading(false);
     }
@@ -120,13 +106,11 @@ const SignupPage: React.FC = () => {
             <img src="/Images/logo-dark.png" alt="Logo" className="w-40" />
           </div>
 
-          <h1 className="text-4xl font-bold mb-4">
-            Share Your Story with the World
-          </h1>
+          <h1 className="text-4xl font-bold mb-4">Share Your Story with the World</h1>
 
           <p className="text-lg text-purple-100 leading-relaxed max-w-md">
-            Join thousands of writers sharing their thoughts, experiences, and
-            expertise with our growing community.
+            Join thousands of writers sharing their thoughts, experiences, and expertise with our
+            growing community.
           </p>
         </div>
       </div>
@@ -143,18 +127,13 @@ const SignupPage: React.FC = () => {
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-2">
             Create an Account
           </h2>
-          <p className="text-gray-600 text-center mb-6">
-            Sign up to start your blogging journey
-          </p>
+          <p className="text-gray-600 text-center mb-6">Sign up to start your blogging journey</p>
 
           {/* Form */}
           <form onSubmit={handleSubmit} noValidate className="space-y-3">
             {/* Name Field */}
             <div>
-              <label
-                htmlFor="name"
-                className="block font-semibold text-gray-700 mb-1"
-              >
+              <label htmlFor="name" className="block font-semibold text-gray-700 mb-1">
                 Full Name
               </label>
               <input
@@ -165,23 +144,16 @@ const SignupPage: React.FC = () => {
                 onChange={handleChange}
                 className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
                   errors.name
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-green-500"
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-green-500'
                 }`}
               />
-              {errors.name && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.name.join(", ")}
-                </p>
-              )}
+              {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name.join(', ')}</p>}
             </div>
 
             {/* Username Field */}
             <div>
-              <label
-                htmlFor="username"
-                className="block font-semibold text-gray-700 mb-1"
-              >
+              <label htmlFor="username" className="block font-semibold text-gray-700 mb-1">
                 Username
               </label>
               <input
@@ -192,23 +164,18 @@ const SignupPage: React.FC = () => {
                 onChange={handleChange}
                 className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
                   errors.username
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-green-500"
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-green-500'
                 }`}
               />
               {errors.username && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.username.join(", ")}
-                </p>
+                <p className="text-sm text-red-500 mt-1">{errors.username.join(', ')}</p>
               )}
             </div>
 
             {/* Email Field */}
             <div>
-              <label
-                htmlFor="email"
-                className="block font-semibold text-gray-700 mb-1"
-              >
+              <label htmlFor="email" className="block font-semibold text-gray-700 mb-1">
                 Email
               </label>
               <input
@@ -219,36 +186,31 @@ const SignupPage: React.FC = () => {
                 onChange={handleChange}
                 className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
                   errors.email
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-green-500"
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-green-500'
                 }`}
               />
               {errors.email && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.email.join(", ")}
-                </p>
+                <p className="text-sm text-red-500 mt-1">{errors.email.join(', ')}</p>
               )}
             </div>
 
             {/* Password Field */}
             <div>
-              <label
-                htmlFor="password"
-                className="block font-semibold text-gray-700 mb-1"
-              >
+              <label htmlFor="password" className="block font-semibold text-gray-700 mb-1">
                 Password
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   placeholder="Create a strong password"
                   value={formData.password}
                   onChange={handleChange}
                   className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 pr-10 ${
                     errors.password
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-green-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-green-500'
                   }`}
                 />
                 <span
@@ -259,70 +221,55 @@ const SignupPage: React.FC = () => {
                 </span>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.password.join(", ")}
-                </p>
+                <p className="text-sm text-red-500 mt-1">{errors.password.join(', ')}</p>
               )}
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block font-semibold text-gray-700 mb-1"
-              >
+              <label htmlFor="confirmPassword" className="block font-semibold text-gray-700 mb-1">
                 Confirm Password
               </label>
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 id="confirmPassword"
                 placeholder="Re-enter your password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
                   errors.confirmPassword
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-green-500"
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-green-500'
                 }`}
               />
               {errors.confirmPassword && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.confirmPassword.join(", ")}
-                </p>
+                <p className="text-sm text-red-500 mt-1">{errors.confirmPassword.join(', ')}</p>
               )}
             </div>
 
             {/* reCAPTCHA */}
             <div className="flex justify-center pt-2">
               <ReCAPTCHA
-                sitekey={RECAPTCHA_SITE_KEY || ""}
+                sitekey={RECAPTCHA_SITE_KEY || ''}
                 onChange={(token: string | null) =>
                   setFormData((prev) => ({
                     ...prev,
-                    captchaToken: token || "",
+                    captchaToken: token || '',
                   }))
                 }
-                onExpired={() =>
-                  setFormData((prev) => ({ ...prev, captchaToken: "" }))
-                }
+                onExpired={() => setFormData((prev) => ({ ...prev, captchaToken: '' }))}
               />
             </div>
 
-            {errors.captcha && (
-              <p className="text-sm text-red-500 text-center">
-                {errors.captcha}
-              </p>
-            )}
+            {errors.captcha && <p className="text-sm text-red-500 text-center">{errors.captcha}</p>}
 
             {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 btn-primary ${
-                loading ? "btn-loading" : ""
-              }`}
+              className={`w-full py-3 btn-primary ${loading ? 'btn-loading' : ''}`}
             >
-              {loading ? "Creating Account..." : "Sign Up"}
+              {loading ? 'Creating Account...' : 'Sign Up'}
             </button>
 
             {/* Divider */}
@@ -352,10 +299,10 @@ const SignupPage: React.FC = () => {
 
             {/* Login Link */}
             <p className="text-center text-gray-600 text-sm mt-4">
-              Already have an account?{" "}
+              Already have an account?{' '}
               <button
                 type="button"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate('/login')}
                 className="text-green-600 font-semibold hover:underline"
               >
                 Log in

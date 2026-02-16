@@ -1,5 +1,5 @@
-import type { BlogWithProfile as Blog} from "../interfaces/blogInterface";
-import api from "./api";
+import type { BlogWithProfile as Blog } from '../interfaces/blogInterface';
+import api from './api';
 
 export type PaginatedBlogs = {
   blogs: Blog[];
@@ -11,19 +11,15 @@ export type PaginatedBlogs = {
 
 // Create Blog
 export const createBlog = async (data: FormData): Promise<Blog> => {
-  const response = await api.post("/blogs", data, {
-    headers: { "Content-Type": "multipart/form-data" },
+  const response = await api.post('/blogs', data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data.data.blog;
 };
 
 // Get All Blogs
-export const getAllBlogs = async (
-  page = 1,
-  limit = 10,
-  search = ""
-): Promise<PaginatedBlogs> => {
-  const response = await api.get("/blogs", {
+export const getAllBlogs = async (page = 1, limit = 10, search = ''): Promise<PaginatedBlogs> => {
+  const response = await api.get('/blogs', {
     params: { page, limit, search },
   });
   const { blogs, total, page: p, limit: l, totalPages } = response.data.data;
@@ -33,9 +29,9 @@ export const getAllBlogs = async (
 export const getFollowingBlogs = async (
   page = 1,
   limit = 10,
-  search = ""
+  search = '',
 ): Promise<PaginatedBlogs> => {
-  const response = await api.get("/blogs/following", {
+  const response = await api.get('/blogs/following', {
     params: { page, limit, search },
   });
   const { blogs, total, page: p, limit: l, totalPages } = response.data.data;
@@ -45,23 +41,23 @@ export const getFollowingBlogs = async (
 export const getTrendingBlogs = async (
   page = 1,
   limit = 10,
-  search = "",
+  search = '',
   decayHours?: number,
-  minHoursWindow?: number
+  minHoursWindow?: number,
 ): Promise<PaginatedBlogs> => {
   const params: Record<string, string | number> = { page, limit };
   if (search) params.search = search;
-  if (typeof decayHours === "number") params.decayHours = decayHours;
-  if (typeof minHoursWindow === "number") params.minHoursWindow = minHoursWindow;
+  if (typeof decayHours === 'number') params.decayHours = decayHours;
+  if (typeof minHoursWindow === 'number') params.minHoursWindow = minHoursWindow;
 
-  const response = await api.get("/blogs/trending", { params });
+  const response = await api.get('/blogs/trending', { params });
   const { blogs, total, page: p, limit: l, totalPages } = response.data.data;
   return { blogs, total, page: p, limit: l, totalPages };
 };
 
 // Get my Blogs
 export const getMyBlogs = async (): Promise<Blog[]> => {
-  const response = await api.get("/blogs/my");
+  const response = await api.get('/blogs/my');
   return response.data.data.blogs;
 };
 
@@ -74,7 +70,7 @@ export const getBlogById = async (id: string): Promise<Blog> => {
 // Update Blog
 export const updateBlog = async (id: string, data: FormData): Promise<Blog> => {
   const response = await api.put(`/blogs/${id}`, data, {
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data.data.blog;
 };
@@ -93,19 +89,16 @@ export const publishBlog = async (id: string): Promise<Blog> => {
 
 // create draft
 export const createDraft = async (data: FormData): Promise<Blog> => {
-  const response = await api.post("/blogs/draft", data, {
-    headers: { "Content-Type": "multipart/form-data" },
+  const response = await api.post('/blogs/draft', data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data.data.blog;
 };
 
 // update draft
-export const updateDraft = async (
-  id: string,
-  data: FormData
-): Promise<Blog> => {
+export const updateDraft = async (id: string, data: FormData): Promise<Blog> => {
   const response = await api.put(`/blogs/draft/${id}`, data, {
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data.data.blog;
 };
@@ -124,7 +117,7 @@ export const archivePost = async (id: string): Promise<Blog> => {
 
 // Get my Drafts
 export const getMyDrafts = async (): Promise<Blog[]> => {
-  const response = await api.get("/blogs/drafts/my");
+  const response = await api.get('/blogs/drafts/my');
   return response.data.data.blogs;
 };
 

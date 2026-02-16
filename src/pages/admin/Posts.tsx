@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useTheme } from "../../contexts/ThemeContext";
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface IPost {
   _id: string;
   title: string;
   author: string;
-  status: "draft" | "published" | "archived";
+  status: 'draft' | 'published' | 'archived';
   createdAt?: string;
 }
 
@@ -15,45 +15,39 @@ const AdminPosts: React.FC = () => {
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState<IPost[]>([]);
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | IPost["status"]>(
-    "all"
-  );
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | IPost['status']>('all');
 
   /* ---------------- Theme Helpers ---------------- */
-  const pageBg = isDarkMode
-    ? "bg-gray-900 text-gray-100"
-    : "bg-gray-50 text-gray-900";
+  const pageBg = isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900';
 
-  const cardBg = isDarkMode
-    ? "bg-gray-800 border-gray-700"
-    : "bg-white border-gray-200";
+  const cardBg = isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200';
 
-  const muted = isDarkMode ? "text-gray-400" : "text-gray-600";
+  const muted = isDarkMode ? 'text-gray-400' : 'text-gray-600';
 
   /* ---------------- Mock Data (replace with API) ---------------- */
   useEffect(() => {
     setPosts([
       {
-        _id: "1",
-        title: "Getting Started with MERN Stack",
-        author: "Ayush Patel",
-        status: "published",
-        createdAt: "2025-01-10",
+        _id: '1',
+        title: 'Getting Started with MERN Stack',
+        author: 'Ayush Patel',
+        status: 'published',
+        createdAt: '2025-01-10',
       },
       {
-        _id: "2",
-        title: "Why Clean UI Matters",
-        author: "John Doe",
-        status: "draft",
-        createdAt: "2025-01-12",
+        _id: '2',
+        title: 'Why Clean UI Matters',
+        author: 'John Doe',
+        status: 'draft',
+        createdAt: '2025-01-12',
       },
       {
-        _id: "3",
-        title: "Dark Mode UX Best Practices",
-        author: "Jane Smith",
-        status: "archived",
-        createdAt: "2025-01-15",
+        _id: '3',
+        title: 'Dark Mode UX Best Practices',
+        author: 'Jane Smith',
+        status: 'archived',
+        createdAt: '2025-01-15',
       },
     ]);
   }, []);
@@ -63,8 +57,7 @@ const AdminPosts: React.FC = () => {
       post.title.toLowerCase().includes(search.toLowerCase()) ||
       post.author.toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === "all" ? true : post.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' ? true : post.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -75,10 +68,8 @@ const AdminPosts: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-              Post Management
-            </h1>
-            <p className={isDarkMode ? "text-gray-400" : "text-gray-600"}>
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Post Management</h1>
+            <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
               Manage posts and post status
             </p>
           </div>
@@ -103,8 +94,8 @@ const AdminPosts: React.FC = () => {
                 onChange={(e) => setSearch(e.target.value)}
                 className={`w-full md:w-64 px-3 py-2 text-sm rounded-lg border transition ${
                   isDarkMode
-                    ? "bg-gray-900 border-gray-700 text-gray-200"
-                    : "bg-gray-100 border-gray-300 text-gray-800 focus:bg-white"
+                    ? 'bg-gray-900 border-gray-700 text-gray-200'
+                    : 'bg-gray-100 border-gray-300 text-gray-800 focus:bg-white'
                 }`}
               />
 
@@ -114,8 +105,8 @@ const AdminPosts: React.FC = () => {
                 onChange={(e) => setStatusFilter(e.target.value as any)}
                 className={`px-3 py-2 text-sm rounded-lg border transition ${
                   isDarkMode
-                    ? "bg-gray-900 border-gray-700 text-gray-200"
-                    : "bg-gray-100 border-gray-300 text-gray-800"
+                    ? 'bg-gray-900 border-gray-700 text-gray-200'
+                    : 'bg-gray-100 border-gray-300 text-gray-800'
                 }`}
               >
                 <option value="all">All Status</option>
@@ -129,8 +120,8 @@ const AdminPosts: React.FC = () => {
             <thead
               className={
                 isDarkMode
-                  ? "bg-gray-700 text-gray-300"
-                  : "bg-gray-100 text-gray-700 border-b border-gray-200"
+                  ? 'bg-gray-700 text-gray-300'
+                  : 'bg-gray-100 text-gray-700 border-b border-gray-200'
               }
             >
               <tr>
@@ -147,8 +138,8 @@ const AdminPosts: React.FC = () => {
                   key={post._id}
                   className={
                     isDarkMode
-                      ? "border-t border-gray-700 hover:bg-gray-700/40"
-                      : "border-t border-gray-200 hover:bg-gray-100"
+                      ? 'border-t border-gray-700 hover:bg-gray-700/40'
+                      : 'border-t border-gray-200 hover:bg-gray-100'
                   }
                 >
                   <td className="px-4 py-3 font-medium">{post.title}</td>
@@ -157,17 +148,17 @@ const AdminPosts: React.FC = () => {
                   <td className="px-4 py-3 text-center capitalize">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        post.status === "published"
+                        post.status === 'published'
                           ? isDarkMode
-                            ? "bg-green-900/40 text-green-300"
-                            : "bg-green-100 text-green-700"
-                          : post.status === "draft"
-                          ? isDarkMode
-                            ? "bg-yellow-900/40 text-yellow-300"
-                            : "bg-yellow-100 text-yellow-700"
-                          : isDarkMode
-                          ? "bg-gray-700 text-gray-300"
-                          : "bg-gray-200 text-gray-700"
+                            ? 'bg-green-900/40 text-green-300'
+                            : 'bg-green-100 text-green-700'
+                          : post.status === 'draft'
+                            ? isDarkMode
+                              ? 'bg-yellow-900/40 text-yellow-300'
+                              : 'bg-yellow-100 text-yellow-700'
+                            : isDarkMode
+                              ? 'bg-gray-700 text-gray-300'
+                              : 'bg-gray-200 text-gray-700'
                       }`}
                     >
                       {post.status}
@@ -191,10 +182,7 @@ const AdminPosts: React.FC = () => {
 
               {filteredPosts.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="px-4 py-6 text-center text-gray-500"
-                  >
+                  <td colSpan={4} className="px-4 py-6 text-center text-gray-500">
                     No posts found
                   </td>
                 </tr>

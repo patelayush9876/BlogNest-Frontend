@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { resetPassword } from "../../services/auth.service";
-import { useLocation, useNavigate } from "react-router-dom";
-import { showToast } from "../../services/toast.service";
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { resetPassword } from '../../services/auth.service';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { showToast } from '../../services/toast.service';
 
 const CreateNewPasswordPage: React.FC = () => {
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ const CreateNewPasswordPage: React.FC = () => {
     event.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      showToast("Passwords do not match", "error");
+      showToast('Passwords do not match', 'error');
       return;
     }
 
@@ -29,10 +29,7 @@ const CreateNewPasswordPage: React.FC = () => {
     )?.resetToken;
 
     if (!resetToken) {
-      showToast(
-        "Invalid or expired reset session. Please restart password reset.",
-        "error",
-      );
+      showToast('Invalid or expired reset session. Please restart password reset.', 'error');
       return;
     }
 
@@ -45,25 +42,19 @@ const CreateNewPasswordPage: React.FC = () => {
       });
 
       if (response.status) {
-        showToast(
-          "Password reset successfully. Please login again.",
-          "success",
-        );
-        navigate("/login");
+        showToast('Password reset successfully. Please login again.', 'success');
+        navigate('/login');
       } else {
-        showToast(response.message, "error");
+        showToast(response.message, 'error');
       }
     } catch (error: any) {
-      showToast(
-        error?.response?.data?.message || "Password reset failed",
-        "error",
-      );
+      showToast(error?.response?.data?.message || 'Password reset failed', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  const backgroundImage = "/Images/createPass.png";
+  const backgroundImage = '/Images/createPass.png';
 
   return (
     <div className="min-h-screen w-screen flex items-center justify-center bg-gray-50 font-sans">
@@ -82,9 +73,7 @@ const CreateNewPasswordPage: React.FC = () => {
             <img src="/Images/logo-light.png" alt="Logo" className="h-20" />
           </div>
 
-          <h2 className="text-3xl font-bold text-center mb-2">
-            Create New Password
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-2">Create New Password</h2>
 
           <p className="text-gray-600 text-center mb-6">
             Set a new password to secure your account.
@@ -93,13 +82,11 @@ const CreateNewPasswordPage: React.FC = () => {
           <form onSubmit={handleSubmit}>
             {/* New Password */}
             <div className="mb-4">
-              <label className="block font-bold text-gray-700 mb-1">
-                New Password
-              </label>
+              <label className="block font-bold text-gray-700 mb-1">New Password</label>
               <div className="relative">
                 <input
                   aria-label="confirm-new-password"
-                  type={showNewPassword ? "text" : "password"}
+                  type={showNewPassword ? 'text' : 'password'}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
@@ -109,22 +96,18 @@ const CreateNewPasswordPage: React.FC = () => {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                 >
-                  <FontAwesomeIcon
-                    icon={showNewPassword ? faEyeSlash : faEye}
-                  />
+                  <FontAwesomeIcon icon={showNewPassword ? faEyeSlash : faEye} />
                 </span>
               </div>
             </div>
 
             {/* Confirm Password */}
             <div className="mb-4">
-              <label className="block font-bold text-gray-700 mb-1">
-                Confirm New Password
-              </label>
+              <label className="block font-bold text-gray-700 mb-1">Confirm New Password</label>
               <div className="relative">
                 <input
                   aria-label="confirm-new-password"
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -134,9 +117,7 @@ const CreateNewPasswordPage: React.FC = () => {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  <FontAwesomeIcon
-                    icon={showConfirmPassword ? faEyeSlash : faEye}
-                  />
+                  <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
                 </span>
               </div>
             </div>
@@ -146,7 +127,7 @@ const CreateNewPasswordPage: React.FC = () => {
               disabled={loading}
               className="w-full cursor-pointer btn-primary py-3 mt-6 font-bold text-white rounded-lg nsyrd transition duration-300 ease-in-out"
             >
-              {loading ? "Resetting..." : "Reset Password"}
+              {loading ? 'Resetting...' : 'Reset Password'}
             </button>
           </form>
         </div>

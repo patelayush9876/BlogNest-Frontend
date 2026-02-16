@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { PenLine, User, Compass, ShieldCheck, Users } from "lucide-react";
-import { useTheme } from "../../contexts/ThemeContext";
-import { useAuth } from "../../contexts/AuthContext";
-import clsx from "clsx";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PenLine, User, Compass, ShieldCheck, Users } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
+import clsx from 'clsx';
 
 const Welcome: React.FC = () => {
   const { isDarkMode } = useTheme();
@@ -21,36 +21,33 @@ const Welcome: React.FC = () => {
 
   const steps = [
     {
-      title: "Welcome to BlogNest",
+      title: 'Welcome to BlogNest',
       subtitle: `Hi ${user?.name}, let’s get you started ✨`,
       icon: <User className="w-8 h-8 text-indigo-500" />,
-      content:
-        "BlogNest is a space to write, explore ideas, and connect with thoughtful creators.",
+      content: 'BlogNest is a space to write, explore ideas, and connect with thoughtful creators.',
     },
     {
-      title: "Privacy & Safety",
-      subtitle: "Your data, your control",
+      title: 'Privacy & Safety',
+      subtitle: 'Your data, your control',
       icon: <ShieldCheck className="w-8 h-8 text-indigo-500" />,
-      content:
-        "We respect your privacy. Your data is never sold, and you control what you share.",
+      content: 'We respect your privacy. Your data is never sold, and you control what you share.',
     },
     {
-      title: "Community Guidelines",
-      subtitle: "Respect makes great communities",
+      title: 'Community Guidelines',
+      subtitle: 'Respect makes great communities',
       icon: <Users className="w-8 h-8 text-indigo-500" />,
       content:
-        "Be respectful, original, and kind. Healthy discussions make BlogNest better for everyone.",
+        'Be respectful, original, and kind. Healthy discussions make BlogNest better for everyone.',
     },
     {
-      title: "How BlogNest Works",
-      subtitle: "Create. Share. Grow.",
+      title: 'How BlogNest Works',
+      subtitle: 'Create. Share. Grow.',
       icon: <PenLine className="w-8 h-8 text-indigo-500" />,
-      content:
-        "Write blogs, follow creators, save posts, and build your audience organically.",
+      content: 'Write blogs, follow creators, save posts, and build your audience organically.',
     },
     {
-      title: "You’re all set!",
-      subtitle: "Start your journey",
+      title: 'You’re all set!',
+      subtitle: 'Start your journey',
       icon: <Compass className="w-8 h-8 text-indigo-500" />,
       content: null,
     },
@@ -61,16 +58,14 @@ const Welcome: React.FC = () => {
   return (
     <div
       className={clsx(
-        "min-h-screen flex items-center justify-center px-4 transition-colors duration-300",
-        isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+        'min-h-screen flex items-center justify-center px-4 transition-colors duration-300',
+        isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900',
       )}
     >
       <div
         className={clsx(
-          "w-full max-w-xl min-h-[460px] rounded-2xl p-8 md:p-10 border animate-fade-in-up flex flex-col justify-between",
-          isDarkMode
-            ? "bg-gray-800 border-gray-700"
-            : "bg-white border-gray-200"
+          'w-full max-w-xl min-h-[460px] rounded-2xl p-8 md:p-10 border animate-fade-in-up flex flex-col justify-between',
+          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200',
         )}
       >
         {/* Progress */}
@@ -79,8 +74,8 @@ const Welcome: React.FC = () => {
             <div
               key={i}
               className={clsx(
-                "h-1 flex-1 mx-1 rounded-full transition",
-                i <= step ? "bg-indigo-500" : "bg-gray-300"
+                'h-1 flex-1 mx-1 rounded-full transition',
+                i <= step ? 'bg-indigo-500' : 'bg-gray-300',
               )}
             />
           ))}
@@ -121,16 +116,8 @@ const Welcome: React.FC = () => {
                 title="Build your audience"
                 text="Gain followers organically."
               />
-              <Feature
-                icon={<ShieldCheck />}
-                title="Stay safe"
-                text="Your data stays private."
-              />
-              <Feature
-                icon={<PenLine />}
-                title="Save drafts"
-                text="Write at your own pace."
-              />
+              <Feature icon={<ShieldCheck />} title="Stay safe" text="Your data stays private." />
+              <Feature icon={<PenLine />} title="Save drafts" text="Write at your own pace." />
             </div>
           )}
         </div>
@@ -155,7 +142,7 @@ const Welcome: React.FC = () => {
             </button>
           ) : (
             <button
-              onClick={() => navigate("/user")}
+              onClick={() => navigate('/user')}
               className="flex-1 px-5 py-3 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
             >
               Enter BlogNest
@@ -167,15 +154,7 @@ const Welcome: React.FC = () => {
   );
 };
 
-const Feature = ({
-  icon,
-  title,
-  text,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  text: string;
-}) => (
+const Feature = ({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) => (
   <div className="flex items-start gap-3">
     <div className="shrink-0 mt-1 text-indigo-500">{icon}</div>
     <div className="flex-1">

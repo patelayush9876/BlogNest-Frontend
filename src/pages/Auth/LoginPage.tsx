@@ -1,20 +1,15 @@
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import ReCAPTCHA from "react-google-recaptcha";
-import { FRONTEND_CONFIG } from "../../config/keyConfig";
-import {
-  required,
-  validateField,
-  validCaptcha,
-  validEmail,
-} from "../../utils/validators";
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { FRONTEND_CONFIG } from '../../config/keyConfig';
+import { required, validateField, validCaptcha, validEmail } from '../../utils/validators';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [errors, setErrors] = useState<{
     email?: string[];
     password?: string[];
@@ -33,9 +28,9 @@ const LoginPage: React.FC = () => {
     setErrors({});
 
     // Validate fields
-    const emailErrors = validateField(email, [required("Email"), validEmail]);
-    const passwordErrors = validateField(password, [required("Password")]);
-    const captchaErrors = validateField(captchaToken || "", [validCaptcha]);
+    const emailErrors = validateField(email, [required('Email'), validEmail]);
+    const passwordErrors = validateField(password, [required('Password')]);
+    const captchaErrors = validateField(captchaToken || '', [validCaptcha]);
 
     if (emailErrors.length || passwordErrors.length || !captchaToken) {
       setErrors({
@@ -51,22 +46,22 @@ const LoginPage: React.FC = () => {
       await loginUser(email, password, captchaToken);
 
       // Get stored user from localStorage
-      const storedUser = localStorage.getItem("user");
+      const storedUser = localStorage.getItem('user');
       const user = storedUser ? JSON.parse(storedUser) : null;
 
       // Redirect based on role
       switch (user?.role) {
-        case "admin":
-          navigate("/admin");
+        case 'admin':
+          navigate('/admin');
           break;
-        case "user":
-          navigate("/user");
+        case 'user':
+          navigate('/user');
           break;
         default:
-          navigate("/");
+          navigate('/');
       }
     } catch (err) {
-      console.error("Login failed:", err);
+      console.error('Login failed:', err);
     } finally {
       setLoading(false);
     }
@@ -91,8 +86,8 @@ const LoginPage: React.FC = () => {
           <h1 className="text-4xl font-bold mb-4">Welcome Back</h1>
 
           <p className="text-lg text-purple-100 leading-relaxed max-w-md">
-            Log in to continue writing, exploring stories, and connecting with
-            the BlogNest community.
+            Log in to continue writing, exploring stories, and connecting with the BlogNest
+            community.
           </p>
         </div>
       </div>
@@ -117,10 +112,7 @@ const LoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} noValidate className="space-y-3">
             {/* Email Field */}
             <div>
-              <label
-                htmlFor="email"
-                className="block font-semibold text-gray-700 mb-1"
-              >
+              <label htmlFor="email" className="block font-semibold text-gray-700 mb-1">
                 Email
               </label>
               <input
@@ -131,36 +123,31 @@ const LoginPage: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 ${
                   errors.email
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-green-500"
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-green-500'
                 }`}
               />
               {errors.email && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.email.join(", ")}
-                </p>
+                <p className="text-sm text-red-500 mt-1">{errors.email.join(', ')}</p>
               )}
             </div>
 
             {/* Password Field */}
             <div>
-              <label
-                htmlFor="password"
-                className="block font-semibold text-gray-700 mb-1"
-              >
+              <label htmlFor="password" className="block font-semibold text-gray-700 mb-1">
                 Password
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className={`w-full px-4 py-2 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 pr-10 ${
                     errors.password
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-green-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-green-500'
                   }`}
                 />
                 <span
@@ -171,31 +158,25 @@ const LoginPage: React.FC = () => {
                 </span>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.password.join(", ")}
-                </p>
+                <p className="text-sm text-red-500 mt-1">{errors.password.join(', ')}</p>
               )}
             </div>
 
             {/* reCAPTCHA */}
             <div className="flex justify-center">
               <ReCAPTCHA
-                sitekey={RECAPTCHA_SITE_KEY || ""}
+                sitekey={RECAPTCHA_SITE_KEY || ''}
                 onChange={(token: string | null) => setCaptchaToken(token)}
                 onExpired={() => setCaptchaToken(null)}
               />
             </div>
-            {errors.captcha && (
-              <p className="text-sm text-red-500 text-center">
-                {errors.captcha}
-              </p>
-            )}
+            {errors.captcha && <p className="text-sm text-red-500 text-center">{errors.captcha}</p>}
 
             {/* Forgot Password */}
             <div className="text-right">
               <button
                 type="button"
-                onClick={() => navigate("/forgot-password")}
+                onClick={() => navigate('/forgot-password')}
                 className="text-sm text-green-600 hover:underline"
               >
                 Forgot Password?
@@ -206,11 +187,9 @@ const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 btn-primary  ${
-                loading ? "btn-loading" : ""
-              } `}
+              className={`w-full py-3 btn-primary  ${loading ? 'btn-loading' : ''} `}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
 
             {/* Divider */}
@@ -240,10 +219,10 @@ const LoginPage: React.FC = () => {
 
             {/* Signup Link */}
             <p className="text-center text-gray-600 text-sm mt-4">
-              Don’t have an account?{" "}
+              Don’t have an account?{' '}
               <button
                 type="button"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate('/signup')}
                 className="text-green-600 font-semibold hover:underline"
               >
                 Sign up

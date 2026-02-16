@@ -1,10 +1,10 @@
-import api from "./api";
+import api from './api';
 
 interface UpdateUserInput {
   name?: string;
   email?: string;
   phoneNumber?: string;
-  role?: "user" | "admin";
+  role?: 'user' | 'admin';
   isActive?: boolean;
 }
 
@@ -12,13 +12,13 @@ export interface GetUsersParams {
   page?: number;
   limit?: number;
   search?: string;
-  role?: "user" | "admin";
-  status?: "active" | "inactive" | "banned";
+  role?: 'user' | 'admin';
+  status?: 'active' | 'inactive' | 'banned';
 }
 
 // GET /users
 export const getAllUsers = async (params: GetUsersParams = {}) => {
-  const response = await api.get("/user", {
+  const response = await api.get('/user', {
     params,
   });
   return response.data; // { status, message, data }
@@ -30,14 +30,10 @@ export const getUserById = async (id: string) => {
 };
 
 // PATCH /users/:id/status
-export const changeUserStatus = async (
-  id: string,
-  status: "active" | "inactive" | "banned"
-) => {
+export const changeUserStatus = async (id: string, status: 'active' | 'inactive' | 'banned') => {
   const response = await api.patch(`/user/${id}/status`, { status });
   return response.data;
 };
-
 
 export const updateUser = async (id: string, data: UpdateUserInput) => {
   const response = await api.put(`/user/${id}`, data);
@@ -55,15 +51,11 @@ export const deleteUser = async (id: string) => {
 };
 
 export const getLoggedInUser = async () => {
-  const response = await api.get("/user/me");
+  const response = await api.get('/user/me');
   return response.data;
 };
 
-export const changePassword = async (
-  id: string,
-  oldPassword: string,
-  newPassword: string
-) => {
+export const changePassword = async (id: string, oldPassword: string, newPassword: string) => {
   const response = await api.post(`/user/${id}/change-password`, {
     oldPassword,
     newPassword,

@@ -1,6 +1,6 @@
-import { useTheme } from "../../../../contexts/ThemeContext";
-import Switch from "../../../../components/molecules/Switch";
-import { useState } from "react";
+import { useTheme } from '../../../../contexts/ThemeContext';
+import Switch from '../../../../components/molecules/Switch';
+import { useState } from 'react';
 
 export const AdminPreferencesTab: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -11,24 +11,24 @@ export const AdminPreferencesTab: React.FC = () => {
     <div className="space-y-8">
       <div
         className={`p-6 rounded-lg border ${
-          isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"
+          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
         }`}
       >
         <h3 className="text-xl font-semibold mb-2">Platform Preferences</h3>
-        <p className={isDarkMode ? "text-gray-400" : "text-gray-500"}>
+        <p className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>
           Control global platform behavior
         </p>
 
         {[
           {
-            title: "Maintenance Mode",
-            desc: "Temporarily disable user access",
+            title: 'Maintenance Mode',
+            desc: 'Temporarily disable user access',
             state: maintenanceMode,
             toggle: () => setMaintenanceMode(!maintenanceMode),
           },
           {
-            title: "Allow New Registrations",
-            desc: "Enable or disable new user signups",
+            title: 'Allow New Registrations',
+            desc: 'Enable or disable new user signups',
             state: allowRegistrations,
             toggle: () => setAllowRegistrations(!allowRegistrations),
           },
@@ -36,12 +36,12 @@ export const AdminPreferencesTab: React.FC = () => {
           <div
             key={i}
             className={`flex justify-between items-center py-3 border-b last:border-b-0 ${
-              isDarkMode ? "border-gray-700" : "border-gray-100"
+              isDarkMode ? 'border-gray-700' : 'border-gray-100'
             }`}
           >
             <div>
               <p className="font-medium">{item.title}</p>
-              <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 {item.desc}
               </p>
             </div>
@@ -53,13 +53,11 @@ export const AdminPreferencesTab: React.FC = () => {
       {/* Theme */}
       <div
         className={`p-6 rounded-lg border ${
-          isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"
+          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
         }`}
       >
         <h3 className="text-xl font-semibold mb-2">Appearance</h3>
-        <p className={isDarkMode ? "text-gray-400" : "text-gray-500"}>
-          Admin panel theme
-        </p>
+        <p className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Admin panel theme</p>
 
         <button
           onClick={toggleTheme}

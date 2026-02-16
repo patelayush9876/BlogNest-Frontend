@@ -1,8 +1,8 @@
 // Footer.tsx
-import React from "react";
-import { Twitter, Linkedin, Github, Mail, Sun, Moon } from "lucide-react";
-import { useTheme } from "../contexts/ThemeContext";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { Twitter, Linkedin, Github, Mail, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 interface FooterLink {
   label: string;
@@ -16,30 +16,30 @@ interface FooterColumn {
 
 const footerColumns: FooterColumn[] = [
   {
-    title: "Community",
+    title: 'Community',
     links: [
-      { label: "Become a Contributor", href: "/user/becomeContributer" },
-      { label: "Writer Guidelines", href: "/user/writerGuidelines" },
-      { label: "Community Standards", href: "/user/communityStandards" },
-      { label: "Report an Issue", href: "/user/reportAnIssue" },
+      { label: 'Become a Contributor', href: '/user/becomeContributer' },
+      { label: 'Writer Guidelines', href: '/user/writerGuidelines' },
+      { label: 'Community Standards', href: '/user/communityStandards' },
+      { label: 'Report an Issue', href: '/user/reportAnIssue' },
     ],
   },
   {
-    title: "Resources",
+    title: 'Resources',
     links: [
-      { label: "Technical Writing Tips", href: "/user/writingTips" },
-      { label: "Publishing Guide", href: "/user/publishingGuide" },
-      { label: "Help Center", href: "/user/help" },
-      { label: "FAQ", href: "/user/faq" },
+      { label: 'Technical Writing Tips', href: '/user/writingTips' },
+      { label: 'Publishing Guide', href: '/user/publishingGuide' },
+      { label: 'Help Center', href: '/user/help' },
+      { label: 'FAQ', href: '/user/faq' },
     ],
   },
   {
-    title: "Legal",
+    title: 'Legal',
     links: [
-      { label: "Privacy Policy", href: "/user/privacy" },
-      { label: "Terms of Service", href: "/user/terms" },
-      { label: "Content Ownership Policy", href: "/user/contentOwnership" },
-      { label: "Cookie Policy", href: "/user/cookies" },
+      { label: 'Privacy Policy', href: '/user/privacy' },
+      { label: 'Terms of Service', href: '/user/terms' },
+      { label: 'Content Ownership Policy', href: '/user/contentOwnership' },
+      { label: 'Cookie Policy', href: '/user/cookies' },
     ],
   },
 ];
@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
   return (
     <footer
       className={`w-full px-10 border-t transition-colors duration-300 ${
-        isDarkMode ? "bg-gray-900 border-gray-800" : "bg-white border-gray-100"
+        isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'
       }`}
     >
       <div className="px-4 py-12 md:px-8">
@@ -61,25 +61,16 @@ const Footer: React.FC = () => {
           <div className="col-span-2">
             <div
               className="flex items-center space-x-2 mb-3 cursor-pointer"
-              onClick={() => navigate("/user")}
+              onClick={() => navigate('/user')}
             >
               <img
-                src={
-                  isDarkMode
-                    ? "/Images/logo-dark.png"
-                    : "/Images/logo-light.png"
-                }
+                src={isDarkMode ? '/Images/logo-dark.png' : '/Images/logo-light.png'}
                 alt="BlogNest"
                 className="w-34"
               />
             </div>
-            <p
-              className={`max-w-xs text-base ${
-                isDarkMode ? "text-gray-400" : "text-gray-600"
-              }`}
-            >
-              A modern platform for sharing knowledge and connecting with
-              writers worldwide.
+            <p className={`max-w-xs text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              A modern platform for sharing knowledge and connecting with writers worldwide.
             </p>
           </div>
 
@@ -88,18 +79,18 @@ const Footer: React.FC = () => {
             <div key={index}>
               <h3
                 onClick={() => {
-                  if (column.title === "Community") {
-                    navigate("/user/community");
-                  } else if (column.title === "Resources") {
-                    navigate("/user/resources");
-                  } else if (column.title === "Legal") {
-                    navigate("/user/legal");
+                  if (column.title === 'Community') {
+                    navigate('/user/community');
+                  } else if (column.title === 'Resources') {
+                    navigate('/user/resources');
+                  } else if (column.title === 'Legal') {
+                    navigate('/user/legal');
                   }
                 }}
                 className={`mb-4 text-lg font-semibold cursor-pointer ${
                   isDarkMode
-                    ? "text-gray-200 hover:text-indigo-400"
-                    : "text-gray-900 hover:text-indigo-600"
+                    ? 'text-gray-200 hover:text-indigo-400'
+                    : 'text-gray-900 hover:text-indigo-600'
                 }`}
               >
                 {column.title}
@@ -112,8 +103,8 @@ const Footer: React.FC = () => {
                       onClick={() => navigate(link.href)}
                       className={`text-left text-base transition duration-150 cursor-pointer ${
                         isDarkMode
-                          ? "text-gray-400 hover:text-indigo-400"
-                          : "text-gray-600 hover:text-indigo-600"
+                          ? 'text-gray-400 hover:text-indigo-400'
+                          : 'text-gray-600 hover:text-indigo-600'
                       }`}
                     >
                       {link.label}
@@ -127,28 +118,24 @@ const Footer: React.FC = () => {
 
         {/* Separator */}
         <div
-          className={`my-10 border-t ${
-            isDarkMode ? "border-gray-800" : "border-gray-200"
-          }`}
+          className={`my-10 border-t ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}
         ></div>
 
         {/* Bottom Row */}
         <div className="flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
           {/* Left */}
-          <p className={`${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+          <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
             © 2025 BlogNest. All rights reserved.
           </p>
 
           {/* Center */}
           <span
             className={`flex items-center gap-1 text-xs md:text-sm ${
-              isDarkMode ? "text-gray-400" : "text-gray-500"
+              isDarkMode ? 'text-gray-400' : 'text-gray-500'
             }`}
           >
             Made with
-            <span className="text-red-500 transition-transform hover:scale-110">
-              ♥
-            </span>
+            <span className="text-red-500 transition-transform hover:scale-110">♥</span>
             in India
           </span>
 
@@ -162,8 +149,8 @@ const Footer: React.FC = () => {
                   key={idx}
                   className={`transition transform hover:scale-110 duration-200 ${
                     isDarkMode
-                      ? "text-gray-400 hover:text-indigo-400"
-                      : "text-gray-500 hover:text-indigo-600"
+                      ? 'text-gray-400 hover:text-indigo-400'
+                      : 'text-gray-500 hover:text-indigo-600'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -176,12 +163,12 @@ const Footer: React.FC = () => {
               onClick={toggleTheme}
               className={`flex items-center gap-2 px-3 py-1 rounded-md border text-sm transition ${
                 isDarkMode
-                  ? "border-gray-700 text-gray-300 hover:bg-gray-800"
-                  : "border-gray-200 text-gray-700 hover:bg-gray-100"
+                  ? 'border-gray-700 text-gray-300 hover:bg-gray-800'
+                  : 'border-gray-200 text-gray-700 hover:bg-gray-100'
               }`}
             >
               {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-              {isDarkMode ? "Light Mode" : "Dark Mode"}
+              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
             </button>
           </div>
         </div>

@@ -1,5 +1,5 @@
 export const ListSkeleton = ({ isDarkMode }: { isDarkMode: boolean }) => {
-  const bg = isDarkMode ? "bg-gray-700/40" : "bg-gray-200/60";
+  const bg = isDarkMode ? 'bg-gray-700/40' : 'bg-gray-200/60';
 
   return (
     <div className="space-y-4">
@@ -7,7 +7,7 @@ export const ListSkeleton = ({ isDarkMode }: { isDarkMode: boolean }) => {
         <div
           key={i}
           className={`flex items-center space-x-4 p-4 rounded-lg border ${
-            isDarkMode ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-white"
+            isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
           }`}
         >
           {/* Avatar shimmer */}

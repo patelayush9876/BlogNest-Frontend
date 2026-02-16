@@ -1,7 +1,7 @@
-import { PenLine, UploadCloud } from "lucide-react";
-import { useTheme } from "../contexts/ThemeContext";
-import { useNavigate } from "react-router-dom";
-import { publishDraft } from "../services/blog.service";
+import { PenLine, UploadCloud } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
+import { useNavigate } from 'react-router-dom';
+import { publishDraft } from '../services/blog.service';
 
 interface DraftCardProps {
   id: string;
@@ -12,35 +12,27 @@ interface DraftCardProps {
   tags: string[];
 }
 
-const DraftCard: React.FC<DraftCardProps> = ({
-  id,
-  title,
-  image,
-  content = "",
-  tags,
-}) => {
+const DraftCard: React.FC<DraftCardProps> = ({ id, title, image, content = '', tags }) => {
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
 
   const TRUNCATE = 130;
-  const truncated =
-    content.slice(0, TRUNCATE).trimEnd() +
-    (content.length > TRUNCATE ? "..." : "");
+  const truncated = content.slice(0, TRUNCATE).trimEnd() + (content.length > TRUNCATE ? '...' : '');
 
   const handlePublish = async () => {
     try {
       await publishDraft(id);
-      alert("Draft published successfully!");
+      alert('Draft published successfully!');
       window.location.reload();
     } catch (err) {
-      console.error("Publish failed:", err);
+      console.error('Publish failed:', err);
     }
   };
 
   return (
     <div
       className={`pb-8 border-b transition-colors duration-300 relative group ${
-        isDarkMode ? "border-gray-700" : "border-gray-200"
+        isDarkMode ? 'border-gray-700' : 'border-gray-200'
       }`}
     >
       {/* Hover Action Buttons */}
@@ -76,9 +68,7 @@ const DraftCard: React.FC<DraftCardProps> = ({
       {/* Draft Badge */}
       <span
         className={`px-3 py-1 text-xs rounded-full font-medium ${
-          isDarkMode
-            ? "bg-yellow-600/20 text-yellow-400"
-            : "bg-yellow-100 text-yellow-800"
+          isDarkMode ? 'bg-yellow-600/20 text-yellow-400' : 'bg-yellow-100 text-yellow-800'
         }`}
       >
         Draft
@@ -87,19 +77,15 @@ const DraftCard: React.FC<DraftCardProps> = ({
       {/* Title */}
       <h2
         className={`mt-3 mb-2 text-2xl font-bold cursor-pointer transition-colors duration-200 ${
-          isDarkMode
-            ? "text-gray-200 hover:text-indigo-400"
-            : "text-gray-800 hover:text-indigo-600"
+          isDarkMode ? 'text-gray-200 hover:text-indigo-400' : 'text-gray-800 hover:text-indigo-600'
         }`}
       >
-        {title || "Untitled Draft"}
+        {title || 'Untitled Draft'}
       </h2>
 
       {/* Content */}
       <div className="mb-4">
-        <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-          {truncated}
-        </p>
+        <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{truncated}</p>
       </div>
 
       {/* Tags */}
@@ -109,8 +95,8 @@ const DraftCard: React.FC<DraftCardProps> = ({
             key={i}
             className={`px-3 py-1 text-xs font-medium rounded-full transition duration-150 ${
               isDarkMode
-                ? "text-indigo-400 bg-indigo-900/30 hover:bg-indigo-800/40"
-                : "text-indigo-600 bg-indigo-50 hover:bg-indigo-100"
+                ? 'text-indigo-400 bg-indigo-900/30 hover:bg-indigo-800/40'
+                : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'
             }`}
           >
             {tag}

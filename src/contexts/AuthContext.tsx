@@ -1,26 +1,16 @@
-import {
-  createContext,
-  type ReactNode,
-  useContext,
-  useState,
-  useEffect,
-} from "react";
-import { useNavigate } from "react-router-dom";
-import { setSessionExpiredCallback } from "../services/api";
-import { showToast } from "../services/toast.service";
-import { login, logoutApi, signupUser } from "../services/auth.service";
-import { getLoggedInUser } from "../services/user.service";
-import type { LoginResponse, SignupInput } from "../interfaces/userInterface";
+import { createContext, type ReactNode, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { setSessionExpiredCallback } from '../services/api';
+import { showToast } from '../services/toast.service';
+import { login, logoutApi, signupUser } from '../services/auth.service';
+import { getLoggedInUser } from '../services/user.service';
+import type { LoginResponse, SignupInput } from '../interfaces/userInterface';
 
 interface AuthContextType {
   user: any | null;
   accessToken: string | null;
   refreshToken: string | null;
-  loginUser: (
-    email: string,
-    password: string,
-    captchaToken: string
-  ) => Promise<void>;
+  loginUser: (email: string, password: string, captchaToken: string) => Promise<void>;
   registerUser: (data: SignupInput) => Promise<void>;
   logoutUser: () => Promise<void>;
   setTokens: (accessToken: string, refreshToken?: string) => void;
@@ -37,9 +27,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Load tokens and user from localStorage on app start
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedAccessToken = localStorage.getItem("accessToken");
-    const storedRefreshToken = localStorage.getItem("refreshToken");
+    const storedUser = localStorage.getItem('user');
+    const storedAccessToken = localStorage.getItem('accessToken');
+    const storedRefreshToken = localStorage.getItem('refreshToken');
 
     if (storedUser && storedAccessToken && storedRefreshToken) {
       setUser(JSON.parse(storedUser));
@@ -50,11 +40,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Set up session expired callback
     setSessionExpiredCallback(() => {
       clearAuthData();
-      showToast(
-        "Session expired due to inactivity. Please login again.",
-        "error"
-      );
-      navigate("/");
+      showToast('Session expired due to inactivity. Please login again.', 'error');
+      navigate('/');
     });
   }, [navigate]);
 
@@ -63,17 +50,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setAccessToken(null);
     setRefreshToken(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   };
 
   // Login user
-  const loginUser = async (
-    email: string,
-    password: string,
-    captchaToken: string
-  ) => {
+  const loginUser = async (email: string, password: string, captchaToken: string) => {
     try {
       const response: LoginResponse = await login({
         email,
@@ -86,25 +69,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { user, accessToken, refreshToken } = data;
 
       if (!accessToken || !refreshToken) {
-        throw new Error("Invalid login response: tokens missing");
+        throw new Error('Invalid login response: tokens missing');
       }
 
       setUser(user);
       setAccessToken(accessToken);
       setRefreshToken(refreshToken);
 
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
 
-      showToast("Login successful!", "success");
-      navigate("/dashboard"); // redirect as needed
+      showToast('Login successful!', 'success');
+      navigate('/dashboard'); // redirect as needed
     } catch (err: any) {
       const message =
-        err.response?.data?.message ||
-        err.message ||
-        "Login failed. Please try again.";
-      showToast(message, "error");
+        err.response?.data?.message || err.message || 'Login failed. Please try again.';
+      showToast(message, 'error');
       throw err;
     }
   };
@@ -121,19 +102,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setAccessToken(accessToken);
         setRefreshToken(refreshToken);
 
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
       }
 
-      showToast("Account created successfully!", "success");
-      navigate("/user");
+      showToast('Account created successfully!', 'success');
+      navigate('/user');
     } catch (err: any) {
       const message =
-        err.response?.data?.message ||
-        err.message ||
-        "Signup failed. Please try again.";
-      showToast(message, "error");
+        err.response?.data?.message || err.message || 'Signup failed. Please try again.';
+      showToast(message, 'error');
       throw err;
     }
   };
@@ -142,13 +121,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logoutUser = async () => {
     try {
       if (refreshToken) await logoutApi(refreshToken);
-      showToast("Logged out successfully.", "success");
+      showToast('Logged out successfully.', 'success');
     } catch (err) {
-      console.error("Logout failed:", err);
-      showToast("Logout failed. Please try again.", "error");
+      console.error('Logout failed:', err);
+      showToast('Logout failed. Please try again.', 'error');
     } finally {
       clearAuthData();
-      navigate("/");
+      navigate('/');
     }
   };
 
@@ -158,20 +137,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res = await getLoggedInUser();
       setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
+      localStorage.setItem('user', JSON.stringify(res.data));
     } catch (err) {
-      console.error("Failed to refresh user:", err);
+      console.error('Failed to refresh user:', err);
     }
   };
 
   // Update access & refresh tokens
   const setTokens = (newAccessToken: string, newRefreshToken?: string) => {
     setAccessToken(newAccessToken);
-    localStorage.setItem("accessToken", newAccessToken);
+    localStorage.setItem('accessToken', newAccessToken);
 
     if (newRefreshToken) {
       setRefreshToken(newRefreshToken);
-      localStorage.setItem("refreshToken", newRefreshToken);
+      localStorage.setItem('refreshToken', newRefreshToken);
     }
   };
 
@@ -195,6 +174,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };

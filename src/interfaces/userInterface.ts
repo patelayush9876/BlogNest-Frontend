@@ -4,7 +4,7 @@ export interface User {
   username: string;
   email: string;
   phoneNumber: string;
-  status: "active" | "inactive" | "banned";
+  status: 'active' | 'inactive' | 'banned';
   role: string;
   createdAt: string;
   updatedAt: string;
@@ -62,4 +62,3 @@ export interface ResetPasswordInput {
   token: string;
   newPassword: string;
 }
-

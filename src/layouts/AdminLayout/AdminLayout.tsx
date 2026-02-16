@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import type { IUserProfile } from "../../interfaces/userProfileInterface";
-import { getMyProfile } from "../../services/profile.service";
-import { useAuth } from "../../contexts/AuthContext";
-import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
-import { useTheme } from "../../contexts/ThemeContext";
+import React, { useEffect, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import type { IUserProfile } from '../../interfaces/userProfileInterface';
+import { getMyProfile } from '../../services/profile.service';
+import { useAuth } from '../../contexts/AuthContext';
+import Sidebar from './Sidebar';
+import Topbar from './Topbar';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const AdminLayout: React.FC = () => {
   const [profile, setProfile] = useState<IUserProfile | null>(null);
@@ -21,12 +21,12 @@ const AdminLayout: React.FC = () => {
         const data = await getMyProfile();
         setProfile(data);
         // simple guard
-        if (!data?.user?.role || data.user.role !== "admin") {
-          navigate("/", { replace: true });
+        if (!data?.user?.role || data.user.role !== 'admin') {
+          navigate('/', { replace: true });
         }
       } catch (err) {
-        console.error("Failed to fetch profile:", err);
-        navigate("/", { replace: true });
+        console.error('Failed to fetch profile:', err);
+        navigate('/', { replace: true });
       } finally {
         setLoading(false);
       }
@@ -45,7 +45,7 @@ const AdminLayout: React.FC = () => {
   return (
     <div
       className={`flex h-screen w-full overflow-hidden ${
-        isDarkMode ? "bg-gray-900" : "bg-gray-50"
+        isDarkMode ? 'bg-gray-900' : 'bg-gray-50'
       }`}
     >
       <Sidebar
@@ -71,8 +71,8 @@ const AdminLayout: React.FC = () => {
         <footer
           className={`shrink-0 border-t ${
             isDarkMode
-              ? "border-gray-700 bg-gray-800 text-gray-400"
-              : "border-gray-100 bg-white text-gray-600"
+              ? 'border-gray-700 bg-gray-800 text-gray-400'
+              : 'border-gray-100 bg-white text-gray-600'
           }`}
         >
           <div className="px-6 py-4 flex items-center justify-between text-sm">
@@ -82,7 +82,7 @@ const AdminLayout: React.FC = () => {
             {/* Right */}
             <span className="flex items-center gap-1">
               Made with <span className="text-red-500 transition hover:scale-110">♥</span>
- in India
+              in India
             </span>
           </div>
         </footer>

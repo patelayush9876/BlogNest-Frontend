@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { verifyResetPasswordOtp } from "../../services/auth.service";
-import { showToast } from "../../services/toast.service";
+import React, { useRef, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { verifyResetPasswordOtp } from '../../services/auth.service';
+import { showToast } from '../../services/toast.service';
 
 const OTP_LENGTH = 6;
 
@@ -11,9 +11,9 @@ const VerifyOtpPage: React.FC = () => {
 
   const email = (location.state as { email?: string })?.email;
 
-  const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
+  const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
@@ -37,25 +37,22 @@ const VerifyOtpPage: React.FC = () => {
     }
   };
 
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number,
-  ) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputsRef.current[index - 1]?.focus();
     }
   };
 
   const handleVerify = async () => {
-    const enteredOtp = otp.join("");
+    const enteredOtp = otp.join('');
 
     if (enteredOtp.length !== OTP_LENGTH) {
-      setError("Please enter the 6-digit OTP");
+      setError('Please enter the 6-digit OTP');
       return;
     }
 
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
       const response = await verifyResetPasswordOtp({
@@ -65,13 +62,13 @@ const VerifyOtpPage: React.FC = () => {
 
       const resetToken = response.data.resetToken;
 
-      showToast("OTP verified successfully", "success");
+      showToast('OTP verified successfully', 'success');
 
-      navigate("/create-password", {
+      navigate('/create-password', {
         state: { resetToken },
       });
     } catch (err: any) {
-      setError(err.response?.data?.message || "Invalid OTP");
+      setError(err.response?.data?.message || 'Invalid OTP');
     } finally {
       setLoading(false);
     }
@@ -86,12 +83,8 @@ const VerifyOtpPage: React.FC = () => {
         </div>
 
         {/* Heading */}
-        <h2 className="text-2xl font-bold text-gray-800 text-center">
-          Check your email
-        </h2>
-        <p className="text-gray-600 text-center mt-2">
-          We’ve sent a 6-digit verification code to
-        </p>
+        <h2 className="text-2xl font-bold text-gray-800 text-center">Check your email</h2>
+        <p className="text-gray-600 text-center mt-2">We’ve sent a 6-digit verification code to</p>
         <p className="text-center font-semibold text-gray-800 mt-1">{email}</p>
 
         {/* OTP Inputs */}
@@ -113,25 +106,21 @@ const VerifyOtpPage: React.FC = () => {
           ))}
         </div>
 
-        {error && (
-          <p className="text-sm text-red-500 text-center mt-3">{error}</p>
-        )}
+        {error && <p className="text-sm text-red-500 text-center mt-3">{error}</p>}
 
         {/* Verify Button */}
         <button
           onClick={handleVerify}
           disabled={loading}
-          className={`w-full mt-6 py-3 btn-primary ${
-            loading ? "btn-loading" : ""
-          }`}
+          className={`w-full mt-6 py-3 btn-primary ${loading ? 'btn-loading' : ''}`}
         >
-          {loading ? "Verifying..." : "Verify OTP"}
+          {loading ? 'Verifying...' : 'Verify OTP'}
         </button>
 
         {/* Footer */}
         <div className="text-center mt-6">
           <button
-            onClick={() => navigate("/forgot-password")}
+            onClick={() => navigate('/forgot-password')}
             className="text-sm text-gray-500 hover:underline"
           >
             Change email address

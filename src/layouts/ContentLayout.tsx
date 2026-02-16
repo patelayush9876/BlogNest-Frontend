@@ -1,23 +1,21 @@
-import React, { useEffect, useState } from "react";
-import ArticleCard from "../components/ArticleCard";
-import clsx from "clsx";
-import * as BlogService from "../services/blog.service";
-import { type PaginatedBlogs } from "../services/blog.service";
-import { useTheme } from "../contexts/ThemeContext";
-import { useAuth } from "../contexts/AuthContext";
-import SidebarSkeleton from "../components/loaders/SidebarSkeleton";
-import { ArticleCardSkeleton } from "../components/loaders/ArticleSkeleton";
-import Pagination from "../components/Pagination";
-import LeftSidebar from "../components/UserSidebar/LeftSidebar";
-import RightSidebar from "../components/UserSidebar/RightSidebar";
+import React, { useEffect, useState } from 'react';
+import ArticleCard from '../components/ArticleCard';
+import clsx from 'clsx';
+import * as BlogService from '../services/blog.service';
+import { type PaginatedBlogs } from '../services/blog.service';
+import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
+import SidebarSkeleton from '../components/loaders/SidebarSkeleton';
+import { ArticleCardSkeleton } from '../components/loaders/ArticleSkeleton';
+import Pagination from '../components/Pagination';
+import LeftSidebar from '../components/UserSidebar/LeftSidebar';
+import RightSidebar from '../components/UserSidebar/RightSidebar';
 
 const ContentLayout: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<
-    "forYou" | "following" | "trending"
-  >("forYou");
+  const [activeTab, setActiveTab] = useState<'forYou' | 'following' | 'trending'>('forYou');
 
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,15 +27,15 @@ const ContentLayout: React.FC = () => {
   const [totalItems, setTotalItems] = useState<number>(0);
 
   const tabs = [
-    { id: "forYou", label: "For You" },
-    { id: "following", label: "Following" },
-    { id: "trending", label: "Trending" },
+    { id: 'forYou', label: 'For You' },
+    { id: 'following', label: 'Following' },
+    { id: 'trending', label: 'Trending' },
   ] as const;
 
   const indicatorPosition = {
-    forYou: "translate-x-[0%]",
-    following: "translate-x-[100%]",
-    trending: "translate-x-[200%]",
+    forYou: 'translate-x-[0%]',
+    following: 'translate-x-[100%]',
+    trending: 'translate-x-[200%]',
   };
 
   // central fetcher: chooses service based on activeTab
@@ -47,13 +45,13 @@ const ContentLayout: React.FC = () => {
         setLoading(true);
 
         let res: PaginatedBlogs;
-        if (activeTab === "forYou") {
-          res = await BlogService.getAllBlogs(currentPage, perPage, "");
-        } else if (activeTab === "following") {
-          res = await BlogService.getFollowingBlogs(currentPage, perPage, "");
+        if (activeTab === 'forYou') {
+          res = await BlogService.getAllBlogs(currentPage, perPage, '');
+        } else if (activeTab === 'following') {
+          res = await BlogService.getFollowingBlogs(currentPage, perPage, '');
         } else {
           // trending
-          res = await BlogService.getTrendingBlogs(currentPage, perPage, "");
+          res = await BlogService.getTrendingBlogs(currentPage, perPage, '');
         }
 
         // normalize tags, likes, comments same as before
@@ -62,13 +60,13 @@ const ContentLayout: React.FC = () => {
           try {
             if (Array.isArray(blog.tags)) {
               parsedTags =
-                blog.tags.length === 1 && blog.tags[0].startsWith("[")
+                blog.tags.length === 1 && blog.tags[0].startsWith('[')
                   ? JSON.parse(blog.tags[0])
                   : blog.tags;
             }
           } catch (err) {
             parsedTags = [];
-            console.log("Error:", err);
+            console.log('Error:', err);
           }
 
           return {
@@ -83,7 +81,7 @@ const ContentLayout: React.FC = () => {
         setTotalItems(res.total || 0);
         setTotalPages(res.totalPages || 1);
       } catch (err) {
-        console.error("Error fetching blogs:", err);
+        console.error('Error fetching blogs:', err);
         setBlogs([]);
         setTotalItems(0);
         setTotalPages(1);
@@ -103,8 +101,8 @@ const ContentLayout: React.FC = () => {
   return (
     <div
       className={clsx(
-        "p-4 w-full md:p-8 h-screen overflow-auto transition-colors duration-300",
-        isDarkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"
+        'p-4 w-full md:p-8 h-screen overflow-auto transition-colors duration-300',
+        isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900',
       )}
     >
       <div className="mx-auto max-w-auto h-full">
@@ -119,18 +117,18 @@ const ContentLayout: React.FC = () => {
           {/* CENTER FEED */}
           <main className="lg:col-span-6 h-full overflow-y-auto">
             {/* Tabs */}
-            <div className={`p-1 tab-container ${isDarkMode ? "dark" : ""}`}>
+            <div className={`p-1 tab-container ${isDarkMode ? 'dark' : ''}`}>
               <div
                 className={clsx(
-                  "tab-indicator",
-                  indicatorPosition[activeTab as keyof typeof indicatorPosition]
+                  'tab-indicator',
+                  indicatorPosition[activeTab as keyof typeof indicatorPosition],
                 )}
               />
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id as any)}
-                  className={clsx("tab-button", {
+                  className={clsx('tab-button', {
                     active: activeTab === tab.id,
                   })}
                 >
@@ -142,18 +140,16 @@ const ContentLayout: React.FC = () => {
             {/* Blog Feed */}
             <div className="mt-6 space-y-8 p-1.8">
               {loading ? (
-                [...Array(4)].map((_, i) => (
-                  <ArticleCardSkeleton key={i} isDarkMode={isDarkMode} />
-                ))
+                [...Array(4)].map((_, i) => <ArticleCardSkeleton key={i} isDarkMode={isDarkMode} />)
               ) : blogs.length ? (
                 blogs.map((blog) => (
                   <ArticleCard
                     key={blog._id}
                     id={blog._id}
-                    image={blog.attachment || ""}
-                    user={blog.author?.name || "Unknown"}
+                    image={blog.attachment || ''}
+                    user={blog.author?.name || 'Unknown'}
                     date={blog.createdAt}
-                    readTime={blog.readTime || "5 min read"}
+                    readTime={blog.readTime || '5 min read'}
                     title={blog.title}
                     content={blog.content}
                     tags={blog.tags || []}
@@ -162,9 +158,7 @@ const ContentLayout: React.FC = () => {
                     author={blog.author}
                     profile={blog.profile}
                     likedByCurrentUser={blog.likedByCurrentUser}
-                    isFollowed={
-                      blog.isFollowed || (user && blog.author?._id === user._id)
-                    }
+                    isFollowed={blog.isFollowed || (user && blog.author?._id === user._id)}
                     authorId={blog.author?._id}
                     saved={blog.isSaved || false}
                   />

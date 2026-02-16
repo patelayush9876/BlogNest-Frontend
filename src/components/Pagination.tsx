@@ -1,5 +1,5 @@
-import clsx from "clsx";
-import { useTheme } from "../contexts/ThemeContext";
+import clsx from 'clsx';
+import { useTheme } from '../contexts/ThemeContext';
 
 type PaginationProps = {
   currentPage: number;
@@ -52,12 +52,8 @@ export default function Pagination({
   };
 
   // summary values
-  const fromItem =
-    totalItems === undefined ? undefined : (current - 1) * perPage + 1;
-  const toItem =
-    totalItems === undefined
-      ? undefined
-      : Math.min(current * perPage, totalItems);
+  const fromItem = totalItems === undefined ? undefined : (current - 1) * perPage + 1;
+  const toItem = totalItems === undefined ? undefined : Math.min(current * perPage, totalItems);
 
   // per-page options (you can modify this array)
   const perPageOptions = [5, 10, 20, 50];
@@ -65,8 +61,8 @@ export default function Pagination({
   return (
     <div
       className={clsx(
-        "mt-8 flex items-center justify-between rounded-2xl border p-3",
-        isDarkMode ? "border-gray-800 bg-gray-900" : "border-gray-200 bg-white"
+        'mt-8 flex items-center justify-between rounded-2xl border p-3',
+        isDarkMode ? 'border-gray-800 bg-gray-900' : 'border-gray-200 bg-white',
       )}
       role="navigation"
       aria-label="Pagination"
@@ -75,30 +71,18 @@ export default function Pagination({
       <div className="text-sm min-w-[160px]">
         {showSummary ? (
           totalItems !== undefined ? (
-            <div
-              className={clsx(isDarkMode ? "text-gray-300" : "text-gray-600")}
-            >
-              <span>Showing</span>{" "}
+            <div className={clsx(isDarkMode ? 'text-gray-300' : 'text-gray-600')}>
+              <span>Showing</span>{' '}
               <span className="font-medium">
                 {fromItem}-{toItem}
-              </span>{" "}
-              <span
-                className={clsx(isDarkMode ? "text-gray-400" : "text-gray-500")}
-              >
-                of
-              </span>{" "}
+              </span>{' '}
+              <span className={clsx(isDarkMode ? 'text-gray-400' : 'text-gray-500')}>of</span>{' '}
               <span className="font-medium">{totalItems}</span>
             </div>
           ) : (
-            <div
-              className={clsx(isDarkMode ? "text-gray-300" : "text-gray-600")}
-            >
-              <span>Page</span> <span className="font-medium">{current}</span>{" "}
-              <span
-                className={clsx(isDarkMode ? "text-gray-400" : "text-gray-500")}
-              >
-                of
-              </span>{" "}
+            <div className={clsx(isDarkMode ? 'text-gray-300' : 'text-gray-600')}>
+              <span>Page</span> <span className="font-medium">{current}</span>{' '}
+              <span className={clsx(isDarkMode ? 'text-gray-400' : 'text-gray-500')}>of</span>{' '}
               <span className="font-medium">{pageCount}</span>
             </div>
           )
@@ -112,12 +96,12 @@ export default function Pagination({
           disabled={current === 1}
           aria-label="Previous page"
           className={clsx(
-            "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition cursor-pointer",
+            'inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition cursor-pointer',
             current === 1
-              ? "text-gray-400 opacity-60 cursor-not-allowed"
+              ? 'text-gray-400 opacity-60 cursor-not-allowed'
               : isDarkMode
-              ? "text-gray-200 hover:text-white"
-              : "text-gray-700 hover:text-gray-900"
+                ? 'text-gray-200 hover:text-white'
+                : 'text-gray-700 hover:text-gray-900',
           )}
         >
           Prev
@@ -133,8 +117,8 @@ export default function Pagination({
               <button
                 onClick={() => go(1)}
                 className={clsx(
-                  "relative z-10 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md",
-                  isDarkMode ? "text-gray-300" : "text-gray-600"
+                  'relative z-10 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md',
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600',
                 )}
               >
                 1
@@ -142,8 +126,8 @@ export default function Pagination({
               {start > 2 && (
                 <span
                   className={clsx(
-                    "inline-flex items-center px-2 text-sm",
-                    isDarkMode ? "text-gray-500" : "text-gray-400"
+                    'inline-flex items-center px-2 text-sm',
+                    isDarkMode ? 'text-gray-500' : 'text-gray-400',
                   )}
                 >
                   …
@@ -160,25 +144,25 @@ export default function Pagination({
                 onClick={() => go(p)}
                 aria-current={isActive || undefined}
                 className={clsx(
-                  "relative z-10 inline-flex items-center px-3 py-2 text-sm font-medium focus:outline-none cursor-pointer",
+                  'relative z-10 inline-flex items-center px-3 py-2 text-sm font-medium focus:outline-none cursor-pointer',
                   isActive
                     ? clsx(
-                        "rounded-md shadow-inner",
-                        isDarkMode ? "text-white" : "bg-gray-100 text-gray-900"
+                        'rounded-md shadow-inner',
+                        isDarkMode ? 'text-white' : 'bg-gray-100 text-gray-900',
                       )
-                    : "rounded-md hover:brightness-95",
-                  isActive ? (isDarkMode ? "bg-gray-700" : "") : ""
+                    : 'rounded-md hover:brightness-95',
+                  isActive ? (isDarkMode ? 'bg-gray-700' : '') : '',
                 )}
               >
                 <span
                   className={clsx(
                     isActive
                       ? isDarkMode
-                        ? "text-white"
-                        : "text-gray-900"
+                        ? 'text-white'
+                        : 'text-gray-900'
                       : isDarkMode
-                      ? "text-gray-300"
-                      : "text-gray-600"
+                        ? 'text-gray-300'
+                        : 'text-gray-600',
                   )}
                 >
                   {p}
@@ -192,8 +176,8 @@ export default function Pagination({
               {end < pageCount - 1 && (
                 <span
                   className={clsx(
-                    "inline-flex items-center px-2 text-sm",
-                    isDarkMode ? "text-gray-500" : "text-gray-400"
+                    'inline-flex items-center px-2 text-sm',
+                    isDarkMode ? 'text-gray-500' : 'text-gray-400',
                   )}
                 >
                   …
@@ -202,8 +186,8 @@ export default function Pagination({
               <button
                 onClick={() => go(pageCount)}
                 className={clsx(
-                  "relative z-10 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md",
-                  isDarkMode ? "text-gray-300" : "text-gray-600"
+                  'relative z-10 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md',
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600',
                 )}
               >
                 {pageCount}
@@ -217,12 +201,12 @@ export default function Pagination({
           disabled={current === pageCount}
           aria-label="Next page"
           className={clsx(
-            "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition cursor-pointer",
+            'inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition cursor-pointer',
             current === pageCount
-              ? "text-gray-400 opacity-60 cursor-not-allowed"
+              ? 'text-gray-400 opacity-60 cursor-not-allowed'
               : isDarkMode
-              ? "text-gray-200 hover:text-white"
-              : "text-gray-700 hover:text-gray-900"
+                ? 'text-gray-200 hover:text-white'
+                : 'text-gray-700 hover:text-gray-900',
           )}
         >
           Next
@@ -231,9 +215,7 @@ export default function Pagination({
 
       {/* Right: per-page control */}
       <div className="hidden sm:flex items-center gap-2 text-sm">
-        <label className={clsx(isDarkMode ? "text-gray-400" : "text-gray-500")}>
-          Per page
-        </label>
+        <label className={clsx(isDarkMode ? 'text-gray-400' : 'text-gray-500')}>Per page</label>
 
         <select
           aria-label="Items per page"
@@ -243,10 +225,10 @@ export default function Pagination({
             if (onPerPageChange) onPerPageChange(v);
           }}
           className={clsx(
-            "rounded-lg border px-2 py-1 text-sm focus:outline-none cursor-pointer",
+            'rounded-lg border px-2 py-1 text-sm focus:outline-none cursor-pointer',
             isDarkMode
-              ? "border-gray-800 bg-gray-900 text-gray-300"
-              : "border-gray-200 bg-white text-gray-700"
+              ? 'border-gray-800 bg-gray-900 text-gray-300'
+              : 'border-gray-200 bg-white text-gray-700',
           )}
         >
           {perPageOptions.map((opt) => (

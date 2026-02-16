@@ -1,13 +1,13 @@
-import api from "./api";
+import api from './api';
 
 export const followUser = async (userId: string): Promise<string> => {
   const response = await api.post(`/follow/${userId}`);
-  return response.data.message || "Followed";
+  return response.data.message || 'Followed';
 };
 
 export const unfollowUser = async (userId: string): Promise<string> => {
   const response = await api.delete(`/follow/${userId}`);
-  return response.data.message || "Unfollowed";
+  return response.data.message || 'Unfollowed';
 };
 
 export interface FollowerItem {
@@ -23,7 +23,7 @@ export interface FollowerItem {
 export const getFollowers = async (
   userId: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ): Promise<{ followers: FollowerItem[]; total: number }> => {
   const response = await api.get(`/follow/followers/${userId}`, {
     params: { page, limit },
@@ -45,7 +45,7 @@ export interface FollowingItem {
 export const getFollowing = async (
   userId: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ): Promise<{ following: FollowingItem[]; total: number }> => {
   const response = await api.get(`/follow/following/${userId}`, {
     params: { page, limit },

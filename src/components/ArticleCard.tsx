@@ -1,15 +1,15 @@
-import { Bookmark, Heart, MessageSquare } from "lucide-react";
-import CommentSection from "./CommentSection";
-import { toggleLike } from "../services/like.service";
-import { followUser } from "../services/follow.service";
-import { useEffect, useState, useRef } from "react";
-import { useTheme } from "../contexts/ThemeContext";
-import { formatRelativeDate } from "../utils/dateUtils";
-import { toggleSave } from "../services/savedBlog.service";
-import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { MoreVertical, Edit, Trash2, Archive } from "lucide-react";
-import { archivePost, deleteBlog } from "../services/blog.service";
+import { Bookmark, Heart, MessageSquare } from 'lucide-react';
+import CommentSection from './CommentSection';
+import { toggleLike } from '../services/like.service';
+import { followUser } from '../services/follow.service';
+import { useEffect, useState, useRef } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import { formatRelativeDate } from '../utils/dateUtils';
+import { toggleSave } from '../services/savedBlog.service';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { MoreVertical, Edit, Trash2, Archive } from 'lucide-react';
+import { archivePost, deleteBlog } from '../services/blog.service';
 
 interface ArticleCardProps {
   id: string;
@@ -36,7 +36,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   image,
   date,
   title,
-  content = "",
+  content = '',
   tags,
   likes = 0,
   comments = 0,
@@ -79,21 +79,18 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         setShowMenu(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (
-        optionsRef.current &&
-        !optionsRef.current.contains(e.target as Node)
-      ) {
+      if (optionsRef.current && !optionsRef.current.contains(e.target as Node)) {
         setShowOptions(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleLike = async () => {
@@ -102,7 +99,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       setLikeCount(data.likeCount);
       setLiked(data.liked);
     } catch (err) {
-      console.error("Error toggling like:", err);
+      console.error('Error toggling like:', err);
     }
   };
 
@@ -111,7 +108,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       const result = await toggleSave(id);
       setIsSaved(result.saved);
     } catch (err) {
-      console.error("Error toggling save:", err);
+      console.error('Error toggling save:', err);
     }
   };
 
@@ -121,7 +118,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       setFollowing(true);
       setShowMenu(false);
     } catch (err) {
-      console.error("Error following:", err);
+      console.error('Error following:', err);
     }
   };
   const handleArchive = async () => {
@@ -131,14 +128,14 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
       // window.location.reload();
     } catch (error) {
-      console.error("Failed to archive blog:", error);
+      console.error('Failed to archive blog:', error);
     }
   };
 
   const handleDelete = async () => {
     try {
       const confirmed = window.confirm(
-        "Are you sure you want to delete this blog? This action cannot be undone.",
+        'Are you sure you want to delete this blog? This action cannot be undone.',
       );
       if (!confirmed) return;
 
@@ -148,20 +145,18 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       // Remove from UI
       // window.location.reload();
     } catch (error) {
-      console.error("Failed to delete blog:", error);
+      console.error('Failed to delete blog:', error);
     }
   };
 
-  const safeContent = content || "";
+  const safeContent = content || '';
   const isTruncated = safeContent.length > TRUNCATE_LENGTH;
-  const displayedText = expanded
-    ? safeContent
-    : safeContent.slice(0, TRUNCATE_LENGTH).trimEnd();
+  const displayedText = expanded ? safeContent : safeContent.slice(0, TRUNCATE_LENGTH).trimEnd();
 
   return (
     <div
       className={`pb-8 border-b transition-colors duration-300 ${
-        isDarkMode ? "border-gray-700" : "border-gray-200"
+        isDarkMode ? 'border-gray-700' : 'border-gray-200'
       }`}
     >
       {/* Image */}
@@ -178,7 +173,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       {/* Author Info */}
       <div
         className={`flex flex-row items-center justify-between space-x-2 text-sm mb-4 ${
-          isDarkMode ? "text-gray-400" : "text-gray-500"
+          isDarkMode ? 'text-gray-400' : 'text-gray-500'
         }`}
       >
         <div className="flex flex-row justify-center items-center relative">
@@ -191,8 +186,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           >
             <img
               className="rounded-full"
-              src={profile?.profilePic || ""}
-              alt={author?.name || "author"}
+              src={profile?.profilePic || ''}
+              alt={author?.name || 'author'}
             />
           </div>
 
@@ -228,11 +223,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             </div>
           )} */}
 
-          <span
-            className={`ml-2 font-semibold ${
-              isDarkMode ? "text-gray-200" : "text-gray-800"
-            }`}
-          >
+          <span className={`ml-2 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
             {author?.name}
           </span>
 
@@ -241,7 +232,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             <button
               onClick={handleFollow}
               className={`ml-3 px-3 py-1 text-xs font-medium rounded-full border border-indigo-500 text-indigo-500 ${
-                isDarkMode ? "hover:bg-indigo-900/30" : "hover:bg-indigo-50"
+                isDarkMode ? 'hover:bg-indigo-900/30' : 'hover:bg-indigo-50'
               }`}
             >
               Follow
@@ -258,7 +249,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
                 aria-label="post options"
                 onClick={() => setShowOptions(!showOptions)}
                 className={`p-1 rounded-full transition ${
-                  isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"
+                  isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
                 }`}
               >
                 <MoreVertical className="w-4 h-4" />
@@ -267,14 +258,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
               {showOptions && (
                 <div
                   className={`absolute right-0 mt-2 w-36 rounded-lg shadow-lg z-50 ${
-                    isDarkMode
-                      ? "bg-gray-800 text-gray-200"
-                      : "bg-white text-gray-800"
+                    isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'
                   }`}
                 >
                   <button
                     className={`flex items-center w-full px-3 py-2 text-sm ${
-                      isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                      isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
                     }`}
                     onClick={() => {
                       navigate(`/user/blogs/${id}/edit`);
@@ -287,7 +276,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
                   <button
                     className={`flex items-center w-full px-3 py-2 text-sm ${
-                      isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                      isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
                     }`}
                     onClick={handleArchive}
                   >
@@ -297,7 +286,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
                   <button
                     className={`flex items-center w-full px-3 py-2 text-sm text-red-500 ${
-                      isDarkMode ? "hover:bg-red-900/30" : "hover:bg-red-50"
+                      isDarkMode ? 'hover:bg-red-900/30' : 'hover:bg-red-50'
                     }`}
                     onClick={handleDelete}
                   >
@@ -314,9 +303,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       {/* Title */}
       <h2
         className={`mb-2 text-2xl font-bold cursor-pointer transition-colors duration-200 ${
-          isDarkMode
-            ? "text-gray-200 hover:text-indigo-400"
-            : "text-gray-800 hover:text-indigo-600"
+          isDarkMode ? 'text-gray-200 hover:text-indigo-400' : 'text-gray-800 hover:text-indigo-600'
         }`}
       >
         {title}
@@ -324,7 +311,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
       {/* Content */}
       <div className="mb-4">
-        <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+        <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
           {displayedText}
           {isTruncated && !expanded && (
             <span
@@ -332,12 +319,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") setExpanded(true);
+                if (e.key === 'Enter' || e.key === ' ') setExpanded(true);
               }}
               className={`ml-1 cursor-pointer font-medium inline-block no-underline ${
                 isDarkMode
-                  ? "text-indigo-400 hover:text-indigo-300"
-                  : "text-gray-600 hover:text-indigo-500"
+                  ? 'text-indigo-400 hover:text-indigo-300'
+                  : 'text-gray-600 hover:text-indigo-500'
               }`}
             >
               ... Read more
@@ -349,8 +336,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
               onClick={() => setExpanded(false)}
               className={`ml-2 text-sm font-medium ${
                 isDarkMode
-                  ? "text-indigo-400 hover:text-indigo-300"
-                  : "text-gray-600 hover:text-indigo-500"
+                  ? 'text-indigo-400 hover:text-indigo-300'
+                  : 'text-gray-600 hover:text-indigo-500'
               }`}
             >
               Show less ▲
@@ -367,8 +354,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
               key={i}
               className={`px-3 py-1 text-xs font-medium rounded-full transition duration-150 ${
                 isDarkMode
-                  ? "text-indigo-400 bg-indigo-900/30 hover:bg-indigo-800/40"
-                  : "text-indigo-600 bg-indigo-50 hover:bg-indigo-100"
+                  ? 'text-indigo-400 bg-indigo-900/30 hover:bg-indigo-800/40'
+                  : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'
               }`}
             >
               {tag}
@@ -378,22 +365,22 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
         <div
           className={`flex items-center space-x-4 ${
-            isDarkMode ? "text-gray-400" : "text-gray-500"
+            isDarkMode ? 'text-gray-400' : 'text-gray-500'
           }`}
         >
           <div
             className={`flex items-center space-x-1 cursor-pointer transition ${
               liked
-                ? "text-red-500 fill-red-500"
+                ? 'text-red-500 fill-red-500'
                 : isDarkMode
-                  ? "hover:text-red-400"
-                  : "hover:text-red-500"
+                  ? 'hover:text-red-400'
+                  : 'hover:text-red-500'
             }`}
             onClick={handleLike}
           >
             <Heart
               className="w-5 h-5"
-              fill={liked ? "currentColor" : "none"}
+              fill={liked ? 'currentColor' : 'none'}
               stroke="currentColor"
             />
             <span className="text-sm">{likeCount}</span>
@@ -404,9 +391,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             onClick={() => setShowComments(!showComments)}
           >
             <MessageSquare
-              className={`w-5 h-5 ${
-                isDarkMode ? "text-gray-400" : "text-gray-500"
-              }`}
+              className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
             />
             <span className="text-sm">{commentCount}</span>
           </div>
@@ -418,12 +403,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             <Bookmark
               className={`w-5 h-5 ${
                 isSaved
-                  ? "text-indigo-500 fill-indigo-500"
+                  ? 'text-indigo-500 fill-indigo-500'
                   : isDarkMode
-                    ? "text-gray-400"
-                    : "text-gray-500"
+                    ? 'text-gray-400'
+                    : 'text-gray-500'
               }`}
-              fill={isSaved ? "currentColor" : "none"}
+              fill={isSaved ? 'currentColor' : 'none'}
             />
           </div>
         </div>

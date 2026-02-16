@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   BarChart,
   Bar,
@@ -12,59 +12,55 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-} from "recharts";
-import { useTheme } from "../../contexts/ThemeContext";
+} from 'recharts';
+import { useTheme } from '../../contexts/ThemeContext';
 
 /* ---------------- Mock Analytics Data ---------------- */
 
 const engagementFunnel = [
-  { stage: "Views", value: 4200 },
-  { stage: "Likes", value: 920 },
-  { stage: "Comments", value: 260 },
-  { stage: "Shares", value: 80 },
+  { stage: 'Views', value: 4200 },
+  { stage: 'Likes', value: 920 },
+  { stage: 'Comments', value: 260 },
+  { stage: 'Shares', value: 80 },
 ];
 
 const contentHealth = [
-  { name: "Published", value: 25, color: "#22C55E" },
-  { name: "Draft", value: 6, color: "#F59E0B" },
-  { name: "Archived", value: 3, color: "#6B7280" },
+  { name: 'Published', value: 25, color: '#22C55E' },
+  { name: 'Draft', value: 6, color: '#F59E0B' },
+  { name: 'Archived', value: 3, color: '#6B7280' },
 ];
 
 const trafficSources = [
-  { name: "Direct", value: 45, color: "#6366F1" },
-  { name: "Search", value: 30, color: "#22C55E" },
-  { name: "Social", value: 20, color: "#3B82F6" },
-  { name: "Referral", value: 5, color: "#F59E0B" },
+  { name: 'Direct', value: 45, color: '#6366F1' },
+  { name: 'Search', value: 30, color: '#22C55E' },
+  { name: 'Social', value: 20, color: '#3B82F6' },
+  { name: 'Referral', value: 5, color: '#F59E0B' },
 ];
 
 const topBlogs = [
-  { title: "Mastering MERN Stack", views: 1200 },
-  { title: "Clean UI Principles", views: 980 },
-  { title: "Dark Mode UX", views: 760 },
+  { title: 'Mastering MERN Stack', views: 1200 },
+  { title: 'Clean UI Principles', views: 980 },
+  { title: 'Dark Mode UX', views: 760 },
 ];
 
 const authorPerformance = [
-  { author: "Ayush Patel", posts: 12 },
-  { author: "John Doe", posts: 8 },
-  { author: "Jane Smith", posts: 6 },
+  { author: 'Ayush Patel', posts: 12 },
+  { author: 'John Doe', posts: 8 },
+  { author: 'Jane Smith', posts: 6 },
 ];
 
 const AdminAnalytics: React.FC = () => {
   const { isDarkMode } = useTheme();
 
   /* ---------------- Theme Helpers ---------------- */
-  const pageBg = isDarkMode
-    ? "bg-gray-900 text-gray-100"
-    : "bg-gray-50 text-gray-900";
+  const pageBg = isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900';
 
-  const muted = isDarkMode ? "text-gray-400" : "text-gray-600";
+  const muted = isDarkMode ? 'text-gray-400' : 'text-gray-600';
 
-  const surface = isDarkMode
-    ? "bg-gray-900/70 border-gray-700"
-    : "bg-white border-gray-200";
+  const surface = isDarkMode ? 'bg-gray-900/70 border-gray-700' : 'bg-white border-gray-200';
 
-  const gridStroke = isDarkMode ? "#374151" : "#E5E7EB";
-  const axisStroke = isDarkMode ? "#9CA3AF" : "#4B5563";
+  const gridStroke = isDarkMode ? '#374151' : '#E5E7EB';
+  const axisStroke = isDarkMode ? '#9CA3AF' : '#4B5563';
 
   return (
     <div className={`min-h-screen ${pageBg}`}>
@@ -74,7 +70,7 @@ const AdminAnalytics: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
             Analytics & Insights
           </h1>
-          <p className={isDarkMode ? "text-gray-400" : "text-gray-600"}>
+          <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
             Deep analysis of content performance and user engagement
           </p>
         </div>
@@ -82,10 +78,10 @@ const AdminAnalytics: React.FC = () => {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
-            { label: "Total Views", value: "4.2K" },
-            { label: "Avg. Engagement Rate", value: "22%" },
-            { label: "Top Author Posts", value: "12" },
-            { label: "Active Readers", value: "36" },
+            { label: 'Total Views', value: '4.2K' },
+            { label: 'Avg. Engagement Rate', value: '22%' },
+            { label: 'Top Author Posts', value: '12' },
+            { label: 'Active Readers', value: '36' },
           ].map((kpi) => (
             <div key={kpi.label} className={`rounded-xl border p-4 ${surface}`}>
               <p className={`text-sm ${muted}`}>{kpi.label}</p>
@@ -165,12 +161,7 @@ const AdminAnalytics: React.FC = () => {
                 <XAxis dataKey="author" stroke={axisStroke} />
                 <YAxis stroke={axisStroke} />
                 <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="posts"
-                  stroke="#6366F1"
-                  strokeWidth={2}
-                />
+                <Line type="monotone" dataKey="posts" stroke="#6366F1" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </div>

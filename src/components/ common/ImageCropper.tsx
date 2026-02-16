@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import Cropper from "react-easy-crop";
+import React, { useState, useCallback } from 'react';
+import Cropper from 'react-easy-crop';
 
 interface ImageCropperProps {
   image: string;
@@ -7,32 +7,25 @@ interface ImageCropperProps {
   onCropComplete: (croppedImage: string) => void;
 }
 
-const ImageCropper: React.FC<ImageCropperProps> = ({
-  image,
-  onCancel,
-  onCropComplete,
-}) => {
+const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCancel, onCropComplete }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
-  const onCropCompleteCallback = useCallback(
-    (_: any, croppedAreaPixels: any) => {
-      setCroppedAreaPixels(croppedAreaPixels);
-    },
-    []
-  );
+  const onCropCompleteCallback = useCallback((_: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
 
   const createCroppedImage = async () => {
     try {
-      const canvas = document.createElement("canvas");
-      const imageElement = document.createElement("img");
+      const canvas = document.createElement('canvas');
+      const imageElement = document.createElement('img');
       imageElement.src = image;
       await new Promise((resolve) => {
         imageElement.onload = resolve;
       });
 
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
       const { width, height, x, y } = croppedAreaPixels;
@@ -40,22 +33,12 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       canvas.width = width;
       canvas.height = height;
 
-      ctx.drawImage(
-        imageElement,
-        x,
-        y,
-        width,
-        height,
-        0,
-        0,
-        width,
-        height
-      );
+      ctx.drawImage(imageElement, x, y, width, height, 0, 0, width, height);
 
-      const croppedImage = canvas.toDataURL("image/jpeg");
+      const croppedImage = canvas.toDataURL('image/jpeg');
       onCropComplete(croppedImage);
     } catch (e) {
-      console.error("Cropping failed:", e);
+      console.error('Cropping failed:', e);
     }
   };
 
@@ -77,11 +60,9 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
         </div>
 
         <div className="w-full mt-4 flex flex-col items-center">
-          <label className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-            Zoom
-          </label>
+          <label className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">Zoom</label>
           <input
-          aria-label="range input"
+            aria-label="range input"
             type="range"
             min="1"
             max="3"

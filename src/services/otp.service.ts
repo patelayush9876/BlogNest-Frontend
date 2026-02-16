@@ -1,4 +1,4 @@
-import api from "./api";
+import api from './api';
 
 export interface VerifyOtpResponse {
   status: boolean;
@@ -16,11 +16,8 @@ export interface BasicOtpResponse {
   data?: any;
 }
 
-export const verifyEmailOtp = async (
-  email: string,
-  otp: string
-): Promise<VerifyOtpResponse> => {
-  const response = await api.post("/otp/verify", {
+export const verifyEmailOtp = async (email: string, otp: string): Promise<VerifyOtpResponse> => {
+  const response = await api.post('/otp/verify', {
     email,
     otp,
   });
@@ -28,10 +25,8 @@ export const verifyEmailOtp = async (
   return response.data;
 };
 
-export const resendEmailOtp = async (
-  email: string
-): Promise<BasicOtpResponse> => {
-  const response = await api.post("/otp/resend", {
+export const resendEmailOtp = async (email: string): Promise<BasicOtpResponse> => {
+  const response = await api.post('/otp/resend', {
     email,
   });
 

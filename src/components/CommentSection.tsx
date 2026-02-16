@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Heart, ArrowUp } from "lucide-react";
-import { addComment, getComments, toggleLikeComment } from "../services/comment.service";
-import { useTheme } from "../contexts/ThemeContext";
+import React, { useEffect, useState } from 'react';
+import { Heart, ArrowUp } from 'lucide-react';
+import { addComment, getComments, toggleLikeComment } from '../services/comment.service';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface CommentDTO {
   _id: string;
@@ -18,10 +18,7 @@ interface CommentSectionProps {
 }
 
 const countAllComments = (comments: CommentDTO[]): number =>
-  comments.reduce(
-    (acc, c) => acc + 1 + (c.replies ? countAllComments(c.replies) : 0),
-    0
-  );
+  comments.reduce((acc, c) => acc + 1 + (c.replies ? countAllComments(c.replies) : 0), 0);
 
 const CommentItem: React.FC<{
   comment: CommentDTO;
@@ -31,7 +28,7 @@ const CommentItem: React.FC<{
   const { isDarkMode } = useTheme();
   const [liked, setLiked] = useState(comment.likes.length > 0);
   const [showReplyInput, setShowReplyInput] = useState(false);
-  const [replyText, setReplyText] = useState("");
+  const [replyText, setReplyText] = useState('');
 
   const handleLike = async () => {
     await onLike(comment._id);
@@ -41,57 +38,47 @@ const CommentItem: React.FC<{
   const handleReply = async () => {
     if (!replyText.trim()) return;
     await onReply(replyText, comment._id);
-    setReplyText("");
+    setReplyText('');
     setShowReplyInput(false);
   };
 
   return (
     <div className="flex mt-6">
       <img
-        src={comment.userId?.profilePic || ""}
+        src={comment.userId?.profilePic || ''}
         className="w-8 h-8 rounded-full"
         alt="ProfilePic"
       />
       <div className="ml-3 flex-1 pb-4">
         <div className="text-sm">
-          <span
-            className={`font-semibold ${
-              isDarkMode ? "text-gray-200" : "text-gray-900"
-            }`}
-          >
+          <span className={`font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-900'}`}>
             @{comment.userId.name}
           </span>
-          <span
-            className={`ml-2 ${
-              isDarkMode ? "text-gray-500" : "text-gray-500"
-            }`}
-          >
+          <span className={`ml-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
             • {new Date(comment.createdAt).toLocaleDateString()}
           </span>
         </div>
 
-        <p className={`mt-1 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-          {comment.text}
-        </p>
+        <p className={`mt-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{comment.text}</p>
 
         <div
           className={`flex items-center mt-2 space-x-4 text-sm ${
-            isDarkMode ? "text-gray-400" : "text-gray-500"
+            isDarkMode ? 'text-gray-400' : 'text-gray-500'
           }`}
         >
           <button
             onClick={handleLike}
             className={`flex items-center space-x-1 transition duration-150 ${
               liked
-                ? "text-red-500 fill-red-500"
+                ? 'text-red-500 fill-red-500'
                 : isDarkMode
-                ? "hover:text-red-400"
-                : "hover:text-red-500"
+                  ? 'hover:text-red-400'
+                  : 'hover:text-red-500'
             }`}
           >
-           <Heart
+            <Heart
               className="w-5 h-5"
-              fill={liked ? "currentColor" : "none"}
+              fill={liked ? 'currentColor' : 'none'}
               stroke="currentColor"
             />
             <span>{comment.likes.length}</span>
@@ -100,9 +87,7 @@ const CommentItem: React.FC<{
           <button
             onClick={() => setShowReplyInput(!showReplyInput)}
             className={`transition duration-150 font-medium ${
-              isDarkMode
-                ? "hover:text-indigo-400"
-                : "hover:text-indigo-600 text-gray-500"
+              isDarkMode ? 'hover:text-indigo-400' : 'hover:text-indigo-600 text-gray-500'
             }`}
           >
             Reply
@@ -116,8 +101,8 @@ const CommentItem: React.FC<{
               rows={2}
               className={`w-full p-2 h-12 pr-10 border rounded-lg resize-none focus:ring-indigo-500 focus:border-indigo-500 ${
                 isDarkMode
-                  ? "border-gray-700 bg-gray-800 text-gray-200 placeholder-gray-500"
-                  : "border-gray-300 text-gray-700"
+                  ? 'border-gray-700 bg-gray-800 text-gray-200 placeholder-gray-500'
+                  : 'border-gray-300 text-gray-700'
               }`}
               placeholder="Write a reply..."
               value={replyText}
@@ -136,17 +121,10 @@ const CommentItem: React.FC<{
         {/* Nested Replies */}
         {comment.replies.length > 0 && (
           <div
-            className={`pl-4 border-l mt-4 ${
-              isDarkMode ? "border-gray-700" : "border-gray-200"
-            }`}
+            className={`pl-4 border-l mt-4 ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
           >
             {comment.replies.map((reply) => (
-              <CommentItem
-                key={reply._id}
-                comment={reply}
-                onLike={onLike}
-                onReply={onReply}
-              />
+              <CommentItem key={reply._id} comment={reply} onLike={onLike} onReply={onReply} />
             ))}
           </div>
         )}
@@ -155,13 +133,10 @@ const CommentItem: React.FC<{
   );
 };
 
-const CommentSection: React.FC<CommentSectionProps> = ({
-  blogId,
-  onCountChange,
-}) => {
+const CommentSection: React.FC<CommentSectionProps> = ({ blogId, onCountChange }) => {
   const { isDarkMode } = useTheme();
   const [comments, setComments] = useState<CommentDTO[]>([]);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
 
   useEffect(() => {
     fetchComments();
@@ -177,7 +152,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   const handlePostComment = async () => {
     if (!text.trim()) return;
     await addComment(blogId, text);
-    setText("");
+    setText('');
     fetchComments();
   };
 
@@ -200,8 +175,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
           rows={3}
           className={`w-full h-13 p-3 pr-12 border rounded-lg resize-none focus:ring-indigo-500 focus:border-indigo-500 ${
             isDarkMode
-              ? "border-gray-700 bg-gray-800 text-gray-200 placeholder-gray-500"
-              : "border-gray-300 text-gray-700"
+              ? 'border-gray-700 bg-gray-800 text-gray-200 placeholder-gray-500'
+              : 'border-gray-300 text-gray-700'
           }`}
           value={text}
           onChange={(e) => setText(e.target.value)}

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "target": "ES2022",           // Change from ES2023 to ES2022
-    "lib": ["ES2022"], 
+    "target": "ES2022", // Change from ES2023 to ES2022
+    "lib": ["ES2022"],
     "module": "ESNext",
     "types": ["node"],
     "skipLibCheck": true,
