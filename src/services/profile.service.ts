@@ -34,3 +34,23 @@ export const getProfileById = async (userId: string) => {
   const response = await api.get(`/profile/${userId}`);
   return response.data.data;
 };
+
+export interface SuggestedUser {
+  _id: string;
+  name: string;
+  email?: string;
+  followerCount: number;
+  profile?: {
+    username?: string;
+    profilePic?: string;
+    bio?: string;
+  };
+}
+
+export const getSuggestedUsers = async (limit: number = 5): Promise<SuggestedUser[]> => {
+  const response = await api.get('/profile/suggested', {
+    params: { limit },
+  });
+
+  return response.data.data;
+};

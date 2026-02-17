@@ -1,33 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { getTrendingTopics } from '../../services/blog.service';
+import { getAllCategories } from '../../services/blogCategory.service';
+
+interface Category {
+  _id: string;
+  name: string;
+}
 
 const LeftSidebar: React.FC = () => {
   const { isDarkMode } = useTheme();
 
-  const trendingTopics = [
-    'React',
-    'JavaScript',
-    'TypeScript',
-    'CSS',
-    'Web Development',
-    'Design',
-    'Programming',
-    'Tutorial',
-  ];
+  const [trendingTopics, setTrendingTopics] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [trendingCategoryIds, setTrendingCategoryIds] = useState<string[]>([]);
 
-  const categories = [
-    'Web Development',
-    'JavaScript',
-    'React',
-    'TypeScript',
-    'Design',
-    'UX/UI',
-    'Backend',
-    'DevOps',
-    'Career',
-    'Tutorial',
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch trending tags
+        const tags = await getTrendingTopics('tag', 8);
+        setTrendingTopics(tags.map((t) => t._id));
+
+        // Fetch trending categories
+        const trendingCats = await getTrendingTopics('category', 10);
+        setTrendingCategoryIds(trendingCats.map((c) => c._id));
+
+        // Fetch all categories
+        const allCategories = await getAllCategories();
+        setCategories(allCategories);
+      } catch (error) {
+        console.error('Failed to fetch sidebar data', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const TopicTag: React.FC<{ children: string }> = ({ children }) => (
     <span
@@ -44,7 +53,7 @@ const LeftSidebar: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Trending */}
+      {/* Trending Topics */}
       <div
         className={`p-5 border rounded-xl ${
           isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
@@ -79,18 +88,24 @@ const LeftSidebar: React.FC = () => {
         </h3>
 
         <ul className="space-y-2">
-          {categories.map((category) => (
-            <li
-              key={category}
-              className={`text-sm cursor-pointer transition ${
-                isDarkMode
-                  ? 'text-gray-300 hover:text-indigo-400'
-                  : 'text-gray-600 hover:text-indigo-600'
-              }`}
-            >
-              {category}
-            </li>
-          ))}
+          {categories.map((category) => {
+            const isTrending = trendingCategoryIds.includes(category._id);
+
+            return (
+              <li
+                key={category._id}
+                className={`text-sm cursor-pointer transition flex items-center justify-left gap-3 ${
+                  isDarkMode
+                    ? 'text-gray-300 hover:text-indigo-400'
+                    : 'text-gray-600 hover:text-indigo-600'
+                }`}
+              >
+                <span>{category.name}</span>
+
+                {isTrending && <TrendingUp className="w-5 h-5 mr-2 text-indigo-600" />}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

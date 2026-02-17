@@ -115,7 +115,7 @@ const ContentLayout: React.FC = () => {
           </aside>
 
           {/* CENTER FEED */}
-          <main className="lg:col-span-6 h-full overflow-y-auto">
+          <main className="lg:col-span-6 h-full overflow-y-auto hide-scrollbar">
             {/* Tabs */}
             <div className={`p-1 tab-container ${isDarkMode ? 'dark' : ''}`}>
               <div

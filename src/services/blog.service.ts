@@ -1,4 +1,4 @@
-import type { BlogWithProfile as Blog } from '../interfaces/blogInterface';
+import type { BlogWithProfile as Blog, TrendingTopic } from '../interfaces/blogInterface';
 import api from './api';
 
 export type PaginatedBlogs = {
@@ -53,6 +53,43 @@ export const getTrendingBlogs = async (
   const response = await api.get('/blogs/trending', { params });
   const { blogs, total, page: p, limit: l, totalPages } = response.data.data;
   return { blogs, total, page: p, limit: l, totalPages };
+};
+
+export const getTrendingTopics = async (
+  type: 'tag' | 'category' = 'tag',
+  limit = 10,
+  decayHours?: number,
+  minHoursWindow?: number,
+): Promise<TrendingTopic[]> => {
+  const params: Record<string, string | number> = { type, limit };
+
+  if (typeof decayHours === 'number') {
+    params.decayHours = decayHours;
+  }
+
+  if (typeof minHoursWindow === 'number') {
+    params.minHoursWindow = minHoursWindow;
+  }
+
+  const response = await api.get('/blogs/trending-topics', { params });
+
+  return response.data.data;
+};
+
+export const getRecommendedBlogs = async (
+  limit = 5,
+): Promise<
+  {
+    _id: string;
+    title: string;
+    author: { _id: string; name: string };
+  }[]
+> => {
+  const response = await api.get('/blogs/recommended', {
+    params: { limit },
+  });
+
+  return response.data.data;
 };
 
 // Get my Blogs
@@ -125,4 +162,20 @@ export const getMyDrafts = async (): Promise<Blog[]> => {
 export const getBlogsByUserId = async (userId: string): Promise<Blog[]> => {
   const response = await api.get(`/blogs/user/${userId}`);
   return response.data.data.blogs;
+};
+
+export const getMostSavedBlogs = async (
+  limit = 5,
+): Promise<
+  {
+    _id: string;
+    title: string;
+    author: { _id: string; name: string };
+  }[]
+> => {
+  const response = await api.get('/blogs/most-saved', {
+    params: { limit },
+  });
+
+  return response.data.data;
 };
