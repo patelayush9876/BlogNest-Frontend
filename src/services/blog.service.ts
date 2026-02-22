@@ -18,9 +18,15 @@ export const createBlog = async (data: FormData): Promise<Blog> => {
 };
 
 // Get All Blogs
-export const getAllBlogs = async (page = 1, limit = 10, search = ''): Promise<PaginatedBlogs> => {
+export const getAllBlogs = async (
+  page = 1,
+  limit = 10,
+  search = '',
+  category = '',
+  tags = '',
+): Promise<PaginatedBlogs> => {
   const response = await api.get('/blogs', {
-    params: { page, limit, search },
+    params: { page, limit, search, category, tags },
   });
   const { blogs, total, page: p, limit: l, totalPages } = response.data.data;
   return { blogs, total, page: p, limit: l, totalPages };

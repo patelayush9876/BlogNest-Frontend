@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useSearchParams } from 'react-router-dom';
 
 interface NavbarProps {
   userProfileImage: string;
@@ -17,6 +18,8 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage, onLogout, userName })
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -80,6 +83,20 @@ const Navbar: React.FC<NavbarProps> = ({ userProfileImage, onLogout, userName })
           <input
             type="search"
             placeholder="Search articles..."
+            value={searchQuery}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearchQuery(value);
+
+              if (value.trim() === '') {
+                navigate('/user');
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && searchQuery.trim()) {
+                navigate(`/user?search=${encodeURIComponent(searchQuery.trim())}`);
+              }
+            }}
             className={`w-full py-2 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition ${
               isDarkMode
                 ? 'bg-gray-800 text-gray-200 placeholder-gray-400'

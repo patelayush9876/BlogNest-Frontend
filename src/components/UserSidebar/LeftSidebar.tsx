@@ -9,7 +9,11 @@ interface Category {
   name: string;
 }
 
-const LeftSidebar: React.FC = () => {
+interface LeftSidebarProps {
+  onCategoryClick?: (categoryId: string) => void;
+  onTagClick?: (tag: string) => void;
+}
+const LeftSidebar: React.FC<LeftSidebarProps> = ({ onCategoryClick, onTagClick }) => {
   const { isDarkMode } = useTheme();
 
   const [trendingTopics, setTrendingTopics] = useState<string[]>([]);
@@ -40,12 +44,13 @@ const LeftSidebar: React.FC = () => {
 
   const TopicTag: React.FC<{ children: string }> = ({ children }) => (
     <span
+      onClick={() => onTagClick?.(children)} // THIS IS THE MAIN THING
       className={`inline-block px-3 py-1 mr-2 mt-2 text-xs font-medium rounded-full cursor-pointer transition
-        ${
-          isDarkMode
-            ? 'bg-gray-800 text-gray-200 hover:bg-gray-700'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-        }`}
+      ${
+        isDarkMode
+          ? 'bg-gray-800 text-gray-200 hover:bg-gray-700'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      }`}
     >
       {children}
     </span>
@@ -94,6 +99,7 @@ const LeftSidebar: React.FC = () => {
             return (
               <li
                 key={category._id}
+                onClick={() => onCategoryClick?.(category._id)}
                 className={`text-sm cursor-pointer transition flex items-center justify-left gap-3 ${
                   isDarkMode
                     ? 'text-gray-300 hover:text-indigo-400'
@@ -101,8 +107,7 @@ const LeftSidebar: React.FC = () => {
                 }`}
               >
                 <span>{category.name}</span>
-
-                {isTrending && <TrendingUp className="w-5 h-5 mr-2 text-indigo-600" />}
+                {isTrending && <TrendingUp className="w-5 h-5 text-indigo-600" />}
               </li>
             );
           })}

@@ -52,6 +52,7 @@ export interface BlogWithProfile {
   readTime?: string;
   likedByCurrentUser?: boolean;
   isFollowed?: boolean;
+  isSaved?: boolean;
 }
 
 export interface TrendingTopic {

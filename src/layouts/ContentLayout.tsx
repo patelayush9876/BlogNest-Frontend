@@ -10,7 +10,7 @@ import { ArticleCardSkeleton } from '../components/loaders/ArticleSkeleton';
 import Pagination from '../components/Pagination';
 import LeftSidebar from '../components/UserSidebar/LeftSidebar';
 import RightSidebar from '../components/UserSidebar/RightSidebar';
-
+import { useSearchParams } from 'react-router-dom';
 const ContentLayout: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
@@ -25,7 +25,12 @@ const ContentLayout: React.FC = () => {
   const [perPage, setPerPage] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalItems, setTotalItems] = useState<number>(0);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedTag, setSelectedTag] = useState<string>('');
 
+  const [debouncedSearch, setDebouncedSearch] = useState<string>('');
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
   const tabs = [
     { id: 'forYou', label: 'For You' },
     { id: 'following', label: 'Following' },
@@ -38,7 +43,6 @@ const ContentLayout: React.FC = () => {
     trending: 'translate-x-[200%]',
   };
 
-  // central fetcher: chooses service based on activeTab
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -46,12 +50,18 @@ const ContentLayout: React.FC = () => {
 
         let res: PaginatedBlogs;
         if (activeTab === 'forYou') {
-          res = await BlogService.getAllBlogs(currentPage, perPage, '');
+          res = await BlogService.getAllBlogs(
+            currentPage,
+            perPage,
+            debouncedSearch,
+            selectedCategory,
+            selectedTag,
+          );
         } else if (activeTab === 'following') {
-          res = await BlogService.getFollowingBlogs(currentPage, perPage, '');
+          res = await BlogService.getFollowingBlogs(currentPage, perPage, debouncedSearch);
         } else {
           // trending
-          res = await BlogService.getTrendingBlogs(currentPage, perPage, '');
+          res = await BlogService.getTrendingBlogs(currentPage, perPage, debouncedSearch);
         }
 
         // normalize tags, likes, comments same as before
@@ -91,11 +101,21 @@ const ContentLayout: React.FC = () => {
     };
 
     fetch();
-  }, [activeTab, currentPage, perPage]);
+  }, [activeTab, currentPage, perPage, selectedCategory, selectedTag, debouncedSearch]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setCurrentPage(1);
+    }, 400); // 400ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
   const handleTabClick = (tabId: typeof activeTab) => {
     setActiveTab(tabId);
     setCurrentPage(1);
+    setSelectedCategory('');
+    setSelectedTag('');
   };
 
   return (
@@ -110,7 +130,24 @@ const ContentLayout: React.FC = () => {
           {/* LEFT SIDEBAR */}
           <aside className="hidden lg:block lg:col-span-3">
             <div className="sticky space-y-6">
-              {loading ? <SidebarSkeleton /> : <LeftSidebar />}
+              {loading ? (
+                <SidebarSkeleton />
+              ) : (
+                <LeftSidebar
+                  onCategoryClick={(categoryId) => {
+                    setSelectedCategory(categoryId);
+                    setSelectedTag(''); // RESET TAG FILTER
+                    setCurrentPage(1);
+                    setActiveTab('forYou');
+                  }}
+                  onTagClick={(tag) => {
+                    setSelectedTag(tag); // APPLY TAG FILTER
+                    setSelectedCategory(''); // RESET CATEGORY FILTER
+                    setCurrentPage(1);
+                    setActiveTab('forYou'); // SHOW FILTERED BLOGS
+                  }}
+                />
+              )}
             </div>
           </aside>
 
@@ -136,7 +173,11 @@ const ContentLayout: React.FC = () => {
                 </button>
               ))}
             </div>
-
+            {searchQuery && (
+              <p className="mb-4 mt-4 text-sm text-gray-500">
+                Showing results for "<strong>{searchQuery}</strong>"
+              </p>
+            )}
             {/* Blog Feed */}
             <div className="mt-6 space-y-8 p-1.8">
               {loading ? (
@@ -185,7 +226,18 @@ const ContentLayout: React.FC = () => {
           {/* RIGHT SIDEBAR */}
           <aside className="hidden lg:block lg:col-span-3">
             <div className="sticky  space-y-6">
-              {loading ? <SidebarSkeleton /> : <RightSidebar />}
+              {loading ? (
+                <SidebarSkeleton />
+              ) : (
+                <RightSidebar
+                  onTagClick={(tag) => {
+                    setSelectedTag(tag);
+                    setSelectedCategory('');
+                    setCurrentPage(1);
+                    setActiveTab('forYou');
+                  }}
+                />
+              )}
             </div>
           </aside>
         </div>

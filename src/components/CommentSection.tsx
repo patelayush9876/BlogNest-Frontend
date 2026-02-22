@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Heart, ArrowUp } from 'lucide-react';
 import { addComment, getComments, toggleLikeComment } from '../services/comment.service';
 import { useTheme } from '../contexts/ThemeContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 interface CommentDTO {
   _id: string;
@@ -44,11 +46,14 @@ const CommentItem: React.FC<{
 
   return (
     <div className="flex mt-6">
-      <img
-        src={comment.userId?.profilePic || ''}
-        className="w-8 h-8 rounded-full"
-        alt="ProfilePic"
-      />
+      {comment.userId?.profilePic ? (
+        <img src={comment.userId?.profilePic} className="w-8 h-8 rounded-full" alt="ProfilePic" />
+      ) : (
+        <FontAwesomeIcon
+          icon={faUser}
+          className={`w-6 h-6 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+        />
+      )}
       <div className="ml-3 flex-1 pb-4">
         <div className="text-sm">
           <span className={`font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-900'}`}>

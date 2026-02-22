@@ -3,6 +3,7 @@ import React from 'react';
 import { Twitter, Linkedin, Github, Mail, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useNavigate } from 'react-router-dom';
+import { getCurrentYear } from '../utils/currentYear';
 
 interface FooterLink {
   label: string;
@@ -47,6 +48,7 @@ const footerColumns: FooterColumn[] = [
 const Footer: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const currentYear = getCurrentYear();
 
   return (
     <footer
@@ -125,7 +127,7 @@ const Footer: React.FC = () => {
         <div className="flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
           {/* Left */}
           <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-            © 2025 BlogNest. All rights reserved.
+            © {currentYear} BlogNest. All rights reserved.
           </p>
 
           {/* Center */}

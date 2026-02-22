@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 import {
   getMostSavedBlogs,
   getRecommendedBlogs,
   getTrendingTopics,
 } from '../../services/blog.service';
-// import { getSuggestedUsers } from '../../services/profile.service';
 
 interface Author {
   _id: string;
@@ -18,18 +18,17 @@ interface BlogItem {
   author: Author;
 }
 
-interface SuggestedUser {
-  _id: string;
-  name: string;
+interface RightSidebarProps {
+  onTagClick?: (tag: string) => void;
 }
 
-const RightSidebar: React.FC = () => {
+const RightSidebar: React.FC<RightSidebarProps> = ({ onTagClick }) => {
   const { isDarkMode } = useTheme();
+  const navigate = useNavigate();
 
   const [recommended, setRecommended] = useState<BlogItem[]>([]);
   const [popularTags, setPopularTags] = useState<string[]>([]);
   const [mostSaved, setMostSaved] = useState<BlogItem[]>([]);
-  // const [suggestedUsers, setSuggestedUsers] = useState<SuggestedUser[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,9 +41,6 @@ const RightSidebar: React.FC = () => {
 
         const saved = await getMostSavedBlogs(3);
         setMostSaved(saved);
-
-        // const users = await getSuggestedUsers(3);
-        // setSuggestedUsers(users);
       } catch (err) {
         console.error('Right sidebar fetch error:', err);
       }
@@ -52,6 +48,10 @@ const RightSidebar: React.FC = () => {
 
     fetchData();
   }, []);
+
+  const handleBlogClick = (id: string) => {
+    navigate(`/user/blogs/${id}`);
+  };
 
   return (
     <div className="space-y-8">
@@ -61,9 +61,7 @@ const RightSidebar: React.FC = () => {
           isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
         }`}
       >
-        <h3
-          className={`mb-4 text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
-        >
+        <h3 className={`mb-4 text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
           Recommended Reading
         </h3>
 
@@ -71,6 +69,7 @@ const RightSidebar: React.FC = () => {
           {recommended.map((item) => (
             <div key={item._id}>
               <p
+                onClick={() => handleBlogClick(item._id)}
                 className={`font-medium cursor-pointer transition ${
                   isDarkMode
                     ? 'text-gray-200 hover:text-indigo-400'
@@ -87,53 +86,13 @@ const RightSidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Who to Follow */}
-      {/* <div
-        className={`p-5 border rounded-xl ${
-          isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
-        }`}
-      >
-        <h3
-          className={`mb-4 text-lg font-semibold ${
-            isDarkMode ? 'text-gray-100' : 'text-gray-900'
-          }`}
-        >
-          Who to Follow
-        </h3>
-
-        <div className="space-y-4">
-          {suggestedUsers.map((user) => (
-            <div
-              key={user._id}
-              className="flex items-center justify-between"
-            >
-              <p
-                className={`font-medium ${
-                  isDarkMode ? 'text-gray-200' : 'text-gray-800'
-                }`}
-              >
-                {user.name}
-              </p>
-
-              <button
-                className="text-xs px-3 py-1 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition"
-              >
-                Follow
-              </button>
-            </div>
-          ))}
-        </div>
-      </div> */}
-
       {/* Popular Tags */}
       <div
         className={`p-5 border rounded-xl ${
           isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
         }`}
       >
-        <h3
-          className={`mb-4 text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
-        >
+        <h3 className={`mb-4 text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
           Popular Tags
         </h3>
 
@@ -141,6 +100,7 @@ const RightSidebar: React.FC = () => {
           {popularTags.map((tag) => (
             <span
               key={tag}
+              onClick={() => onTagClick?.(tag)} // SAME PATTERN AS LEFT SIDEBAR
               className={`inline-block px-3 py-1 mr-2 mt-2 text-xs font-medium rounded-full cursor-pointer transition ${
                 isDarkMode
                   ? 'bg-gray-800 text-gray-200 hover:bg-gray-700'
@@ -159,9 +119,7 @@ const RightSidebar: React.FC = () => {
           isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
         }`}
       >
-        <h3
-          className={`mb-4 text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
-        >
+        <h3 className={`mb-4 text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
           Most Saved
         </h3>
 
@@ -169,6 +127,7 @@ const RightSidebar: React.FC = () => {
           {mostSaved.map((item) => (
             <div key={item._id}>
               <p
+                onClick={() => handleBlogClick(item._id)}
                 className={`font-medium cursor-pointer transition ${
                   isDarkMode
                     ? 'text-gray-200 hover:text-indigo-400'
