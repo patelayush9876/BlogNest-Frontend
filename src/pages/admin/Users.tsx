@@ -23,7 +23,7 @@ const AdminUsers: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'banned'>('all');
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const [totalUsers, setTotalUsers] = useState(0);
   const debouncedSearchHandler = useMemo(
     () =>
@@ -92,7 +92,7 @@ const AdminUsers: React.FC = () => {
 
   return (
     <div
-      className={`min-h-auto transition-colors duration-300 ${
+      className={`h-full transition-colors duration-300 ${
         isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'
       }`}
     >

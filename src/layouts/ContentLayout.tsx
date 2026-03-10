@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ArticleCard from '../components/ArticleCard';
 import clsx from 'clsx';
 import * as BlogService from '../services/blog.service';
@@ -11,6 +11,7 @@ import Pagination from '../components/Pagination';
 import LeftSidebar from '../components/UserSidebar/LeftSidebar';
 import RightSidebar from '../components/UserSidebar/RightSidebar';
 import { useSearchParams } from 'react-router-dom';
+
 const ContentLayout: React.FC = () => {
   const { isDarkMode } = useTheme();
   const { user } = useAuth();
@@ -27,7 +28,7 @@ const ContentLayout: React.FC = () => {
   const [totalItems, setTotalItems] = useState<number>(0);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedTag, setSelectedTag] = useState<string>('');
-
+  const feedRef = useRef<HTMLDivElement | null>(null);
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
@@ -43,6 +44,21 @@ const ContentLayout: React.FC = () => {
     trending: 'translate-x-[200%]',
   };
 
+  useEffect(() => {
+    if (feedRef.current) {
+      feedRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+  }, [currentPage]);
+  
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [currentPage]);
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -152,7 +168,7 @@ const ContentLayout: React.FC = () => {
           </aside>
 
           {/* CENTER FEED */}
-          <main className="lg:col-span-6 h-full overflow-y-auto hide-scrollbar">
+          <main ref={feedRef} className="lg:col-span-6 h-full overflow-y-auto hide-scrollbar">
             {/* Tabs */}
             <div className={`p-1 tab-container ${isDarkMode ? 'dark' : ''}`}>
               <div

@@ -11,6 +11,7 @@ import { toggleSave } from '../../services/savedBlog.service';
 import { formatRelativeDate } from '../../utils/dateUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import BlogDetailsSkeleton from '../../components/loaders/skeletons/BlogDetailsSkeleton';
 
 const BlogDetailsPage = () => {
   const { id } = useParams();
@@ -44,7 +45,7 @@ const BlogDetailsPage = () => {
     fetchBlog();
   }, [id]);
 
-  if (!blog) return <div className="p-10">Loading...</div>;
+  if (!blog) return <BlogDetailsSkeleton isDarkMode={isDarkMode} />;
 
   const handleLike = async () => {
     const data = await toggleLike(blog._id);
