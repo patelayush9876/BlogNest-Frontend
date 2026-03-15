@@ -13,7 +13,7 @@ const ReportIssue: React.FC = () => {
   const [email, setEmail] = useState('');
   const [attachment, setAttachment] = useState<File | null>(null);
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState('');
+  const [_error, setError] = useState('');
   const [issueType, setIssueType] = useState('content');
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,8 +30,8 @@ const ReportIssue: React.FC = () => {
           setIssueType(fetched[0]._id); // default select first category
         }
         setLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch categories');
+      } catch (error: any) {
+        console.error('Failed to fetch categories', error.message);
         setLoading(false);
       }
     };

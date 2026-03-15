@@ -4,7 +4,7 @@ import {
   Cookie,
   BookText,
   Settings2,
-  ShieldCheck,
+  // ShieldCheck,
   BarChart3,
   SlidersHorizontal,
 } from 'lucide-react';

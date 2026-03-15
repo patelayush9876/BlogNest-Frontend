@@ -24,7 +24,7 @@ const BlogDetailsPage = () => {
   const [liked, setLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [following, setFollowing] = useState(false);
-  const [commentCount, setCommentCount] = useState(0);
+  const [_commentCount, setCommentCount] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
   const [animatePreview, setAnimatePreview] = useState(false);
 

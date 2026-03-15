@@ -23,7 +23,7 @@ const AdminPosts: React.FC = () => {
 
   const cardBg = isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200';
 
-  const muted = isDarkMode ? 'text-gray-400' : 'text-gray-600';
+  // const muted = isDarkMode ? 'text-gray-400' : 'text-gray-600';
 
   /* ---------------- Mock Data (replace with API) ---------------- */
   useEffect(() => {

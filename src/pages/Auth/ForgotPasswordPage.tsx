@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
-  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [submitted, _setSubmitted] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 

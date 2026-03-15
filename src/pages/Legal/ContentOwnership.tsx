@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
-import { Crown, PenTool, FileBadge, Stamp, ShieldAlert, Mail } from 'lucide-react';
+import { Crown, PenTool, FileBadge, ShieldAlert, Mail } from 'lucide-react';
 
 const ContentOwnership: React.FC = () => {
   const { isDarkMode } = useTheme();
