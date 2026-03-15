@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-// import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { FRONTEND_CONFIG } from '../../config/keyConfig';
 import { required, validateField, validCaptcha, validEmail } from '../../utils/validators';
@@ -30,7 +30,7 @@ const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  // const { registerUser } = useAuth();
+  const { registerUser } = useAuth();
   const RECAPTCHA_SITE_KEY = FRONTEND_CONFIG.RECAPTCHA_SITE_KEY;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,13 +67,13 @@ const SignupPage: React.FC = () => {
 
     setLoading(true);
     try {
-      // const res = await registerUser({
-      //   name: formData.name,
-      //   username: formData.username,
-      //   email: formData.email,
-      //   password: formData.password,
-      //   captchaToken: formData.captchaToken,
-      // });
+      await registerUser({
+        name: formData.name,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        captchaToken: formData.captchaToken,
+      });
 
       // ✅ store email temporarily
       localStorage.setItem('pendingEmail', formData.email);
