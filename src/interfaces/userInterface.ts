@@ -4,12 +4,17 @@ export interface User {
   username: string;
   email: string;
   phoneNumber: string;
-  isActive: boolean;
+  status: 'active' | 'inactive' | 'banned';
   role: string;
   createdAt: string;
   updatedAt: string;
 }
 
+export interface ApiResponse {
+  status: boolean;
+  message: string;
+  data?: any;
+}
 export interface LoginResponse {
   status: boolean;
   message: string;
@@ -42,4 +47,18 @@ export interface SignupResponse {
     accessToken: string;
     refreshToken: string;
   };
+}
+
+export interface ChangePasswordInput {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface ForgotPasswordInput {
+  email: string;
+}
+
+export interface ResetPasswordInput {
+  token: string;
+  newPassword: string;
 }

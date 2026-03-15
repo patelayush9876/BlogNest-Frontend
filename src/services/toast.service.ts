@@ -1,18 +1,17 @@
-import { toast, type ToastOptions } from "react-toastify";
-import toastMessages from "../constants/toastMessages.json";
-import type { ToastMessages } from "../interfaces/toastMessages";
-
+import { toast, type ToastOptions } from 'react-toastify';
+import toastMessages from '../constants/toastMessages.json';
+import type { ToastMessages } from '../interfaces/toastMessages';
 
 const typedToastMessages = toastMessages as ToastMessages;
 
-export type ToastType = "success" | "warn" | "error";
+export type ToastType = 'success' | 'warn' | 'error';
 
 export function showToast(
   messageKeyOrText: string,
-  type: ToastType = "error",
-  options: ToastOptions = {}
+  type: ToastType = 'error',
+  options: ToastOptions = {},
 ) {
-  let title = "";
+  let title = '';
   let message = messageKeyOrText;
 
   if (typedToastMessages[messageKeyOrText]) {
@@ -24,13 +23,13 @@ export function showToast(
   const formattedMessage = title ? `${title}: ${message}` : message;
 
   switch (type) {
-    case "success":
+    case 'success':
       toast.success(formattedMessage, options);
       break;
-    case "warn":
+    case 'warn':
       toast.warning(formattedMessage, options);
       break;
-    case "error":
+    case 'error':
     default:
       toast.error(formattedMessage, options);
       break;

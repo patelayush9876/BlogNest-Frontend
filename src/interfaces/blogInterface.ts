@@ -52,4 +52,16 @@ export interface BlogWithProfile {
   readTime?: string;
   likedByCurrentUser?: boolean;
   isFollowed?: boolean;
+  isSaved?: boolean;
+}
+
+export interface TrendingTopic {
+  _id: string; // tag name OR categoryId
+  name?: string; // only for category
+  totalScore: number;
+  blogCount: number;
+}
+
+export interface TrendingTopicsResponse {
+  topics: TrendingTopic[];
 }

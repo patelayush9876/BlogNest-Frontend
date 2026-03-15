@@ -1,24 +1,38 @@
-import React from "react";
-import { TrendingUp } from "lucide-react";
-import { useTheme } from "../contexts/ThemeContext";
+import React from 'react';
+import { TrendingUp } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 const Sidebar: React.FC = () => {
   const { isDarkMode } = useTheme();
 
   const trendingTopics = [
-    "React", "JavaScript", "TypeScript", "CSS", "Web Development",
-    "Design", "Programming", "Tutorial"
+    'React',
+    'JavaScript',
+    'TypeScript',
+    'CSS',
+    'Web Development',
+    'Design',
+    'Programming',
+    'Tutorial',
   ];
 
   const categories = [
-    "Web Development", "JavaScript", "React", "TypeScript", "Design",
-    "UX/UI", "Backend", "DevOps", "Career", "Tutorial"
+    'Web Development',
+    'JavaScript',
+    'React',
+    'TypeScript',
+    'Design',
+    'UX/UI',
+    'Backend',
+    'DevOps',
+    'Career',
+    'Tutorial',
   ];
 
   const recommendedReading = [
-    { title: "10 Tips for Better Code Reviews", author: "Sarah Chen" },
-    { title: "The Future of Web Development", author: "Mike Rodriguez" },
-    { title: "Mastering CSS Animations", author: "Lisa Park" },
+    { title: '10 Tips for Better Code Reviews', author: 'Sarah Chen' },
+    { title: 'The Future of Web Development', author: 'Mike Rodriguez' },
+    { title: 'Mastering CSS Animations', author: 'Lisa Park' },
   ];
 
   const TopicTag: React.FC<{ children: string }> = ({ children }) => (
@@ -26,8 +40,8 @@ const Sidebar: React.FC = () => {
       className={`inline-block px-3 py-1 mr-2 mt-2 text-xs font-medium rounded-full cursor-pointer transition duration-150
       ${
         isDarkMode
-          ? "bg-gray-800 text-gray-200 hover:bg-gray-700"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          ? 'bg-gray-800 text-gray-200 hover:bg-gray-700'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
       }`}
     >
       {children}
@@ -35,15 +49,15 @@ const Sidebar: React.FC = () => {
   );
 
   return (
-    <div className="space-y-8 sticky top-4">
+    <div className="space-y-8 ">
       {/* Trending Topics */}
       <div
         className={`p-5 border rounded-xl transition-colors duration-200
-        ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`}
+        ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}
       >
         <div
           className={`flex items-center mb-3 text-sm font-semibold
-          ${isDarkMode ? "text-gray-100" : "text-gray-900"}`}
+          ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
         >
           <TrendingUp className="w-5 h-5 mr-2 text-indigo-600" />
           Trending Topics
@@ -58,11 +72,11 @@ const Sidebar: React.FC = () => {
       {/* Categories */}
       <div
         className={`p-5 border rounded-xl transition-colors duration-200
-        ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`}
+        ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}
       >
         <h3
           className={`mb-3 text-lg font-semibold
-          ${isDarkMode ? "text-gray-100" : "text-gray-900"}`}
+          ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
         >
           Categories
         </h3>
@@ -73,8 +87,8 @@ const Sidebar: React.FC = () => {
               className={`text-sm cursor-pointer transition
               ${
                 isDarkMode
-                  ? "text-gray-300 hover:text-indigo-400"
-                  : "text-gray-600 hover:text-indigo-600"
+                  ? 'text-gray-300 hover:text-indigo-400'
+                  : 'text-gray-600 hover:text-indigo-600'
               }`}
             >
               {category}
@@ -86,11 +100,11 @@ const Sidebar: React.FC = () => {
       {/* Recommended Reading */}
       <div
         className={`p-5 border rounded-xl transition-colors duration-200
-        ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"}`}
+        ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}
       >
         <h3
           className={`mb-4 text-lg font-semibold
-          ${isDarkMode ? "text-gray-100" : "text-gray-900"}`}
+          ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
         >
           Recommended Reading
         </h3>
@@ -101,15 +115,15 @@ const Sidebar: React.FC = () => {
                 className={`font-medium cursor-pointer transition
                 ${
                   isDarkMode
-                    ? "text-gray-200 hover:text-indigo-400"
-                    : "text-gray-800 hover:text-indigo-600"
+                    ? 'text-gray-200 hover:text-indigo-400'
+                    : 'text-gray-800 hover:text-indigo-600'
                 }`}
               >
                 {item.title}
               </p>
               <p
                 className={`text-sm
-                ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}
+                ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
               >
                 {item.author}
               </p>

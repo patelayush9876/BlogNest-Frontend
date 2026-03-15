@@ -1,4 +1,4 @@
-import api from "./api";
+import api from './api';
 
 export interface BlogCategory {
   _id: string;
@@ -11,7 +11,7 @@ export interface BlogCategory {
  * Get all blog categories
  */
 export const getAllCategories = async (): Promise<BlogCategory[]> => {
-  const response = await api.get("/categories");
+  const response = await api.get('/categories');
   return response.data.data.categories;
 };
 
@@ -19,7 +19,7 @@ export const getAllCategories = async (): Promise<BlogCategory[]> => {
  * Create a new blog category
  */
 export const createCategory = async (name: string): Promise<BlogCategory> => {
-  const response = await api.post("/categories", { name });
+  const response = await api.post('/categories', { name });
   return response.data.data.category;
 };
 

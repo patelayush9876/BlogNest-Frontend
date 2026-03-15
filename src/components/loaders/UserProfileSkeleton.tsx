@@ -1,14 +1,13 @@
 export const UserProfileSkeleton = ({ isDarkMode }: { isDarkMode: boolean }) => {
-  const bg = isDarkMode ? "bg-gray-700/40" : "bg-gray-200/60";
+  const bg = isDarkMode ? 'bg-gray-700/40' : 'bg-gray-200/60';
 
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+        isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'
       }`}
     >
       <div className="container mx-auto px-4 py-8 md:px-8 max-w-4xl animate-pulse">
-        
         {/* Theme Toggle */}
         <div className="flex justify-end mb-6">
           <div className={`h-8 w-28 rounded ${bg}`} />
@@ -16,7 +15,6 @@ export const UserProfileSkeleton = ({ isDarkMode }: { isDarkMode: boolean }) => 
 
         {/* Profile Header */}
         <div className="mb-10 flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8">
-          
           {/* Profile Pic */}
           <div className={`w-32 h-32 rounded-full ${bg}`} />
 
@@ -41,11 +39,7 @@ export const UserProfileSkeleton = ({ isDarkMode }: { isDarkMode: boolean }) => 
         </div>
 
         {/* Tabs */}
-        <div
-          className={`border-b pb-2 mb-8 ${
-            isDarkMode ? "border-gray-700" : "border-gray-200"
-          }`}
-        >
+        <div className={`border-b pb-2 mb-8 ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="flex space-x-6">
             {[...Array(5)].map((_, i) => (
               <div key={i} className={`h-5 w-24 rounded ${bg}`} />

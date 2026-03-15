@@ -1,7 +1,9 @@
-import api from "./api";
+import api from './api';
 
 // Toggle Like on a Blog (requires authentication)
-export const toggleLike = async (blogId: string): Promise<{
+export const toggleLike = async (
+  blogId: string,
+): Promise<{
   liked: boolean;
   likeCount: number;
 }> => {

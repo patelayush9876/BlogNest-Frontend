@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { User } from "lucide-react";
-import { useParams } from "react-router-dom";
-import { useTheme } from "../../contexts/ThemeContext";
+import React, { useEffect, useState } from 'react';
+import { User } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
 
 import {
   followUser,
   getFollowers,
   getFollowing,
   unfollowUser,
-} from "../../services/follow.service";
+} from '../../services/follow.service';
 
-import ArticleCard from "../../components/ArticleCard";
-import { getProfileById } from "../../services/profile.service";
-import { getBlogsByUserId } from "../../services/blog.service";
-import { ListSkeleton } from "../../components/loaders/ListSkeleton";
-import { ArticleCardSkeleton } from "../../components/loaders/ArticleSkeleton";
+import ArticleCard from '../../components/ArticleCard';
+import { getProfileById } from '../../services/profile.service';
+import { getBlogsByUserId } from '../../services/blog.service';
+import { ListSkeleton } from '../../components/loaders/ListSkeleton';
+import { ArticleCardSkeleton } from '../../components/loaders/ArticleSkeleton';
+import { UserProfileSkeleton } from '../../components/loaders/UserProfileSkeleton';
 
 const PublicUserProfile: React.FC = () => {
   const { authorId } = useParams();
@@ -29,7 +30,7 @@ const PublicUserProfile: React.FC = () => {
   const [followersLoading, setFollowersLoading] = useState(false);
   const [followingLoading, setFollowingLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState("Posts");
+  const [activeTab, setActiveTab] = useState('Posts');
   const [isFollowingUser, setIsFollowingUser] = useState(false);
 
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,7 @@ const PublicUserProfile: React.FC = () => {
         // check if current user follows this profile
         setIsFollowingUser(data.isFollowedByCurrentUser || false);
       } catch (err) {
-        console.error("Failed to fetch profile:", err);
+        console.error('Failed to fetch profile:', err);
       } finally {
         setLoading(false);
       }
@@ -56,14 +57,14 @@ const PublicUserProfile: React.FC = () => {
   }, [userId]);
 
   useEffect(() => {
-    if (activeTab === "Followers" && authorId) {
+    if (activeTab === 'Followers' && authorId) {
       const fetchFollowers = async () => {
         setFollowersLoading(true);
         try {
           const { followers } = await getFollowers(authorId);
           setFollowers(followers);
         } catch (err) {
-          console.error("Failed to fetch followers:", err);
+          console.error('Failed to fetch followers:', err);
         } finally {
           setFollowersLoading(false);
         }
@@ -74,14 +75,14 @@ const PublicUserProfile: React.FC = () => {
   }, [activeTab, authorId]);
 
   useEffect(() => {
-    if (activeTab === "Following" && authorId) {
+    if (activeTab === 'Following' && authorId) {
       const fetchFollowing = async () => {
         setFollowingLoading(true);
         try {
           const { following } = await getFollowing(authorId);
           setFollowing(following);
         } catch (err) {
-          console.error("Failed to fetch following:", err);
+          console.error('Failed to fetch following:', err);
         } finally {
           setFollowingLoading(false);
         }
@@ -92,14 +93,14 @@ const PublicUserProfile: React.FC = () => {
   }, [activeTab, authorId]);
 
   useEffect(() => {
-    if (activeTab === "Posts" && authorId) {
+    if (activeTab === 'Posts' && authorId) {
       const fetchPosts = async () => {
         setBlogsLoading(true);
         try {
           const data = await getBlogsByUserId(authorId);
           setBlogs(data);
         } catch (err) {
-          console.error("Failed to fetch posts:", err);
+          console.error('Failed to fetch posts:', err);
         } finally {
           setBlogsLoading(false);
         }
@@ -128,32 +129,26 @@ const PublicUserProfile: React.FC = () => {
         }));
       }
     } catch (err) {
-      console.error("Follow error:", err);
+      console.error('Follow error:', err);
     }
   };
 
+  const handleBuyMeCoffee = () => {
+    alert('☕ Buy Me a Coffee feature coming soon!');
+  };
+
   if (loading) {
-    return (
-      <div
-        className={`text-center py-10 ${
-          isDarkMode ? "text-gray-300" : "text-gray-600"
-        }`}
-      >
-        Loading profile...
-      </div>
-    );
+    return <UserProfileSkeleton isDarkMode={isDarkMode} />;
   }
 
   if (!profile) {
-    return (
-      <div className="text-center py-10 text-red-500">User not found.</div>
-    );
+    return <div className="text-center py-10 text-red-500">User not found.</div>;
   }
 
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+        isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'
       }`}
     >
       <div className="container mx-auto px-4 py-8 md:px-8 max-w-4xl">
@@ -164,11 +159,11 @@ const PublicUserProfile: React.FC = () => {
             onClick={toggleTheme}
             className={`px-3 py-2 text-sm border rounded-lg transition ${
               isDarkMode
-                ? "bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700"
-                : "bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200"
+                ? 'bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700'
+                : 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200'
             }`}
           >
-            {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+            {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
           </button>
         </div>
 
@@ -179,15 +174,15 @@ const PublicUserProfile: React.FC = () => {
               src={profile.profilePic}
               alt="Profile"
               className={`w-32 h-32 object-cover rounded-full border ${
-                isDarkMode ? "border-gray-700" : "border-gray-300"
+                isDarkMode ? 'border-gray-700' : 'border-gray-300'
               }`}
             />
           ) : (
             <div
               className={`w-32 h-32 flex items-center justify-center rounded-full border ${
                 isDarkMode
-                  ? "border-gray-700 bg-gray-700/30 text-gray-400"
-                  : "border-gray-300 bg-gray-100 text-gray-500"
+                  ? 'border-gray-700 bg-gray-700/30 text-gray-400'
+                  : 'border-gray-300 bg-gray-100 text-gray-500'
               }`}
             >
               <User className="h-16 w-16" />
@@ -214,40 +209,49 @@ const PublicUserProfile: React.FC = () => {
             </div>
 
             {/* Follow / Unfollow Button */}
-            <div className="mt-4">
+            {/* Follow / Unfollow Button */}
+            <div className="mt-4 flex flex-wrap gap-3">
               <button
                 onClick={handleFollow}
                 className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
                   isFollowingUser
                     ? isDarkMode
-                      ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                      : "bg-gray-200 text-gray-900 hover:bg-gray-300"
+                      ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                      : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
                     : isDarkMode
-                    ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-                    : "bg-gray-900 hover:bg-gray-800 text-white"
+                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                      : 'bg-gray-900 hover:bg-gray-800 text-white'
                 }`}
               >
-                {isFollowingUser ? "Following" : "Follow"}
+                {isFollowingUser ? 'Following' : 'Follow'}
+              </button>
+
+              {/* Buy Me a Coffee */}
+              <button
+                onClick={handleBuyMeCoffee}
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition border ${
+                  isDarkMode
+                    ? 'border-yellow-500 text-yellow-400 hover:bg-yellow-500/10'
+                    : 'border-yellow-600 text-yellow-700 hover:bg-yellow-100'
+                }`}
+              >
+                ☕ Buy Me a Coffee
               </button>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div
-          className={`border-b mb-8 ${
-            isDarkMode ? "border-gray-700" : "border-gray-200"
-          }`}
-        >
+        <div className={`border-b mb-8 ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="flex space-x-6 text-base font-medium">
-            {["Posts", "Followers", "Following"].map((tab) => (
+            {['Posts', 'Followers', 'Following'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-1 pb-3 transition ${
                   activeTab === tab
                     ? `border-b-2 border-indigo-500 font-semibold`
-                    : "opacity-60 hover:opacity-90"
+                    : 'opacity-60 hover:opacity-90'
                 }`}
               >
                 {tab}
@@ -257,7 +261,7 @@ const PublicUserProfile: React.FC = () => {
         </div>
 
         {/* -------------------- POSTS -------------------- */}
-        {activeTab === "Posts" &&
+        {activeTab === 'Posts' &&
           (blogsLoading ? (
             <div className="space-y-10">
               <ArticleCardSkeleton isDarkMode={isDarkMode} />
@@ -285,28 +289,22 @@ const PublicUserProfile: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="py-16 text-center opacity-70">
-              No posts available.
-            </div>
+            <div className="py-16 text-center opacity-70">No posts available.</div>
           ))}
 
         {/* -------------------- FOLLOWERS -------------------- */}
-        {activeTab === "Followers" && (
+        {activeTab === 'Followers' && (
           <div className="space-y-4">
             {followersLoading ? (
               <ListSkeleton isDarkMode={isDarkMode} />
             ) : followers.length === 0 ? (
-              <div className="py-10 text-center opacity-70">
-                No followers yet.
-              </div>
+              <div className="py-10 text-center opacity-70">No followers yet.</div>
             ) : (
               followers.map((item) => (
                 <div
                   key={item._id}
                   className={`flex items-center space-x-4 p-4 rounded-lg border ${
-                    isDarkMode
-                      ? "border-gray-700 bg-gray-800"
-                      : "border-gray-200 bg-white"
+                    isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                   }`}
                 >
                   <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
@@ -323,22 +321,18 @@ const PublicUserProfile: React.FC = () => {
         )}
 
         {/* -------------------- FOLLOWING -------------------- */}
-        {activeTab === "Following" && (
+        {activeTab === 'Following' && (
           <div className="space-y-4">
             {followingLoading ? (
               <ListSkeleton isDarkMode={isDarkMode} />
             ) : following.length === 0 ? (
-              <div className="py-10 text-center opacity-70">
-                Not following anyone yet.
-              </div>
+              <div className="py-10 text-center opacity-70">Not following anyone yet.</div>
             ) : (
               following.map((item) => (
                 <div
                   key={item._id}
                   className={`flex items-center space-x-4 p-4 rounded-lg border ${
-                    isDarkMode
-                      ? "border-gray-700 bg-gray-800"
-                      : "border-gray-200 bg-white"
+                    isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
                   }`}
                 >
                   <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">

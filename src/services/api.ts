@@ -1,5 +1,5 @@
-import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import API_CONFIG from "../config/apiConfig";
+import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
+import API_CONFIG from '../config/apiConfig';
 
 let isRefreshing = false;
 let failedQueue: {
@@ -23,43 +23,36 @@ const processQueue = (error: any, token: string | null = null) => {
 
 const api = axios.create({
   baseURL: `${API_CONFIG.BASE_URL}/api/v1`,
-  headers: { "Content-Type": "application/json" },
+  headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token && config.headers)
-      config.headers.Authorization = `Bearer ${token}`;
+    const token = localStorage.getItem('accessToken');
+    if (token && config.headers) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 api.interceptors.response.use(
   (response) => response,
-  async (
-    error: AxiosError & { config?: AxiosRequestConfig & { _retry?: boolean } }
-  ) => {
+  async (error: AxiosError & { config?: AxiosRequestConfig & { _retry?: boolean } }) => {
     const originalRequest = error.config;
 
     // Skip refresh logic for login/register/forgot-password
     if (
-      originalRequest?.url?.includes("/auth/login") ||
-      originalRequest?.url?.includes("/auth/register") ||
-      originalRequest?.url?.includes("/auth/forgot-password")
+      originalRequest?.url?.includes('/auth/login') ||
+      originalRequest?.url?.includes('/auth/register') ||
+      originalRequest?.url?.includes('/auth/forgot-password')
     ) {
       return Promise.reject(error);
     }
 
-    if (
-      error.response?.status === 401 &&
-      originalRequest &&
-      !originalRequest._retry
-    ) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
-      const refreshToken = localStorage.getItem("refreshToken");
+      const refreshToken = localStorage.getItem('refreshToken');
 
       if (!refreshToken) {
         // Trigger session expired callback, do NOT clear storage here
@@ -72,8 +65,7 @@ api.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            if (originalRequest.headers)
-              originalRequest.headers.Authorization = `Bearer ${token}`;
+            if (originalRequest.headers) originalRequest.headers.Authorization = `Bearer ${token}`;
             return api(originalRequest);
           })
           .catch((err) => Promise.reject(err));
@@ -85,11 +77,11 @@ api.interceptors.response.use(
         const response = await axios.post(
           `${API_CONFIG.BASE_URL}/api/v1/auth/refresh-token`,
           { refreshToken },
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         const newAccessToken = response.data.accessToken;
-        localStorage.setItem("accessToken", newAccessToken);
+        localStorage.setItem('accessToken', newAccessToken);
 
         processQueue(null, newAccessToken);
 
@@ -108,7 +100,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

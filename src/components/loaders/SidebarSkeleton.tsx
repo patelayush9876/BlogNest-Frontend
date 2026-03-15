@@ -1,16 +1,16 @@
-import React from "react";
-import { useTheme } from "../../contexts/ThemeContext";
+import React from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const SidebarSkeleton: React.FC = () => {
   const { isDarkMode } = useTheme();
-  const bg = isDarkMode ? "bg-gray-700/40" : "bg-gray-200/60";
+  const bg = isDarkMode ? 'bg-gray-700/40' : 'bg-gray-200/60';
 
   return (
     <div className="space-y-8 sticky top-4 animate-pulse">
       {/* Box 1 */}
       <div
         className={`p-5 border rounded-xl ${
-          isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
+          isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
         }`}
       >
         <div className={`h-5 w-32 rounded mb-4 ${bg}`} />
@@ -25,7 +25,7 @@ const SidebarSkeleton: React.FC = () => {
       {/* Box 2 */}
       <div
         className={`p-5 border rounded-xl ${
-          isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
+          isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
         }`}
       >
         <div className={`h-5 w-28 rounded mb-4 ${bg}`} />
@@ -40,7 +40,7 @@ const SidebarSkeleton: React.FC = () => {
       {/* Box 3 */}
       <div
         className={`p-5 border rounded-xl ${
-          isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
+          isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
         }`}
       >
         <div className={`h-5 w-40 rounded mb-4 ${bg}`} />

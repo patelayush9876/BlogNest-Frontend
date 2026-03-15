@@ -1,11 +1,7 @@
-import api from "./api";
+import api from './api';
 
 // Add a comment or reply (requires auth)
-export const addComment = async (
-  blogId: string,
-  text: string,
-  parentCommentId?: string
-) => {
+export const addComment = async (blogId: string, text: string, parentCommentId?: string) => {
   const payload = parentCommentId ? { text, parentCommentId } : { text };
   const response = await api.post(`/comments/${blogId}`, payload);
   return response.data.data; // backend returns { comment }

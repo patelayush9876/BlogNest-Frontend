@@ -1,10 +1,10 @@
 export const ArticleCardSkeleton = ({ isDarkMode }: { isDarkMode: boolean }) => {
-  const bg = isDarkMode ? "bg-gray-700/40" : "bg-gray-200/60";
+  const bg = isDarkMode ? 'bg-gray-700/40' : 'bg-gray-200/60';
 
   return (
     <div
       className={`pb-8 border-b ${
-        isDarkMode ? "border-gray-700" : "border-gray-200"
+        isDarkMode ? 'border-gray-700' : 'border-gray-200'
       } animate-pulse`}
     >
       {/* Image skeleton */}

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -13,6 +13,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+/* global.css */
+:root {
+  --tw-border-style: solid;
+}
+
 .btn-primary {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -46,7 +51,9 @@
   overflow: hidden;
   border: 1px solid #e5e7eb; /* border-gray-200 */
   background-color: #f3f4f6; /* bg-gray-100 */
-  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+  transition:
+    background-color 0.3s ease-in-out,
+    border-color 0.3s ease-in-out;
 }
 
 .dark .tab-container {
@@ -102,7 +109,6 @@
   color: #fff;
   background: linear-gradient(to right, #2563eb, #7c3aed);
   border-radius: 9999px;
-
 }
 
 /* Skeleton shimmer animation */
@@ -111,7 +117,7 @@
 }
 
 .skeleton::after {
-  content: "";
+  content: '';
   @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 dark:via-gray-500/20 to-transparent animate-[shimmer_1.3s_infinite];
 }
 
@@ -119,4 +125,65 @@
   100% {
     transform: translateX(100%);
   }
+}
+
+/* ===== Custom Scrollbar (Global) ===== */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.6) transparent;
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(99, 102, 241, 0.6); /* indigo */
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(99, 102, 241, 0.85);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.loaderScreen {
+  height: 56vh;
+  display: grid;
+  background-color: white;
+  place-items: center;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }

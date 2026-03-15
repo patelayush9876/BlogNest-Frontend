@@ -1,27 +1,27 @@
-import React, { useState } from "react";
-import { User, Settings, Bell } from "lucide-react";
-import { useTheme } from "../../../contexts/ThemeContext";
-import { AccountTab } from "./AccountTab";
-import { PreferencesTab } from "./PreferencesTab";
-import { NotificationsTab } from "./NotificationTab";
+import React, { useState } from 'react';
+import { User, Settings, Bell } from 'lucide-react';
+import { useTheme } from '../../../contexts/ThemeContext';
+import { AccountTab } from './AccountTab';
+import { PreferencesTab } from './PreferencesTab';
+import { NotificationsTab } from './NotificationTab';
 
 const SettingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("Account");
+  const [activeTab, setActiveTab] = useState('Account');
   const { isDarkMode } = useTheme();
 
   const tabs = [
-    { name: "Account", icon: User },
-    { name: "Preferences", icon: Settings },
-    { name: "Notifications", icon: Bell },
+    { name: 'Account', icon: User },
+    { name: 'Preferences', icon: Settings },
+    { name: 'Notifications', icon: Bell },
   ];
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "Account":
+      case 'Account':
         return <AccountTab />;
-      case "Preferences":
+      case 'Preferences':
         return <PreferencesTab />;
-      case "Notifications":
+      case 'Notifications':
         return <NotificationsTab />;
       default:
         return null;
@@ -31,18 +31,14 @@ const SettingsPage: React.FC = () => {
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        isDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+        isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl pt-8 pb-16">
         {/* Header */}
         <div className="mb-6 text-center sm:text-left">
           <h1 className="text-2xl sm:text-3xl font-bold">Settings</h1>
-          <p
-            className={`text-sm sm:text-base ${
-              isDarkMode ? "text-gray-400" : "text-gray-500"
-            }`}
-          >
+          <p className={`text-sm sm:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             Manage your account settings and preferences
           </p>
         </div>
@@ -50,9 +46,7 @@ const SettingsPage: React.FC = () => {
         {/* Tabs */}
         <div
           className={`flex overflow-x-auto no-scrollbar px-1 rounded-xl shadow-sm border mb-8 transition-colors ${
-            isDarkMode
-              ? "bg-gray-800 border-gray-700"
-              : "bg-white border-gray-100"
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
           }`}
         >
           <div className="flex flex-nowrap gap-2 min-w-max p-2">
@@ -65,11 +59,11 @@ const SettingsPage: React.FC = () => {
               ${
                 activeTab === tab.name
                   ? isDarkMode
-                    ? "bg-gray-700 text-gray-200"
-                    : "bg-gray-100 text-gray-900 shadow-inner"
+                    ? 'bg-gray-700 text-gray-200'
+                    : 'bg-gray-100 text-gray-900 shadow-inner'
                   : isDarkMode
-                  ? "text-gray-400 hover:text-gray-200"
-                  : "text-gray-500 hover:text-gray-900"
+                    ? 'text-gray-400 hover:text-gray-200'
+                    : 'text-gray-500 hover:text-gray-900'
               }`}
               >
                 <tab.icon className="w-5 h-5 mr-2" />
